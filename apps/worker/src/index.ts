@@ -15,7 +15,7 @@
  */
 
 import { Env } from './lib/types';
-import { ERROR_CODES } from './lib/constants';
+import { ERROR_CODES, HTTP_STATUS } from './lib/constants';
 import { handleOptions, errorResponse } from './lib/response';
 import { handleRoot } from './handlers/root';
 import { handleChat } from './handlers/chat';
@@ -44,9 +44,10 @@ const worker: ExportedHandler<Env> = {
       }
 
       // 404 for unknown routes
-      return errorResponse('NOT_FOUND', `Route ${path} not found`, 404);
+      return errorResponse('NOT_FOUND', `Route ${path} not found`, HTTP_STATUS.NOT_FOUND);
     } catch (error) {
-      console.error('Unhandled error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Unhandled error:', errorMessage, error);
       return errorResponse(ERROR_CODES.INTERNAL_ERROR, 'An unexpected error occurred');
     }
   },

@@ -17,13 +17,18 @@ import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages
 /**
  * In-memory session storage for conversation history
  * In production, consider using Cloudflare KV or Durable Objects
+ * 
+ * Note: This will be lost on worker restart. For production, use persistent storage.
  */
-const sessionHistories = new Map<string, Array<{ role: string; content: string }>>();
+const sessionHistories = new Map<string, Message[]>();
 
 /**
  * Get or create conversation history for a session
+ * 
+ * @param sessionId - Unique session identifier
+ * @returns Array of messages for the session
  */
-function getSessionHistory(sessionId: string): Array<{ role: string; content: string }> {
+function getSessionHistory(sessionId: string): Message[] {
   if (!sessionHistories.has(sessionId)) {
     sessionHistories.set(sessionId, []);
   }
@@ -71,7 +76,7 @@ export async function executeAgent(
   messages: Message[]
 ): Promise<{
   reply: string;
-  toolsUsed: Array<{ name: string; result: any }>;
+  toolsUsed: Array<{ name: string; result: unknown }>;
 }> {
   // Get the last user message
   const lastUserMessage = messages.filter((m) => m.role === 'user').pop();
@@ -112,13 +117,15 @@ export async function executeAgent(
   }
 
   // Extract tool usage from messages
-  const toolsUsed: Array<{ name: string; result: any }> = [];
+  const toolsUsed: Array<{ name: string; result: unknown }> = [];
   for (const msg of result.messages) {
     if (msg._getType() === 'tool') {
       // Tool messages contain tool results
+      // Type assertion needed because LangChain tool messages don't expose name in types
+      const toolMsg = msg as { name?: string; content: unknown };
       toolsUsed.push({
-        name: (msg as any).name || 'unknown',
-        result: msg.content,
+        name: toolMsg.name || 'unknown',
+        result: toolMsg.content,
       });
     }
   }

@@ -2,7 +2,7 @@
  * Response utilities for HTTP handlers
  */
 
-import { ChatResponse, ErrorResponse } from './types';
+import type { ChatResponse, ErrorResponse } from './types';
 import { ERROR_CODES, HTTP_STATUS } from './constants';
 
 /**
@@ -26,9 +26,13 @@ export function handleOptions(): Response {
 
 /**
  * Create a JSON response with CORS headers
+ * 
+ * @param data - Response data (ChatResponse, ErrorResponse, or any JSON-serializable object)
+ * @param status - HTTP status code
+ * @returns Response with JSON body and CORS headers
  */
 export function jsonResponse(
-  data: ChatResponse | ErrorResponse,
+  data: ChatResponse | ErrorResponse | Record<string, unknown>,
   status: number = HTTP_STATUS.OK,
 ): Response {
   return new Response(JSON.stringify(data, null, 2), {

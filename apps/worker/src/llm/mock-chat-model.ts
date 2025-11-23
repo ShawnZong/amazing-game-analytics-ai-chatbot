@@ -15,7 +15,7 @@ import { ChatResult, ChatGeneration, ChatGenerationChunk } from '@langchain/core
  * 2. The factory in model-factory.ts will automatically use ChatOpenAI instead
  */
 export class MockChatModel extends BaseChatModel {
-  constructor(fields?: any) {
+  constructor(fields?: Record<string, unknown>) {
     super(fields || {});
   }
 

@@ -25,7 +25,7 @@ export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 // Tool result
 export const ToolResultSchema = z.object({
   name: z.string(),
-  result: z.any(),
+  result: z.unknown(), // Use unknown instead of any for better type safety
 });
 export type ToolResult = z.infer<typeof ToolResultSchema>;
 

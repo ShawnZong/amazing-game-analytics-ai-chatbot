@@ -14,8 +14,28 @@ import { jsonResponse, errorResponse } from '../lib/response';
  */
 export async function handleChat(request: Request, env: Env): Promise<Response> {
   try {
+    // Validate Content-Type
+    const contentType = request.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        'Content-Type must be application/json',
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
     // Parse and validate request body
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return errorResponse(
+        ERROR_CODES.VALIDATION_ERROR,
+        'Invalid JSON in request body',
+        HTTP_STATUS.BAD_REQUEST,
+      );
+    }
+
     const validation = ChatRequestSchema.safeParse(body);
 
     if (!validation.success) {
@@ -58,7 +78,8 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     console.log(`Chat response generated successfully`);
     return jsonResponse(response);
   } catch (error) {
-    console.error('Error handling chat request:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error handling chat request:', errorMessage, error);
 
     // Don't expose internal error details to client
     return errorResponse(
