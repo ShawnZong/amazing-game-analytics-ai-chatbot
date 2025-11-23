@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
-import { Bot, User } from "lucide-react"
+import { Bot, User, Shield, Sparkles } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Message } from "@/types/chat"
@@ -15,60 +15,57 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === "user"
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+    <div
       className={cn(
-        "flex w-full items-start gap-3 px-4 py-3",
+        "group flex w-full items-start gap-4 px-2 py-4",
         isUser ? "flex-row-reverse" : "flex-row"
       )}
     >
       {/* Avatar */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+      <div
         className={cn(
-          "flex size-9 shrink-0 select-none items-center justify-center rounded-full border-2 shadow-lg transition-all",
+          "flex size-10 shrink-0 select-none items-center justify-center rounded-xl border-2 shadow-lg transition-all",
           isUser
-            ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground border-primary/20"
-            : "bg-gradient-to-br from-muted to-muted/80 text-foreground border-border/50"
+            ? "border-emerald-700 bg-emerald-500 text-white shadow-emerald-900/20"
+            : "border-purple-700 bg-purple-500 text-white shadow-purple-900/20"
         )}
       >
         {isUser ? (
-          <User className="size-4" />
+          <Shield className="size-5 drop-shadow-md" />
         ) : (
-          <Bot className="size-4" />
+          <Sparkles className="size-5 drop-shadow-md" />
         )}
-      </motion.div>
+      </div>
 
-      {/* Message bubble */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.15 }}
+      {/* Message Content */}
+      <div
         className={cn(
-          "flex max-w-[75%] flex-col gap-1.5 rounded-2xl px-4 py-2.5 shadow-md transition-all",
-          isUser
-            ? "bg-gradient-to-br from-primary to-primary/90 text-primary-foreground rounded-br-sm"
-            : "bg-card border border-border/50 text-foreground rounded-bl-sm"
+          "relative flex max-w-[85%] flex-col gap-1",
+          isUser ? "items-end" : "items-start"
         )}
       >
-        <div className="whitespace-pre-wrap text-sm leading-relaxed">
-          {message.content}
+        <div className="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-1">
+          {isUser ? "Chief" : "Analytics Goblin"}
         </div>
         <div
           className={cn(
-            "text-[10px] opacity-70",
-            isUser ? "text-right" : "text-left"
+            "rounded-xl border-b-4 px-5 py-3.5 shadow-md text-sm font-medium leading-relaxed",
+            isUser
+              ? "border-emerald-700 bg-emerald-100 text-emerald-900 dark:bg-emerald-900/80 dark:text-emerald-50"
+              : "border-slate-300 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
           )}
         >
+          <div className="whitespace-pre-wrap">{message.content}</div>
+        </div>
+        
+        {/* Timestamp */}
+        <span className="px-1 text-[10px] font-bold text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 dark:text-slate-500">
           {new Date(message.createdAt).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           })}
-        </div>
-      </motion.div>
-    </motion.div>
+        </span>
+      </div>
+    </div>
   )
 }
