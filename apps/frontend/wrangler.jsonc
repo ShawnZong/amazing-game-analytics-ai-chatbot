@@ -25,22 +25,36 @@
 	// "placement": { "mode": "smart" },
 	/**
 	 * Service Bindings (communicate between multiple Workers)
-	 * Uncomment to connect frontend to backend worker
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
 	 */
-	// "services": [
-	// 	{
-	// 		"binding": "BACKEND",
-	// 		"service": "rawg-analytics-worker"
-	// 	}
-	// ],
+	"services": [
+		{
+			"binding": "BACKEND",
+			"service": "rawg-analytics-worker"
+		}
+	],
 	/**
 	 * Environment Variables
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
-	// "vars": {
-	// 	"NEXT_PUBLIC_WORKER_URL": "https://rawg-analytics-worker.your-subdomain.workers.dev"
-	// },
+	"vars": {
+		"NEXT_PUBLIC_WORKER_URL": "http://localhost:8787"
+	},
+	/**
+	 * Environment-specific configurations
+	 */
+	"env": {
+		"dev": {
+			"vars": {
+				"NEXT_PUBLIC_WORKER_URL": "http://localhost:8787"
+			}
+		},
+		"production": {
+			"vars": {
+				"NEXT_PUBLIC_WORKER_URL": "https://rawg-analytics-worker.your-subdomain.workers.dev"
+			}
+		}
+	},
 	/**
 	 * Note: Use secrets to store sensitive data.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/

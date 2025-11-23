@@ -9,6 +9,16 @@
   "compatibility_date": "2025-11-23",
   "compatibility_flags": ["nodejs_compat"],
   /**
+   * Service Bindings (communicate between multiple Workers)
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+   */
+  "services": [
+    {
+      "binding": "MCP_SERVER",
+      "service": "rawg-mcp-agent"
+    }
+  ],
+  /**
    * Environment-specific configurations
    * Note: vars are NOT inherited from top-level, must be explicitly defined
    * Always use --env flag when deploying (e.g., --env production or --env dev)
