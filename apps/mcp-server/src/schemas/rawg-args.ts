@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-// Auto-generated argument schemas from OpenAPI specification
-// DO NOT EDIT MANUALLY - This file is generated from rawg-api-openapi.json
+// Argument schemas from OpenAPI specification
+// Originally generated from rawg-api-openapi.json, manually modified to add defaults
 // Contains Zod schemas for tool function arguments/parameters
 
 export const GamesListArgsSchema = z.object({
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
   search: z.string().optional().describe("Search query."),
   search_precise: z.boolean().optional().describe("Disable fuzziness for the search query."),
   search_exact: z.boolean().optional().describe("Mark the search query as exact."),
@@ -33,40 +33,40 @@ export const GamesListArgsSchema = z.object({
 export const GamesAdditionsListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
 });
 
 export const GamesDevelopmentTeamListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   ordering: z.string().optional().describe("Which field to use when ordering the results."),
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
 });
 
 export const GamesGameSeriesListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
 });
 
 export const GamesParentGamesListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
 });
 
 export const GamesScreenshotsListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   ordering: z.string().optional().describe("Which field to use when ordering the results."),
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
 });
 
 export const GamesStoresListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   ordering: z.string().optional().describe("Which field to use when ordering the results."),
   page: z.number().optional().describe("A page number within the paginated result set."),
-  page_size: z.number().optional().describe("Number of results to return per page."),
+  page_size: z.number().default(10).describe("Number of results to return per page. Default: 10."),
 });
 
 export const GamesReadArgsSchema = z.object({
