@@ -34,8 +34,8 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     // Create chat model (mock or GPT-4 based on env)
     const model = createChatModel(env);
 
-    // Create tools that connect to MCP server
-    const tools = createAllTools(env);
+    // Create tools that connect to MCP server (now async)
+    const tools = await createAllTools(env);
 
     console.log(`Available tools: ${tools.map(t => t.name).join(', ')}`);
 
