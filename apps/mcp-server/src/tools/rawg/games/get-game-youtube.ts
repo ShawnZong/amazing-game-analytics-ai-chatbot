@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GamesYoutubeReadArgsSchema } from '../../../schemas/rawg-args';
+import { GamesYoutubeReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
 
 /**

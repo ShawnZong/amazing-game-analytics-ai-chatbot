@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GamesScreenshotsListArgsSchema } from '../../../schemas/rawg-args';
+import { GamesScreenshotsListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
 
 /**

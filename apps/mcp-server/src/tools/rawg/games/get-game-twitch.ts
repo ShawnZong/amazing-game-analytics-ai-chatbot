@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GamesTwitchReadArgsSchema } from '../../../schemas/rawg-args';
+import { GamesTwitchReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
 
 /**
