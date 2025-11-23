@@ -47,4 +47,3 @@ export const YoutubeSchema = z.object({
   favorite_count: z.number().int(),
   thumbnails: z.record(z.unknown()),
 });
-

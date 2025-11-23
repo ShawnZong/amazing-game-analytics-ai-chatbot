@@ -6,7 +6,10 @@ import { z } from 'zod';
 export const PositionSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
 });
 
 /**
@@ -15,7 +18,10 @@ export const PositionSchema = z.object({
 export const PersonSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
   image: z.string().url(),
   image_background: z.string().url().min(1),
   games_count: z.number().int(),
@@ -27,7 +33,10 @@ export const PersonSchema = z.object({
 export const PersonSingleSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
   image: z.string().url(),
   image_background: z.string().url().min(1),
   description: z.string().min(1).optional(),
@@ -44,9 +53,11 @@ export const PersonSingleSchema = z.object({
 export const GamePersonListSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
   image: z.string().url(),
   image_background: z.string().url().min(1),
   games_count: z.number().int(),
 });
-

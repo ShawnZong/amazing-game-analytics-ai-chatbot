@@ -31,4 +31,3 @@ export const ParentAchievementSchema = z.object({
   image: z.string().url(),
   percent: z.string(),
 });
-

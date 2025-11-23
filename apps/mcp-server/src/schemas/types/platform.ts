@@ -6,7 +6,10 @@ import { z } from 'zod';
 export const PlatformSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1).max(100),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
   games_count: z.number().int(),
   image_background: z.string().url(),
   image: z.string().url().nullable(),
@@ -20,7 +23,10 @@ export const PlatformSchema = z.object({
 export const PlatformParentSingleSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1).max(100),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
   platforms: z.array(PlatformSchema),
 });
 
@@ -30,7 +36,10 @@ export const PlatformParentSingleSchema = z.object({
 export const PlatformSingleSchema = z.object({
   id: z.number().int(),
   name: z.string().min(1).max(100),
-  slug: z.string().min(1).regex(/^[-a-zA-Z0-9_]+$/),
+  slug: z
+    .string()
+    .min(1)
+    .regex(/^[-a-zA-Z0-9_]+$/),
   games_count: z.number().int(),
   image_background: z.string().url(),
   description: z.string().optional(),
@@ -46,4 +55,3 @@ export const GamePlatformMetacriticSchema = z.object({
   metascore: z.number().int(),
   url: z.string().min(1),
 });
-
