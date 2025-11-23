@@ -3,7 +3,7 @@ import { LRUCache } from 'lru-cache';
 import { z } from 'zod';
 import {
   FetchGameDataArgsSchema
-} from '../schemas';
+} from '../schemas/rawg';
 import logger from '../utils/logger';
 
 type FetchGameDataArgs = z.infer<typeof FetchGameDataArgsSchema>;
