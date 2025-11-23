@@ -1,22 +1,12 @@
+// next.config.mjs
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-import type { NextConfig } from 'next';
 
-// Enable calling `getCloudflareContext()` in `next dev` only
-// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
-if (process.env.NODE_ENV === 'development') {
-  initOpenNextCloudflareForDev();
-}
+// Initialize Cloudflare adapter for dev
+initOpenNextCloudflareForDev();
 
-const nextConfig: NextConfig = {
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
-  productionBrowserSourceMaps: false,
-  experimental: {
-    optimizePackageImports: ['lucide-react'],
-  },
-  output: 'standalone', // Recommended for Cloudflare Workers
-  poweredByHeader: false, // Security best practice
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // your existing Next.js config here
 };
 
 export default nextConfig;
