@@ -9,7 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl border-4 border-slate-300 bg-white text-slate-950 shadow-[0_6px_0_#94a3b8] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-50 dark:shadow-[0_6px_0_#334155]",
+      "rounded-[2rem] border-4 border-slate-900 bg-slate-800 text-white shadow-xl overflow-hidden dark:border-slate-950 dark:bg-slate-900",
       className
     )}
     {...props}
@@ -23,7 +23,7 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6 border-b-2 border-slate-100 dark:border-slate-800", className)}
+    className={cn("flex flex-col space-y-1.5 p-8 bg-gradient-to-b from-white/5 to-transparent", className)}
     {...props}
   />
 ))
@@ -36,7 +36,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-2xl font-black uppercase tracking-tight leading-none text-slate-800 dark:text-slate-100",
+      "text-3xl font-black uppercase italic tracking-tight leading-none text-white drop-shadow-md transform -skew-x-6",
       className
     )}
     {...props}
@@ -50,7 +50,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm font-medium text-slate-500 dark:text-slate-400", className)}
+    className={cn("text-base font-bold text-slate-400 transform -skew-x-6", className)}
     {...props}
   />
 ))
@@ -60,7 +60,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  <div ref={ref} className={cn("p-8 pt-0", className)} {...props} />
 ))
 CardContent.displayName = "CardContent"
 
@@ -70,7 +70,7 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
+    className={cn("flex items-center p-8 pt-0", className)}
     {...props}
   />
 ))
