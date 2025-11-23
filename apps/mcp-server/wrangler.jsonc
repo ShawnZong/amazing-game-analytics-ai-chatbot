@@ -11,19 +11,19 @@
   "migrations": [
     {
       "new_sqlite_classes": ["RawgMcpAgent"],
-      "tag": "v1"
-    }
+      "tag": "v1",
+    },
   ],
   "durable_objects": {
     "bindings": [
       {
         "class_name": "RawgMcpAgent",
-        "name": "MCP_OBJECT"
-      }
-    ]
+        "name": "MCP_OBJECT",
+      },
+    ],
   },
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   // Environment variables (set in Cloudflare Dashboard)
   // "vars": {
@@ -31,7 +31,6 @@
   // },
   // Development
   "dev": {
-    "port": 8787
-  }
+    "port": 8787,
+  },
 }
-

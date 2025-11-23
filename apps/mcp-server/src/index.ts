@@ -2,10 +2,10 @@
 
 /**
  * MCP Server - Cloudflare Worker
- * 
+ *
  * Standalone MCP server deployed as a Cloudflare Worker.
  * Provides video game analytics tools via Model Context Protocol.
- * 
+ *
  * Architecture:
  * - Uses agents/mcp package for MCP server implementation
  * - Exposes MCP protocol over HTTP
@@ -26,7 +26,7 @@ let currentApiKey: string | undefined;
 
 /**
  * RAWG MCP Server Agent
- * 
+ *
  * Extends McpAgent to provide video game analytics tools
  */
 export class RawgMcpAgent extends McpAgent {
@@ -40,7 +40,7 @@ export class RawgMcpAgent extends McpAgent {
     if (apiKey !== undefined) {
       currentApiKey = apiKey;
     }
-    
+
     // Register all tools from the TOOLS array
     for (const tool of TOOLS) {
       this.server.registerTool(
@@ -72,7 +72,7 @@ export class RawgMcpAgent extends McpAgent {
               isError: true,
             };
           }
-        }
+        },
       );
     }
   }
@@ -95,14 +95,14 @@ const worker: ExportedHandler<Env> = {
             protocolVersion: '2024-11-05',
           },
           null,
-          2
+          2,
         ),
         {
           headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
           },
-        }
+        },
       );
     }
 
@@ -110,7 +110,7 @@ const worker: ExportedHandler<Env> = {
     if (url.pathname === '/' || url.pathname === '/mcp') {
       // Set API key for this request (Cloudflare Workers run one request per isolate)
       currentApiKey = env.RAWG_API_KEY;
-      
+
       // Use the parent class's serve method which handles MCP protocol
       // The tools will access currentApiKey from the closure
       return RawgMcpAgent.serve('/mcp').fetch(request, env, ctx);
@@ -122,4 +122,3 @@ const worker: ExportedHandler<Env> = {
 };
 
 export default worker;
-
