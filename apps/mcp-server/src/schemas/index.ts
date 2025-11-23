@@ -16,9 +16,6 @@ export * from './types/tag';
 export * from './types/media';
 export * from './types/social';
 
-// API endpoints and client
-export * from './api/endpoints';
-export * from './api/client';
 
 // Keep backward compatibility with the generated schemas
 export * from './rawg-generated';
