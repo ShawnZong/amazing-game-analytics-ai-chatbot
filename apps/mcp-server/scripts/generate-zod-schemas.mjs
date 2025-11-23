@@ -11,11 +11,11 @@ const outputPath = join(__dirname, '../src/schemas/rawg-generated.ts');
 const spec = JSON.parse(readFileSync(openApiPath, 'utf-8'));
 
 // Helper to convert OpenAPI type to Zod schema
-const typeToZod = (param) => {
+const typeToZod = param => {
   const { type, format, description } = param;
-  
+
   let schema = '';
-  
+
   if (type === 'string') {
     schema = 'z.string()';
   } else if (type === 'integer' || type === 'number') {
@@ -25,22 +25,22 @@ const typeToZod = (param) => {
   } else {
     schema = 'z.unknown()';
   }
-  
+
   // Handle union types for path parameters (can be string or number)
   if (param.in === 'path' && (type === 'string' || type === 'integer')) {
     schema = 'z.union([z.string(), z.number()])';
   }
-  
+
   // Make optional if not required
   if (!param.required && param.in !== 'path') {
     schema += '.optional()';
   }
-  
+
   // Add description if available
   if (description) {
     schema += `.describe(${JSON.stringify(description)})`;
   }
-  
+
   return schema;
 };
 
@@ -58,20 +58,20 @@ const paginationFields = `
 gamesEndpoints.forEach(([path, methods]) => {
   const getMethod = methods.get;
   if (!getMethod) return;
-  
+
   const operationId = getMethod.operationId;
   const summary = getMethod.summary || '';
-  
+
   // Extract path and query parameters
   const pathParams = [];
   const queryParams = [];
-  
+
   // Get parameters from operation
   const operationParams = getMethod.parameters || [];
   // Also check path-level parameters
   const pathLevelParams = methods.parameters || [];
   const allParams = [...operationParams, ...pathLevelParams];
-  
+
   allParams.forEach(param => {
     if (param.in === 'path') {
       pathParams.push(param);
@@ -79,16 +79,17 @@ gamesEndpoints.forEach(([path, methods]) => {
       queryParams.push(param);
     }
   });
-  
+
   // Generate schema name (convert to PascalCase, handle hyphens)
-  const schemaName = operationId
-    .split(/[_-]/)
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('') + 'ArgsSchema';
-  
+  const schemaName =
+    operationId
+      .split(/[_-]/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join('') + 'ArgsSchema';
+
   // Build schema fields (use Map to deduplicate)
   const fieldMap = new Map();
-  
+
   // Add path parameters first
   pathParams.forEach(param => {
     if (!fieldMap.has(param.name)) {
@@ -96,7 +97,7 @@ gamesEndpoints.forEach(([path, methods]) => {
       fieldMap.set(param.name, zodSchema);
     }
   });
-  
+
   // Add query parameters
   queryParams.forEach(param => {
     if (!fieldMap.has(param.name)) {
@@ -104,17 +105,15 @@ gamesEndpoints.forEach(([path, methods]) => {
       fieldMap.set(param.name, zodSchema);
     }
   });
-  
+
   // Convert map to array of field strings
-  const fields = Array.from(fieldMap.entries()).map(([name, schema]) => 
-    `  ${name}: ${schema},`
-  );
-  
+  const fields = Array.from(fieldMap.entries()).map(([name, schema]) => `  ${name}: ${schema},`);
+
   // Build schema
   const schemaCode = `export const ${schemaName} = z.object({
 ${fields.join('\n')}
 });`;
-  
+
   schemas.push(schemaCode);
   exports.push(schemaName);
 });
@@ -131,4 +130,3 @@ ${schemas.join('\n\n')}
 writeFileSync(outputPath, fileContent, 'utf-8');
 console.log(`✅ Generated Zod schemas: ${exports.length} schemas`);
 console.log(`📝 Output: ${outputPath}`);
-

@@ -26,4 +26,3 @@ try {
   console.error('❌ Error generating schemas:', error);
   process.exit(1);
 }
-

@@ -18,19 +18,19 @@ const referencedDefinitions = new Set();
  */
 const propertyToZod = (prop, propName, required = []) => {
   const isRequired = required.includes(propName);
-  
+
   if (prop.$ref) {
     const defName = prop.$ref.split('/').pop();
     referencedDefinitions.add(defName);
     return `${defName}Schema`;
   }
-  
+
   let schema = '';
-  
+
   // Handle type
   if (prop.type === 'string') {
     schema = 'z.string()';
-    
+
     // Handle string formats
     if (prop.format === 'date') {
       schema = 'z.string()'; // Keep as string, add description
@@ -43,7 +43,7 @@ const propertyToZod = (prop, propName, required = []) => {
     } else if (prop.format === 'decimal') {
       schema = 'z.string()'; // Keep as string for decimal
     }
-    
+
     // Handle string constraints
     if (prop.minLength !== undefined) {
       schema += `.min(${prop.minLength})`;
@@ -81,10 +81,12 @@ const propertyToZod = (prop, propName, required = []) => {
     }
   } else if (prop.type === 'object') {
     if (prop.properties) {
-      const objProps = Object.entries(prop.properties).map(([name, p]) => {
-        const propSchema = propertyToZod(p, name, prop.required || []);
-        return `    ${name}: ${propSchema},`;
-      }).join('\n');
+      const objProps = Object.entries(prop.properties)
+        .map(([name, p]) => {
+          const propSchema = propertyToZod(p, name, prop.required || []);
+          return `    ${name}: ${propSchema},`;
+        })
+        .join('\n');
       schema = `z.object({\n${objProps}\n  })`;
     } else {
       schema = 'z.record(z.unknown())';
@@ -92,26 +94,26 @@ const propertyToZod = (prop, propName, required = []) => {
   } else {
     schema = 'z.unknown()';
   }
-  
+
   // Handle nullable
   if (prop['x-nullable']) {
     schema += '.nullable()';
   }
-  
+
   // Handle optional
   if (!isRequired && prop.readOnly !== true) {
     schema += '.optional()';
   }
-  
+
   return schema;
 };
 
 /**
  * Convert OpenAPI parameter to Zod schema
  */
-const parameterToZod = (param) => {
+const parameterToZod = param => {
   let schema = '';
-  
+
   if (param.type === 'string') {
     schema = 'z.string()';
   } else if (param.type === 'integer') {
@@ -123,16 +125,16 @@ const parameterToZod = (param) => {
   } else {
     schema = 'z.unknown()';
   }
-  
+
   // Path parameters can be string or number
   if (param.in === 'path') {
     schema = 'z.union([z.string(), z.number()])';
   }
-  
+
   if (!param.required && param.in !== 'path') {
     schema += '.optional()';
   }
-  
+
   return schema;
 };
 
@@ -143,44 +145,48 @@ const generateDefinitionSchema = (defName, definition) => {
   if (!definition || !definition.type) {
     return `export const ${defName}Schema = z.unknown();`;
   }
-  
+
   const required = definition.required || [];
   const properties = definition.properties || {};
-  
-  const props = Object.entries(properties).map(([propName, prop]) => {
-    const zodSchema = propertyToZod(prop, propName, required);
-    return `  ${propName}: ${zodSchema},`;
-  }).join('\n');
-  
+
+  const props = Object.entries(properties)
+    .map(([propName, prop]) => {
+      const zodSchema = propertyToZod(prop, propName, required);
+      return `  ${propName}: ${zodSchema},`;
+    })
+    .join('\n');
+
   return `export const ${defName}Schema = z.object({\n${props}\n});`;
 };
 
 /**
  * Generate response schema from OpenAPI response definition
  */
-const generateResponseSchema = (response) => {
+const generateResponseSchema = response => {
   if (!response || !response.schema) {
     return 'z.void()';
   }
-  
+
   const schema = response.schema;
-  
+
   if (schema.$ref) {
     const defName = schema.$ref.split('/').pop();
     referencedDefinitions.add(defName);
     return `${defName}Schema`;
   }
-  
+
   // Handle inline object schemas
   if (schema.type === 'object' && schema.properties) {
     const required = schema.required || [];
-    const props = Object.entries(schema.properties).map(([propName, prop]) => {
-      const zodSchema = propertyToZod(prop, propName, required);
-      return `    ${propName}: ${zodSchema},`;
-    }).join('\n');
+    const props = Object.entries(schema.properties)
+      .map(([propName, prop]) => {
+        const zodSchema = propertyToZod(prop, propName, required);
+        return `    ${propName}: ${zodSchema},`;
+      })
+      .join('\n');
     return `z.object({\n${props}\n  })`;
   }
-  
+
   return 'z.unknown()';
 };
 
@@ -212,20 +218,20 @@ console.log(`🔗 Processing ${Object.keys(spec.paths).length} API paths...\n`);
 Object.entries(spec.paths).forEach(([path, methods]) => {
   const getMethod = methods.get;
   if (!getMethod) return;
-  
+
   endpointCount++;
   const operationId = getMethod.operationId;
   const summary = getMethod.summary || '';
   const description = getMethod.description || '';
-  
+
   // Convert path from OpenAPI format to Zodios format
   const zodiosPath = path.replace(/{([^}]+)}/g, ':$1');
-  
+
   // Collect all parameters
   const operationParams = getMethod.parameters || [];
   const pathLevelParams = methods.parameters || [];
   const allParams = [...operationParams, ...pathLevelParams];
-  
+
   // Deduplicate parameters by name
   const paramMap = new Map();
   allParams.forEach(param => {
@@ -233,23 +239,23 @@ Object.entries(spec.paths).forEach(([path, methods]) => {
       paramMap.set(param.name, param);
     }
   });
-  
+
   // Generate parameter definitions
   const parameters = Array.from(paramMap.values()).map(param => {
     const typeLabel = param.in === 'path' ? 'Path' : 'Query';
     const zodSchema = parameterToZod(param);
-    
+
     return `      {
         name: "${param.name}",
         type: "${typeLabel}",
         schema: ${zodSchema},
       }`;
   });
-  
+
   // Get response schema
   const response = getMethod.responses['200'];
   const responseSchema = generateResponseSchema(response);
-  
+
   // Build endpoint object
   const endpointCode = `  {
     method: "get",
@@ -261,7 +267,7 @@ ${parameters.join(',\n')}
     ],
     response: ${responseSchema},
   }`;
-  
+
   endpoints.push(endpointCode);
 });
 
@@ -295,4 +301,3 @@ console.log(`\n📊 Summary:`);
 console.log(`   - ${definitionSchemas.length} type definitions`);
 console.log(`   - ${endpointCount} API endpoints`);
 console.log(`   - ${referencedDefinitions.size} referenced types\n`);
-
