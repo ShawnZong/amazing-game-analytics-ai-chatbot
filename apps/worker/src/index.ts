@@ -147,7 +147,7 @@ function handleRoot(env: Env): Response {
  * Main Worker fetch handler
  */
 const worker: ExportedHandler<Env> = {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
 
