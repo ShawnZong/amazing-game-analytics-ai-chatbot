@@ -7,8 +7,8 @@
  * - System prompt configuration
  */
 
-import { AgentExecutor, createToolCallingAgent } from 'langchain/agents';
-import { BufferMemory } from 'langchain/memory';
+import { AgentExecutor, createToolCallingAgent } from '@langchain/core/agents';
+import { BufferMemory } from '@langchain/core/memory';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { DynamicStructuredTool } from '@langchain/core/tools';
