@@ -1,4 +1,9 @@
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import type { NextConfig } from 'next';
+
+// Enable calling `getCloudflareContext()` in `next dev`.
+// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
   compiler: {
@@ -10,17 +15,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// Enable calling `getCloudflareContext()` in `next dev`.
-// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
-if (process.env.NODE_ENV === 'development') {
-  import('@opennextjs/cloudflare').then(({ initOpenNextCloudflareForDev }) => {
-    initOpenNextCloudflareForDev();
-  });
-}
-
 export default nextConfig;
-
-// Enable calling `getCloudflareContext()` in `next dev`.
-// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
-import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-initOpenNextCloudflareForDev();
