@@ -70,7 +70,7 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
             className="space-y-2"
           >
             <h2 className="text-5xl font-lilita text-white brawl-text-outline transform -skew-x-3 drop-shadow-xl tracking-wide">
-              LET'S BRAWL!
+              LET&apos;S BRAWL!
             </h2>
             <p className="max-w-md text-xl font-black text-cyan-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3">
               Select a mode to start
@@ -84,7 +84,7 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
           transition={{ delay: 0.4, duration: 0.5 }}
           className="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2"
         >
-          {SUGGESTIONS.map((suggestion, index) => (
+          {SUGGESTIONS.map((suggestion) => (
             <button
               key={suggestion.label}
               onClick={() => onSuggestionClick?.(suggestion.query)}
