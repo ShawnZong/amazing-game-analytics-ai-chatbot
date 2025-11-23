@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GenresListArgsSchema } from '../../../schemas/args';
+import { GenresListArgsSchema } from '@rawg-analytics/shared/schemas';
 import { fetchRawgApi } from '../utils/api-client';
 
 /**

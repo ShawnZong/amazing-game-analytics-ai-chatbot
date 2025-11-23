@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GamesAdditionsListArgsSchema } from '../../../schemas/args';
+import { GamesAdditionsListArgsSchema } from '@rawg-analytics/shared/schemas';
 import { fetchRawgApi } from '../utils/api-client';
 import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 

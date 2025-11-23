@@ -1,4 +1,4 @@
-import { GenresListArgsSchema, GenresReadArgsSchema } from '../schemas/args';
+import { GenresListArgsSchema, GenresReadArgsSchema } from '@rawg-analytics/shared/schemas';
 import { listGenres, getGenreDetails } from '../tools/rawg';
 
 /**

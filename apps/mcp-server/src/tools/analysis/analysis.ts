@@ -5,7 +5,7 @@ import {
   CompareGroupsArgsSchema,
   TrendAnalysisArgsSchema,
   CorrelationAnalysisArgsSchema,
-} from '../../schemas/args';
+} from '@rawg-analytics/shared/schemas';
 
 /**
  * Execute statistical calculation on a dataset

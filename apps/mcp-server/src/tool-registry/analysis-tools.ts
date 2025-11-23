@@ -3,7 +3,7 @@ import {
   CompareGroupsArgsSchema,
   TrendAnalysisArgsSchema,
   CorrelationAnalysisArgsSchema,
-} from '../schemas/args';
+} from '@rawg-analytics/shared/schemas';
 import {
   executeCalculation,
   compareGroups,
