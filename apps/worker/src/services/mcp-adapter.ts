@@ -5,7 +5,7 @@
  * The MCP server exposes tools that can be invoked by the LLM agent.
  */
 
-import { Env } from "./types";
+import { Env } from '../lib/types';
 
 /**
  * JSON-RPC request structure

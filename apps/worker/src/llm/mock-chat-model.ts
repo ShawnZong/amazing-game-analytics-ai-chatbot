@@ -1,7 +1,7 @@
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { BaseMessage, AIMessage } from "@langchain/core/messages";
-import { CallbackManagerForLLMRun } from "@langchain/core/callbacks/manager";
-import { ChatResult, ChatGeneration } from "@langchain/core/outputs";
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { BaseMessage, AIMessage } from '@langchain/core/messages';
+import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
+import { ChatResult, ChatGeneration, ChatGenerationChunk } from '@langchain/core/outputs';
 
 /**
  * MockChatModel - A deterministic chat model for testing and development
@@ -15,6 +15,10 @@ import { ChatResult, ChatGeneration } from "@langchain/core/outputs";
  * 2. The factory in model-factory.ts will automatically use ChatOpenAI instead
  */
 export class MockChatModel extends BaseChatModel {
+  constructor(fields?: any) {
+    super(fields || {});
+  }
+
   _llmType(): string {
     return "mock";
   }
@@ -84,12 +88,12 @@ export class MockChatModel extends BaseChatModel {
    * 2. Use Server-Sent Events (SSE) in the Worker
    * 3. Update the frontend to handle streamed responses
    */
-  _streamResponseChunks(
+  async *_streamResponseChunks(
     _messages: BaseMessage[],
-    _options: this["ParsedCallOptions"],
+    _options: this['ParsedCallOptions'],
     _runManager?: CallbackManagerForLLMRun
-  ): AsyncGenerator<ChatGeneration> {
-    throw new Error("Streaming is not supported in the MVP");
+  ): AsyncGenerator<ChatGenerationChunk> {
+    throw new Error('Streaming is not supported in the MVP');
   }
 }
 

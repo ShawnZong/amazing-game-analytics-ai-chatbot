@@ -11,11 +11,11 @@
  * without any code changes - just set the environment variable.
  */
 
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { ChatOpenAI } from "@langchain/openai";
-import { MockChatModel } from "./mock-chat-model";
-import { Env } from "./types";
-import { MODEL_CONFIG } from "./constants";
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { ChatOpenAI } from '@langchain/openai';
+import { MockChatModel } from './mock-chat-model';
+import { Env } from '../lib/types';
+import { MODEL_CONFIG } from '../lib/constants';
 
 /**
  * Create a chat model instance based on environment configuration

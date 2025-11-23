@@ -7,14 +7,14 @@
  * - System prompt configuration
  */
 
-import { AgentExecutor, createToolCallingAgent } from "langchain/agents";
-import { BufferMemory } from "langchain/memory";
-import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
-import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { DynamicStructuredTool } from "@langchain/core/tools";
-import { DEFAULT_SYSTEM_PROMPT } from "./constants";
-import { Message } from "./types";
-import { HumanMessage, AIMessage, SystemMessage } from "@langchain/core/messages";
+import { AgentExecutor, createToolCallingAgent } from 'langchain/agents';
+import { BufferMemory } from 'langchain/memory';
+import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { DynamicStructuredTool } from '@langchain/core/tools';
+import { DEFAULT_SYSTEM_PROMPT } from '../lib/constants';
+import { Message } from '../lib/types';
+import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
 
 /**
  * In-memory session storage for conversation history

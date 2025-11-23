@@ -13,7 +13,7 @@
  * consistency between worker and MCP server.
  */
 
-import { DynamicStructuredTool } from "@langchain/core/tools";
+import { DynamicStructuredTool } from '@langchain/core/tools';
 import {
   GamesListArgsSchema,
   GamesReadArgsSchema,
@@ -35,9 +35,9 @@ import {
   CompareGroupsArgsSchema,
   TrendAnalysisArgsSchema,
   CorrelationAnalysisArgsSchema,
-} from "@rawg-analytics/shared/schemas";
-import { invokeMcpTool } from "./mcp-adapter";
-import { Env } from "./types";
+} from '@rawg-analytics/shared/schemas';
+import { invokeMcpTool } from '../services/mcp-adapter';
+import { Env } from '../lib/types';
 
 /**
  * Helper function to create a tool wrapper
