@@ -53,7 +53,7 @@ export async function POST(request: Request): Promise<Response> {
       const error = data as ErrorResponse;
       return Response.json(
         { code: error.code, message: error.message },
-        { status: response.status }
+        { status: response.status },
       );
     }
 
@@ -64,8 +64,7 @@ export async function POST(request: Request): Promise<Response> {
         code: 'INTERNAL_ERROR',
         message: error instanceof Error ? error.message : 'Failed to send chat message',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-
