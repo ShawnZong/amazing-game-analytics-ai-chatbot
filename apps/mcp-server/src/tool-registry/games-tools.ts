@@ -33,7 +33,7 @@ import {
 
 /**
  * Games API Tools
- * 
+ *
  * Array of MCP tools for the games endpoint.
  * Each tool includes name, title, description, schema, and execute function.
  */
@@ -122,7 +122,7 @@ export const GAMES_TOOLS = [
     name: 'get_game_reddit',
     title: 'Get Game Reddit Posts',
     description:
-      'Retrieve the most recent posts from the game\'s subreddit. Includes post titles, text, images, URLs, usernames, and creation dates. Useful for understanding community discussions and sentiment about a game.',
+      "Retrieve the most recent posts from the game's subreddit. Includes post titles, text, images, URLs, usernames, and creation dates. Useful for understanding community discussions and sentiment about a game.",
     schema: GamesRedditReadArgsSchema,
     execute: getGameReddit,
   },
@@ -151,4 +151,3 @@ export const GAMES_TOOLS = [
     execute: getGameYoutube,
   },
 ];
-

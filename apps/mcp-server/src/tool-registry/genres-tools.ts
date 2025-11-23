@@ -1,15 +1,9 @@
-import {
-  GenresListArgsSchema,
-  GenresReadArgsSchema,
-} from '../schemas/args';
-import {
-  listGenres,
-  getGenreDetails,
-} from '../tools/rawg';
+import { GenresListArgsSchema, GenresReadArgsSchema } from '../schemas/args';
+import { listGenres, getGenreDetails } from '../tools/rawg';
 
 /**
  * Genres API Tools
- * 
+ *
  * Array of MCP tools for the genres endpoint.
  * Each tool includes name, title, description, schema, and execute function.
  */
@@ -31,4 +25,3 @@ export const GENRES_TOOLS = [
     execute: getGenreDetails,
   },
 ];
-
