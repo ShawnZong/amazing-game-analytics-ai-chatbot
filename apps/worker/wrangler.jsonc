@@ -9,24 +9,22 @@
   "compatibility_date": "2025-11-23",
   "compatibility_flags": ["nodejs_compat"],
   /**
-   * Environment Variables
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-   */
-  "vars": {
-    "MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
-    "DEFAULT_MODEL": "gpt-4o",
-    "MAX_TOKENS": "2000",
-    "TEMPERATURE": "0.7",
-  },
-  /**
    * Environment-specific configurations
    * Note: vars are NOT inherited from top-level, must be explicitly defined
-   * Production uses top-level vars (same values), only dev needs override
+   * Always use --env flag when deploying (e.g., --env production or --env dev)
    */
   "env": {
     "dev": {
       "vars": {
         "MCP_SERVER_URL": "http://localhost:3000",
+        "DEFAULT_MODEL": "gpt-4o",
+        "MAX_TOKENS": "2000",
+        "TEMPERATURE": "0.7",
+      },
+    },
+    "production": {
+      "vars": {
+        "MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
         "DEFAULT_MODEL": "gpt-4o",
         "MAX_TOKENS": "2000",
         "TEMPERATURE": "0.7",
