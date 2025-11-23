@@ -57,7 +57,9 @@ export const GamesListArgsSchema = z.object({
   metacritic: z
     .string()
     .optional()
-    .describe('Filter by a metacritic rating, for example: `80,100`.'),
+    .describe(
+      'Filter by a Metacritic rating, for example: `80,100`. Note: Scores can be null. To exclude games with null Metacritic scores, set the lower limit to 0 (e.g., `0,100`). Remember to set the correct ordering before filtering by Metacritic score.',
+    ),
   exclude_collection: z
     .number()
     .optional()
@@ -73,7 +75,13 @@ export const GamesListArgsSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Available fields: `name`, `released`, `added`, `created`, `updated`, `rating`, `metacritic`. You can reverse the sort order adding a hyphen, for example: `-released`.',
+      'Available fields: `name`, `released`, `added`, `created`, `updated`, `rating`, `metacritic`. You can reverse the sort order adding a hyphen, for example: `-released`. Note: When ordering by `rating` or `metacritic`, games with null values will be sorted last. Set the correct ordering before filtering by these metrics.',
+    ),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "rating", "platforms.name"]). If not specified, all fields are returned.',
     ),
 });
 
@@ -81,6 +89,12 @@ export const GamesAdditionsListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   page: z.number().optional().describe('A page number within the paginated result set.'),
   page_size: z.number().default(10).describe('Number of results to return per page. Default: 10.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "rating", "platforms.name"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesDevelopmentTeamListArgsSchema = z.object({
@@ -88,18 +102,36 @@ export const GamesDevelopmentTeamListArgsSchema = z.object({
   ordering: z.string().optional().describe('Which field to use when ordering the results.'),
   page: z.number().optional().describe('A page number within the paginated result set.'),
   page_size: z.number().default(10).describe('Number of results to return per page. Default: 10.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "slug", "position.name"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesGameSeriesListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   page: z.number().optional().describe('A page number within the paginated result set.'),
   page_size: z.number().default(10).describe('Number of results to return per page. Default: 10.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "rating", "platforms.name"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesParentGamesListArgsSchema = z.object({
   game_pk: z.union([z.string(), z.number()]),
   page: z.number().optional().describe('A page number within the paginated result set.'),
   page_size: z.number().default(10).describe('Number of results to return per page. Default: 10.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "rating", "platforms.name"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesScreenshotsListArgsSchema = z.object({
@@ -107,6 +139,12 @@ export const GamesScreenshotsListArgsSchema = z.object({
   ordering: z.string().optional().describe('Which field to use when ordering the results.'),
   page: z.number().optional().describe('A page number within the paginated result set.'),
   page_size: z.number().default(10).describe('Number of results to return per page. Default: 10.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "image", "width", "height"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesStoresListArgsSchema = z.object({
@@ -114,32 +152,80 @@ export const GamesStoresListArgsSchema = z.object({
   ordering: z.string().optional().describe('Which field to use when ordering the results.'),
   page: z.number().optional().describe('A page number within the paginated result set.'),
   page_size: z.number().default(10).describe('Number of results to return per page. Default: 10.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "url", "store_id"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "rating", "platforms.name"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesAchievementsReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "description", "percent"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesMoviesReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "preview"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesRedditReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "text", "url"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesSuggestedReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "rating", "platforms.name"]). If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesTwitchReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields. If not specified, all fields are returned.',
+    ),
 });
 
 export const GamesYoutubeReadArgsSchema = z.object({
   id: z.union([z.string(), z.number()]).describe('An ID or a slug identifying this Game.'),
+  fields: z
+    .array(z.string())
+    .optional()
+    .describe(
+      'Specify which fields to include in the response. Use dot notation for nested fields. If not specified, all fields are returned.',
+    ),
 });
