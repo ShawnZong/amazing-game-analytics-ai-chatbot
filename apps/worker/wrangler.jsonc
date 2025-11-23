@@ -8,6 +8,9 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-11-23",
   "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+  },
   /**
    * Environment-specific configurations
    * Note: vars and services are NOT inherited from top-level, must be explicitly defined
@@ -18,31 +21,31 @@
       "services": [
         {
           "binding": "MCP_SERVER",
-          "service": "rawg-mcp-agent"
-        }
+          "service": "rawg-mcp-agent",
+        },
       ],
       "vars": {
         "MCP_SERVER_URL": "http://localhost:3000",
         "DEFAULT_MODEL": "gpt-4o",
         "MAX_TOKENS": "2000",
-        "TEMPERATURE": "0.7"
-      }
+        "TEMPERATURE": "0.7",
+      },
     },
     "production": {
       "services": [
         {
           "binding": "MCP_SERVER",
-          "service": "rawg-mcp-agent"
-        }
+          "service": "rawg-mcp-agent",
+        },
       ],
       "vars": {
         "MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
         "DEFAULT_MODEL": "gpt-4o",
         "MAX_TOKENS": "2000",
-        "TEMPERATURE": "0.7"
-      }
-    }
-  }
+        "TEMPERATURE": "0.7",
+      },
+    },
+  },
   /**
    * Note: Use secrets to store sensitive data.
    * https://developers.cloudflare.com/workers/configuration/secrets/

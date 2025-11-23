@@ -46,7 +46,7 @@
 				}
 			],
 			"vars": {
-				"NEXT_PUBLIC_WORKER_URL": "https://rawg-analytics-worker.your-subdomain.workers.dev"
+				"NEXT_PUBLIC_WORKER_URL": "https://rawg-analytics-worker-production.dt9gdsv25p.workers.dev"
 			}
 		}
 	}

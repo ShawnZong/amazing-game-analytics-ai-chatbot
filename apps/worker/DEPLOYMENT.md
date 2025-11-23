@@ -89,11 +89,13 @@ npx wrangler deploy --env dev
 ### Step 3: Verify Deployment
 
 After deployment, Wrangler will show you the worker URL:
-- Example: `https://rawg-analytics-worker.your-subdomain.workers.dev`
+
+- Example: `https://rawg-analytics-worker-production.dt9gdsv25p.workers.dev`
 
 Test the health endpoint:
+
 ```bash
-curl https://rawg-analytics-worker.your-subdomain.workers.dev/
+curl https://rawg-analytics-worker-production.dt9gdsv25p.workers.dev/
 ```
 
 You should see service information.
@@ -101,7 +103,7 @@ You should see service information.
 ### Step 4: Test the Chat Endpoint
 
 ```bash
-curl -X POST https://rawg-analytics-worker.your-subdomain.workers.dev/chat \
+curl -X POST https://rawg-analytics-worker-production.dt9gdsv25p.workers.dev/chat \
   -H "Content-Type: application/json" \
   -d '{
     "sessionId": "test-123",
@@ -119,12 +121,13 @@ Update your frontend to point to the deployed worker URL:
 
 ```typescript
 // In your frontend code
-const WORKER_URL = 'https://rawg-analytics-worker.your-subdomain.workers.dev';
+const WORKER_URL = 'https://rawg-analytics-worker-production.dt9gdsv25p.workers.dev';
 ```
 
 ### Monitor Logs
 
 View real-time logs:
+
 ```bash
 npx wrangler tail
 ```
@@ -132,6 +135,7 @@ npx wrangler tail
 ### Check Secrets
 
 Verify secrets are set:
+
 ```bash
 npx wrangler secret list
 ```
@@ -139,11 +143,13 @@ npx wrangler secret list
 ### Update Secrets
 
 To update a secret:
+
 ```bash
 npx wrangler secret put OPENAI_API_KEY
 ```
 
 To delete a secret:
+
 ```bash
 npx wrangler secret delete OPENAI_API_KEY
 ```
@@ -169,13 +175,13 @@ npx wrangler secret delete OPENAI_API_KEY
 
 ## Environment Variables Summary
 
-| Variable | Type | Required | Description |
-|----------|------|----------|-------------|
-| `MCP_SERVER_URL` | var | Yes | URL of deployed MCP server |
-| `OPENAI_API_KEY` | secret | No | OpenAI API key (uses mock if not set) |
-| `DEFAULT_MODEL` | var | No | Model name (default: gpt-4o) |
-| `MAX_TOKENS` | var | No | Max tokens (default: 2000) |
-| `TEMPERATURE` | var | No | Temperature (default: 0.7) |
+| Variable         | Type   | Required | Description                           |
+| ---------------- | ------ | -------- | ------------------------------------- |
+| `MCP_SERVER_URL` | var    | Yes      | URL of deployed MCP server            |
+| `OPENAI_API_KEY` | secret | No       | OpenAI API key (uses mock if not set) |
+| `DEFAULT_MODEL`  | var    | No       | Model name (default: gpt-4o)          |
+| `MAX_TOKENS`     | var    | No       | Max tokens (default: 2000)            |
+| `TEMPERATURE`    | var    | No       | Temperature (default: 0.7)            |
 
 ## Quick Reference
 
@@ -198,4 +204,3 @@ npx wrangler secret put OPENAI_API_KEY
 # Delete secret
 npx wrangler secret delete OPENAI_API_KEY
 ```
-
