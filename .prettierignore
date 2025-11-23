@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+**/.next/
+**/out/
+**/dist/
+**/build/
+
+# Cloudflare Workers & Wrangler
+**/.wrangler/
+.wrangler.toml.local
+**/.mf/
+
+# Next.js
+.vercel/
+**/.vercel/
+.next/
+**/.next/
+next-env.d.ts
+**/next-env.d.ts
+
+# OpenNext
+.open-next/
+**/.open-next/
+
+# TypeScript
+**/*.tsbuildinfo
+
+# Generated files
+**/rawg-api-openapi.json
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.turbo/
+.swc/
+
+# OS files
+.DS_Store
+Thumbs.db
+
