@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { v4 as uuidv4 } from "uuid"
+import { Sparkles } from "lucide-react"
 
 import { ChatInput } from "@/components/chat/chat-input"
 import { ChatList } from "@/components/chat/chat-list"
@@ -36,13 +37,26 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-screen w-full flex-col bg-background">
-      <header className="flex h-14 items-center border-b px-6">
-        <h1 className="text-lg font-semibold">RAWG Analytics Chat</h1>
+    <main className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-br from-background via-background to-muted/20">
+      {/* Header with gradient */}
+      <header className="relative z-10 flex h-16 items-center border-b border-border/40 bg-background/80 backdrop-blur-sm px-6 shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-primary/80 text-primary-foreground shadow-lg">
+            <Sparkles className="size-5" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold tracking-tight">RAWG Analytics Chat</h1>
+            <p className="text-xs text-muted-foreground">AI-powered game analytics assistant</p>
+          </div>
+        </div>
       </header>
-      <div className="flex-1 overflow-hidden">
-        <ChatList messages={messages} />
+      
+      {/* Chat area */}
+      <div className="relative flex-1 overflow-hidden">
+        <ChatList messages={messages} isLoading={isLoading} />
       </div>
+      
+      {/* Input area */}
       <ChatInput onSend={handleSend} isLoading={isLoading} />
     </main>
   )
