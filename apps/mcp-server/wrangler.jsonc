@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "mcp-server",
+  "name": "rawg-mcp-agent",
   "main": "src/index.ts",
   "compatibility_date": "2024-11-22",
   "compatibility_flags": ["nodejs_compat"],
