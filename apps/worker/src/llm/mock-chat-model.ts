@@ -1,5 +1,5 @@
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { BaseMessage, AIMessage } from '@langchain/core/messages';
+import { BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages';
 import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
 import { ChatResult, ChatGeneration, ChatGenerationChunk } from '@langchain/core/outputs';
 
@@ -34,7 +34,7 @@ export class MockChatModel extends BaseChatModel {
   ): Promise<ChatResult> {
     // Extract the last user message for context-aware mocking
     const lastUserMessage = messages
-      .filter((m) => m._getType() === "human")
+      .filter((m) => m instanceof HumanMessage)
       .pop();
 
     const userContent = lastUserMessage?.content?.toString() || "";

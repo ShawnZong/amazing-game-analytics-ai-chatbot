@@ -12,7 +12,7 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { StructuredToolInterface } from '@langchain/core/tools';
 import { DEFAULT_SYSTEM_PROMPT } from '../lib/constants';
 import { Message } from '../lib/types';
-import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
+import { HumanMessage, AIMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
 
 /**
  * In-memory session storage for conversation history
@@ -119,13 +119,11 @@ export async function executeAgent(
   // Extract tool usage from messages
   const toolsUsed: Array<{ name: string; result: unknown }> = [];
   for (const msg of result.messages) {
-    if (msg._getType() === 'tool') {
+    if (msg instanceof ToolMessage) {
       // Tool messages contain tool results
-      // Type assertion needed because LangChain tool messages don't expose name in types
-      const toolMsg = msg as { name?: string; content: unknown };
       toolsUsed.push({
-        name: toolMsg.name || 'unknown',
-        result: toolMsg.content,
+        name: msg.name || 'unknown',
+        result: msg.content,
       });
     }
   }
