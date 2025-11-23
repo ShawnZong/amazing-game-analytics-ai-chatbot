@@ -1,6 +1,6 @@
 import {
   FetchGameDataArgsSchema
-} from "./schemas";
+} from "./schemas/rawg";
 import {
   fetchGameData
 } from "./tools/rawg";
