@@ -5,79 +5,81 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Warm background like the village grass/ground */
-  --background: 84 40% 90%;
-  --foreground: 30 50% 15%; /* Dark brown text */
+  /* Brawl Stars Background - Vibrant Blue/Purple */
+  --background: 215 80% 95%; /* Light Blue background for light mode */
+  --foreground: 222 47% 11%; /* Dark Blue text */
 
-  /* Card white-ish but slightly warm */
-  --card: 45 30% 96%;
-  --card-foreground: 30 50% 15%;
+  /* Cards - Clean white/blue tinted */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
 
-  --popover: 45 30% 96%;
-  --popover-foreground: 30 50% 15%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
 
-  /* Gold/Orange primary action color (like Gold storage or upgrade buttons) */
+  /* Primary - Brawl Box Yellow */
   --primary: 45 100% 50%; /* #FFCC00 */
-  --primary-foreground: 30 60% 10%; /* Dark text on gold */
+  --primary-foreground: 222 47% 11%;
 
-  /* Elixir Purple secondary */
-  --secondary: 290 80% 60%; /* #D944FF approx */
+  /* Secondary - Trophy Road Blue */
+  --secondary: 200 100% 50%; /* #00A6ED */
   --secondary-foreground: 0 0% 100%;
 
-  /* Stone Gray for muted/inactive */
-  --muted: 210 10% 85%;
-  --muted-foreground: 210 10% 40%;
+  /* Muted - Inactive Grey/Blue */
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
 
-  /* Light wood/parchment accent */
-  --accent: 35 60% 90%;
-  --accent-foreground: 30 50% 15%;
+  /* Accent - Star Power Pink */
+  --accent: 300 100% 50%;
+  --accent-foreground: 0 0% 100%;
 
-  --destructive: 0 84.2% 60.2%;
+  /* Destructive - Red Team */
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 30 30% 80%; /* Light brown border */
-  --input: 30 30% 80%;
+  /* Borders - Dark Blue Outline style */
+  --border: 222 47% 11%; /* Black/Dark Blue outline */
+  --input: 222 47% 11%;
   --ring: 45 100% 50%;
 
-  --radius: 0.75rem; /* Slightly rounder for cartoon feel */
+  --radius: 1.5rem; /* Super rounded pill shapes */
 
-  /* Charts can be resources */
-  --chart-1: 48 100% 50%; /* Gold */
-  --chart-2: 290 80% 60%; /* Elixir */
-  --chart-3: 120 60% 40%; /* Gems/Grass */
-  --chart-4: 0 0% 20%; /* Dark Elixir */
-  --chart-5: 20 80% 50%; /* Builder Orange */
+  /* Charts */
+  --chart-1: 45 100% 50%; /* Yellow */
+  --chart-2: 200 100% 50%; /* Blue */
+  --chart-3: 300 100% 50%; /* Pink */
+  --chart-4: 120 60% 50%; /* Green (Gem) */
+  --chart-5: 0 84% 60%; /* Red */
 }
 
 .dark {
-  /* Night mode village */
-  --background: 220 40% 15%; /* Dark blue night */
-  --foreground: 45 20% 90%;
+  /* Dark Mode - Deep Space/Menu Blue */
+  --background: 222 47% 11%; /* #0F172A approx */
+  --foreground: 210 40% 98%;
 
-  --card: 220 30% 20%;
-  --card-foreground: 45 20% 90%;
+  --card: 217 33% 17%;
+  --card-foreground: 210 40% 98%;
 
-  --popover: 220 30% 20%;
-  --popover-foreground: 45 20% 90%;
+  --popover: 217 33% 17%;
+  --popover-foreground: 210 40% 98%;
 
-  --primary: 48 100% 50%;
-  --primary-foreground: 30 60% 10%;
+  --primary: 45 100% 50%;
+  --primary-foreground: 222 47% 11%;
 
-  --secondary: 290 80% 60%;
+  --secondary: 200 100% 50%;
   --secondary-foreground: 0 0% 100%;
 
-  --muted: 220 30% 25%;
-  --muted-foreground: 220 20% 60%;
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
 
-  --accent: 220 30% 25%;
-  --accent-foreground: 45 20% 90%;
+  --accent: 300 100% 50%;
+  --accent-foreground: 0 0% 100%;
 
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 220 30% 30%;
-  --input: 220 30% 30%;
-  --ring: 48 100% 50%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 45 100% 50%;
 }
 
 @theme inline {
@@ -113,7 +115,7 @@
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Arial Rounded MT Bold", "Helvetica Rounded", Arial, sans-serif; /* Rounded fonts */
 }
 
 @layer base {
