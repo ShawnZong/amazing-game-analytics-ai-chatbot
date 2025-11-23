@@ -2,7 +2,7 @@
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 // Initialize Cloudflare adapter for dev
-initOpenNextCloudflareForDev();
+await initOpenNextCloudflareForDev();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
