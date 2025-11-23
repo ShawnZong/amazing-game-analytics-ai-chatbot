@@ -20,16 +20,23 @@
   },
   /**
    * Environment-specific configurations
+   * Note: vars are NOT inherited from top-level, must be explicitly defined
    */
   "env": {
     "dev": {
       "vars": {
         "MCP_SERVER_URL": "http://localhost:3000",
+        "DEFAULT_MODEL": "gpt-4o",
+        "MAX_TOKENS": "2000",
+        "TEMPERATURE": "0.7",
       },
     },
     "production": {
       "vars": {
         "MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
+        "DEFAULT_MODEL": "gpt-4o",
+        "MAX_TOKENS": "2000",
+        "TEMPERATURE": "0.7",
       },
     },
   },
