@@ -13,7 +13,7 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 	 */
 	"vars": {
-		"MCP_SERVER_URL": "http://localhost:3000",
+		"MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
 		"DEFAULT_MODEL": "gpt-4o",
 		"MAX_TOKENS": "2000",
 		"TEMPERATURE": "0.7"
