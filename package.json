@@ -20,6 +20,8 @@
     "build:worker": "npm run type-check --workspace=@rawg-analytics/worker",
     "build:all": "npm run build:frontend && npm run build:mcp-server && npm run build:worker",
     "deploy:frontend": "npm run deploy --workspace=frontend",
+    "deploy:frontend:production": "npm run deploy:production --workspace=frontend",
+    "deploy:frontend:dev": "npm run deploy:dev --workspace=frontend",
     "deploy:mcp-server": "npm run deploy --workspace=mcp-server",
     "deploy:worker": "npm run deploy --workspace=@rawg-analytics/worker -- --env production",
     "deploy:worker:dev": "npm run deploy --workspace=@rawg-analytics/worker -- --env dev",
