@@ -27,7 +27,20 @@ const fetchRawgApi = async (endpoint: string, args: Record<string, unknown>, api
     logger.warn('RAWG_API_KEY is not set. Using mock data or failing.');
   }
 
-  const cacheKey = `${endpoint}:${JSON.stringify(args)}`;
+  // Filter out undefined values and prepare params
+  const params: Record<string, string | number | boolean> = {
+    key: API_KEY || '',
+  };
+
+  // Add all non-undefined args to params
+  // Axios will handle type conversion (numbers/booleans to strings) for query params
+  for (const [key, value] of Object.entries(args)) {
+    if (value !== undefined && value !== null) {
+      params[key] = value as string | number | boolean;
+    }
+  }
+
+  const cacheKey = `${endpoint}:${JSON.stringify(params)}`;
 
   if (cache.has(cacheKey)) {
     logger.info(`Serving from cache: ${cacheKey}`);
@@ -36,10 +49,7 @@ const fetchRawgApi = async (endpoint: string, args: Record<string, unknown>, api
 
   try {
     const response = await axios.get(`${BASE_URL}${endpoint}`, {
-      params: {
-        key: API_KEY,
-        ...args,
-      },
+      params,
     });
     
     cache.set(cacheKey, response.data as Record<string, unknown>);
