@@ -6,9 +6,20 @@
   "private": true,
   "description": "RAWG Analytics app with frontend and mcp server - Monorepo",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:backend": "npm run dev --workspace=mcp-server",
+    "build": "npm run build --workspaces --if-present",
+    "build:backend": "npm run build --workspace=mcp-server",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "type-check": "npm run type-check --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  },
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=9.0.0"
