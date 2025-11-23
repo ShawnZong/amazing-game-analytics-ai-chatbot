@@ -13,6 +13,8 @@ import {
   GamesSuggestedReadArgsSchema,
   GamesTwitchReadArgsSchema,
   GamesYoutubeReadArgsSchema,
+  GenresListArgsSchema,
+  GenresReadArgsSchema,
 } from './schemas/rawg-args';
 import {
   listGames,
@@ -29,6 +31,8 @@ import {
   getGameSuggested,
   getGameTwitch,
   getGameYoutube,
+  listGenres,
+  getGenreDetails,
 } from './tools/rawg';
 
 export const TOOLS = [
@@ -143,5 +147,21 @@ export const TOOLS = [
       'Get YouTube videos associated with the game. Includes video details, channel information, view counts, like/dislike counts, and thumbnails. Useful for content discovery and video analytics. Note: Available only for business and enterprise API users.',
     schema: GamesYoutubeReadArgsSchema,
     execute: getGameYoutube,
+  },
+  {
+    name: 'list_genres',
+    title: 'List Game Genres',
+    description:
+      'Get a list of all video game genres available in the RAWG database. Returns genre information including name, slug, games count, and images. Genres include Action, Adventure, RPG, Strategy, Puzzle, Shooter, and many more. Use this to discover available genres for filtering games or to build genre browsing interfaces.',
+    schema: GenresListArgsSchema,
+    execute: listGenres,
+  },
+  {
+    name: 'get_genre_details',
+    title: 'Get Genre Details',
+    description:
+      'Retrieve detailed information about a specific video game genre. Includes genre name, slug, description, games count, and background image. Use this to get comprehensive information about a particular genre, including statistics about how many games belong to that genre and a detailed description of what defines the genre.',
+    schema: GenresReadArgsSchema,
+    execute: getGenreDetails,
   },
 ];

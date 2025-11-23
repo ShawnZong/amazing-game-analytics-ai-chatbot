@@ -23,3 +23,7 @@ export * from './games/get-game-suggested';
 export * from './games/get-game-twitch';
 export * from './games/get-game-youtube';
 
+// Genre tools
+export * from './genres/list-genres';
+export * from './genres/get-genre-details';
+
