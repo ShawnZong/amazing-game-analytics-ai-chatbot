@@ -29,13 +29,16 @@ export async function POST(request: Request): Promise<Response> {
 
     if (backend) {
       // Use service binding for internal communication
-      response = await backend.fetch('/chat', {
+      // Service bindings route internally, so we use service name as hostname
+      // The actual service name varies by environment, but binding handles routing
+      const serviceRequest = new Request('https://rawg-analytics-worker/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ sessionId, messages }),
       });
+      response = await backend.fetch(serviceRequest);
     } else {
       // Fallback to HTTP fetch (local development or when binding unavailable)
       response = await fetch(`${WORKER_URL}/chat`, {
