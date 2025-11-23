@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesGameSeriesListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * Get games in same series
@@ -17,5 +18,7 @@ export const getGameSeries = async (
   args: z.infer<typeof GamesGameSeriesListArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{game_pk}/game-series', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{game_pk}/game-series', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };

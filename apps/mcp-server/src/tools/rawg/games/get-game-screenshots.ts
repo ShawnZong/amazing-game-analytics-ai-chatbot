@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesScreenshotsListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * Get screenshots
@@ -16,5 +17,7 @@ export const getGameScreenshots = async (
   args: z.infer<typeof GamesScreenshotsListArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{game_pk}/screenshots', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{game_pk}/screenshots', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };

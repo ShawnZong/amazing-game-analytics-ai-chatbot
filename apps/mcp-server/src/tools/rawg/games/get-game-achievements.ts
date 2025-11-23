@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesAchievementsReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFields } from '../utils/field-selector';
 
 /**
  * Get achievements
@@ -16,5 +17,7 @@ export const getGameAchievements = async (
   args: z.infer<typeof GamesAchievementsReadArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{id}/achievements', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{id}/achievements', apiArgs as Record<string, unknown>, apiKey);
+  return selectFields(result, fields);
 };

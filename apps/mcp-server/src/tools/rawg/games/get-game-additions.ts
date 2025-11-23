@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesAdditionsListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * Get game additions (DLCs, GOTY editions, etc.)
@@ -16,5 +17,7 @@ export const getGameAdditions = async (
   args: z.infer<typeof GamesAdditionsListArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{game_pk}/additions', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{game_pk}/additions', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };

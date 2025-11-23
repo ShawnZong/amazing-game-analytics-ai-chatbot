@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesParentGamesListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * Get parent games for DLCs
@@ -16,5 +17,7 @@ export const getGameParentGames = async (
   args: z.infer<typeof GamesParentGamesListArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{game_pk}/parent-games', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{game_pk}/parent-games', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };

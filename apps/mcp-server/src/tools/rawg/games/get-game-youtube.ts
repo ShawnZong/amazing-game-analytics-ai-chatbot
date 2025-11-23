@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesYoutubeReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFields } from '../utils/field-selector';
 
 /**
  * Get YouTube videos (business/enterprise only)
@@ -19,5 +20,7 @@ export const getGameYoutube = async (
   args: z.infer<typeof GamesYoutubeReadArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{id}/youtube', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{id}/youtube', apiArgs as Record<string, unknown>, apiKey);
+  return selectFields(result, fields);
 };

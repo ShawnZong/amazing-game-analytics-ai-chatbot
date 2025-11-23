@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesMoviesReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFields } from '../utils/field-selector';
 
 /**
  * Get trailers
@@ -16,5 +17,7 @@ export const getGameMovies = async (
   args: z.infer<typeof GamesMoviesReadArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{id}/movies', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{id}/movies', apiArgs as Record<string, unknown>, apiKey);
+  return selectFields(result, fields);
 };

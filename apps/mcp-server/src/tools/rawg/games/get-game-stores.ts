@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesStoresListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * Get store links
@@ -16,5 +17,7 @@ export const getGameStores = async (
   args: z.infer<typeof GamesStoresListArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{game_pk}/stores', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{game_pk}/stores', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };

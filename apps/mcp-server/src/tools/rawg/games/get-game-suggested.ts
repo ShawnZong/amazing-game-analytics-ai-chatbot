@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesSuggestedReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFields } from '../utils/field-selector';
 
 /**
  * Get similar games (business/enterprise only)
@@ -18,5 +19,7 @@ export const getGameSuggested = async (
   args: z.infer<typeof GamesSuggestedReadArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{id}/suggested', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{id}/suggested', apiArgs as Record<string, unknown>, apiKey);
+  return selectFields(result, fields);
 };

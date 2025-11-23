@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesTwitchReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFields } from '../utils/field-selector';
 
 /**
  * Get Twitch streams (business/enterprise only)
@@ -18,5 +19,7 @@ export const getGameTwitch = async (
   args: z.infer<typeof GamesTwitchReadArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{id}/twitch', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{id}/twitch', apiArgs as Record<string, unknown>, apiKey);
+  return selectFields(result, fields);
 };

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesRedditReadArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFields } from '../utils/field-selector';
 
 /**
  * Get Reddit posts
@@ -16,5 +17,7 @@ export const getGameReddit = async (
   args: z.infer<typeof GamesRedditReadArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{id}/reddit', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{id}/reddit', apiArgs as Record<string, unknown>, apiKey);
+  return selectFields(result, fields);
 };

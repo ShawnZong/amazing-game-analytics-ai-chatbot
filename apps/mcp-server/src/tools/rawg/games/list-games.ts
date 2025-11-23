@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * List games with filters
@@ -13,5 +14,7 @@ import { fetchRawgApi } from '../utils/api-client';
  * @returns Paginated list of games
  */
 export const listGames = async (args: z.infer<typeof GamesListArgsSchema>, apiKey?: string) => {
-  return fetchRawgApi('/games', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };

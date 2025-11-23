@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GamesDevelopmentTeamListArgsSchema } from '../../../schemas/args';
 import { fetchRawgApi } from '../utils/api-client';
+import { selectFieldsFromPaginatedResponse } from '../utils/field-selector';
 
 /**
  * Get development team
@@ -16,5 +17,7 @@ export const getGameDevelopmentTeam = async (
   args: z.infer<typeof GamesDevelopmentTeamListArgsSchema>,
   apiKey?: string,
 ) => {
-  return fetchRawgApi('/games/{game_pk}/development-team', args as Record<string, unknown>, apiKey);
+  const { fields, ...apiArgs } = args;
+  const result = await fetchRawgApi('/games/{game_pk}/development-team', apiArgs as Record<string, unknown>, apiKey);
+  return selectFieldsFromPaginatedResponse(result, fields);
 };
