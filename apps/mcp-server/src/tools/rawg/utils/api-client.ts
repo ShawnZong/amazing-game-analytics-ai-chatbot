@@ -15,17 +15,17 @@ const cache = new LRUCache<string, Record<string, unknown>>({
 
 /**
  * Fetch data from RAWG API with caching and error handling
- * 
+ *
  * @param endpoint - API endpoint path (e.g., '/games', '/games/{id}')
  * @param args - Query and path parameters
  * @param apiKey - Optional API key (defaults to RAWG_API_KEY env var)
  * @returns API response data
- * 
+ *
  * @example
  * ```ts
  * // List games with search query
  * const games = await fetchRawgApi('/games', { search: 'witcher', page_size: 10 });
- * 
+ *
  * // Get game details
  * const game = await fetchRawgApi('/games/{id}', { id: 3328 });
  * ```
@@ -33,7 +33,7 @@ const cache = new LRUCache<string, Record<string, unknown>>({
 export const fetchRawgApi = async (
   endpoint: string,
   args: Record<string, unknown>,
-  apiKey?: string
+  apiKey?: string,
 ): Promise<Record<string, unknown>> => {
   const API_KEY = apiKey || process.env.RAWG_API_KEY;
 
@@ -97,4 +97,3 @@ export const fetchRawgApi = async (
     throw new Error(`Failed to fetch data from ${resolvedEndpoint}: ${errorMessage}`);
   }
 };
-

@@ -1,6 +1,6 @@
 /**
  * RAWG API Tools
- * 
+ *
  * Collection of tools for interacting with the RAWG Video Games Database API
  */
 
@@ -26,4 +26,3 @@ export * from './games/get-game-youtube';
 // Genre tools
 export * from './genres/list-genres';
 export * from './genres/get-genre-details';
-
