@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { motion } from "framer-motion"
-import { Bot, User, Shield, Sparkles } from "lucide-react"
+import { Shield, Sparkles } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Message } from "@/types/chat"
