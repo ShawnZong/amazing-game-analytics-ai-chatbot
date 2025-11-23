@@ -1,103 +1,77 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { Gamepad2 } from "lucide-react";
+import * as React from "react"
+import { v4 as uuidv4 } from "uuid"
+import { Skull, Star } from "lucide-react"
 
-import { ChatInput } from "@/components/chat/chat-input";
-import { ChatList } from "@/components/chat/chat-list";
-import type { ChatMessage } from "@rawg-analytics/shared/types";
-
-/**
- * Generate unique ID for messages
- */
-const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+import { ChatInput } from "@/components/chat/chat-input"
+import { ChatList } from "@/components/chat/chat-list"
+import { Message } from "@/types/chat"
 
 export default function Home() {
-  const [messages, setMessages] = React.useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [sessionId] = React.useState(() => `session-${Date.now()}`);
+  const [messages, setMessages] = React.useState<Message[]>([])
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const handleSend = async (content: string) => {
-    const userMessage: ChatMessage = {
+    const userMessage: Message = {
+      id: uuidv4(),
       role: "user",
       content,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-
-    try {
-      // TODO: Replace with actual worker URL when backend is deployed
-      const workerUrl = process.env.NEXT_PUBLIC_WORKER_URL || "http://localhost:8787";
-      
-      const response = await fetch(`${workerUrl}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sessionId,
-          messages: [...messages, userMessage],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      const aiMessage: ChatMessage = {
-        role: "assistant",
-        content: data.reply,
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      console.error("Failed to send message:", error);
-      
-      // Show error message to user
-      const errorMessage: ChatMessage = {
-        role: "assistant",
-        content: "Sorry, I'm having trouble connecting to the server. Please try again later.",
-      };
-      
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
+      createdAt: new Date(),
     }
-  };
+
+    setMessages((prev) => [...prev, userMessage])
+    setIsLoading(true)
+
+    // Simulate network delay
+    setTimeout(() => {
+      const aiMessage: Message = {
+        id: uuidv4(),
+        role: "assistant",
+        content: "BRAWL! 🌵 I've analyzed the match data. Ready to rumble?",
+        createdAt: new Date(),
+      }
+      setMessages((prev) => [...prev, aiMessage])
+      setIsLoading(false)
+    }, 1000)
+  }
 
   return (
-    <main className="relative flex h-screen w-full flex-col overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+    <main className="relative flex h-screen w-full flex-col overflow-hidden">
+      {/* Background handled by globals.css */}
       
-      {/* Header */}
-      <header className="relative z-10 border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 w-full max-w-4xl items-center gap-3 px-4">
-          <div className="flex size-10 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/20">
-            <Gamepad2 className="size-5 text-white" />
+      {/* Header - Brawl Style */}
+      <header className="relative z-10 flex h-24 shrink-0 items-center justify-between border-b-4 border-black/20 bg-secondary/90 px-6 shadow-2xl backdrop-blur-sm">
+        <div className="mx-auto flex w-full max-w-4xl items-center gap-4">
+          <div className="relative flex size-14 items-center justify-center rounded-2xl bg-yellow-400 border-4 border-black shadow-[0_4px_0_0_rgba(0,0,0,1)] transform -rotate-6 hover:rotate-0 transition-transform duration-300">
+            <Skull className="size-8 text-black drop-shadow-sm" strokeWidth={3} />
+            <div className="absolute -top-2 -right-2 text-yellow-300 animate-pulse">
+               <Star className="size-6 fill-yellow-200 text-black stroke-2" />
+            </div>
           </div>
           <div className="flex flex-col">
-            <h1 className="text-lg font-semibold text-white">RAWG Analytics</h1>
-            <p className="text-xs text-slate-400">AI-Powered Game Insights</p>
+            <h1 className="text-4xl font-lilita tracking-wider text-white brawl-text-outline uppercase transform -skew-x-3 drop-shadow-lg">
+              Brawl Stats
+            </h1>
+            <p className="text-sm font-black text-yellow-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3 -mt-1">
+              AI Powered
+            </p>
           </div>
         </div>
       </header>
       
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
         <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden p-4">
             <ChatList messages={messages} isLoading={isLoading} onSuggestionClick={handleSend} />
           </div>
           
-          <div className="border-t border-slate-800 p-4">
+          <div className="p-4 pb-8">
             <ChatInput onSend={handleSend} isLoading={isLoading} />
           </div>
         </div>
       </div>
     </main>
-  );
+  )
 }

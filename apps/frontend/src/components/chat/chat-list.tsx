@@ -1,67 +1,67 @@
-"use client";
+"use client"
 
-import * as React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import type { ChatMessage as SharedChatMessage } from "@rawg-analytics/shared/types";
-import { ChatMessage } from "./chat-message";
-import { LoadingIndicator } from "./loading-indicator";
-import { Gamepad2, Search, TrendingUp, Sparkles } from "lucide-react";
+import * as React from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Message } from "@/types/chat"
+import { ChatMessage } from "./chat-message"
+import { LoadingIndicator } from "./loading-indicator"
+import { Star, Skull, Zap, Trophy } from "lucide-react"
 
 interface ChatListProps {
-  messages: SharedChatMessage[];
-  isLoading?: boolean;
-  onSuggestionClick?: (suggestion: string) => void;
+  messages: Message[]
+  isLoading?: boolean
+  onSuggestionClick?: (suggestion: string) => void
 }
 
 const SUGGESTIONS = [
   {
-    icon: TrendingUp,
-    label: "Top Games",
-    query: "What are the most popular RPG games right now?",
-    color: "text-purple-400",
-    bg: "bg-purple-500",
+    icon: Trophy,
+    label: "Meta Brawlers",
+    query: "Which Brawlers are S-tier in the current meta?",
+    bgColor: "bg-yellow-400",
+    hoverColor: "group-hover:bg-yellow-300",
   },
   {
-    icon: Search,
-    label: "Find Games",
-    query: "Find me action games released in 2023 for PlayStation 5",
-    color: "text-blue-400",
-    bg: "bg-blue-500",
+    icon: Star,
+    label: "Map Guide",
+    query: "Best brawlers for Snake Prairie?",
+    bgColor: "bg-cyan-400",
+    hoverColor: "group-hover:bg-cyan-300",
   },
   {
-    icon: Sparkles,
-    label: "Recommendations",
-    query: "Recommend games similar to The Witcher 3",
-    color: "text-pink-400",
-    bg: "bg-pink-500",
+    icon: Zap,
+    label: "Counter Picks",
+    query: "How do I counter Edgar in Showdown?",
+    bgColor: "bg-purple-400",
+    hoverColor: "group-hover:bg-purple-300",
   },
   {
-    icon: Gamepad2,
-    label: "Game Info",
-    query: "Tell me about Elden Ring",
-    color: "text-green-400",
-    bg: "bg-green-500",
+    icon: Skull,
+    label: "Gem Grab Tips",
+    query: "Give me advanced tips for Gem Grab mode.",
+    bgColor: "bg-emerald-400",
+    hoverColor: "group-hover:bg-emerald-300",
   },
-];
+]
 
 export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListProps) {
-  const bottomRef = React.useRef<HTMLDivElement>(null);
+  const bottomRef = React.useRef<HTMLDivElement>(null)
 
   React.useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isLoading]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages, isLoading])
 
   if (messages.length === 0) {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-8 p-8 text-center">
         <div className="flex flex-col items-center gap-6">
           <motion.div
-            initial={{ opacity: 0, scale: 0.5 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", duration: 0.8, bounce: 0.3 }}
-            className="flex size-24 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-500/20"
+            initial={{ opacity: 0, scale: 0.5, rotate: -180 }}
+            animate={{ opacity: 1, scale: 1, rotate: -12 }}
+            transition={{ type: "spring", duration: 0.8, bounce: 0.5 }}
+            className="flex size-32 items-center justify-center rounded-[2.5rem] bg-gradient-to-br from-yellow-400 to-orange-500 border-4 border-black shadow-[0_10px_0_0_rgba(0,0,0,1)]"
           >
-            <Gamepad2 className="size-12 text-white" />
+            <Skull className="size-16 text-black drop-shadow-md" strokeWidth={2.5} />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -69,11 +69,11 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
             transition={{ delay: 0.2, duration: 0.5 }}
             className="space-y-2"
           >
-            <h2 className="text-3xl font-bold text-white">
-              Welcome to RAWG Analytics
+            <h2 className="text-5xl font-lilita text-white brawl-text-outline transform -skew-x-3 drop-shadow-xl tracking-wide">
+              LET'S BRAWL!
             </h2>
-            <p className="max-w-md text-slate-400">
-              Ask me anything about video games! I can help you discover new titles, analyze trends, and get detailed information.
+            <p className="max-w-md text-xl font-black text-cyan-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3">
+              Select a mode to start
             </p>
           </motion.div>
         </div>
@@ -82,40 +82,42 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
-          className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2"
+          className="grid w-full max-w-3xl grid-cols-1 gap-4 sm:grid-cols-2"
         >
-          {SUGGESTIONS.map((suggestion) => (
+          {SUGGESTIONS.map((suggestion, index) => (
             <button
               key={suggestion.label}
               onClick={() => onSuggestionClick?.(suggestion.query)}
-              className="group relative flex items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-left transition-all hover:border-slate-700 hover:bg-slate-900"
+              className={`group relative flex items-center gap-4 overflow-hidden rounded-2xl border-3 border-black bg-white p-4 text-left shadow-[0_6px_0_0_rgba(0,0,0,1)] transition-all hover:-translate-y-1 active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,1)]`}
             >
-              <div className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${suggestion.bg} shadow-lg`}>
-                <suggestion.icon className="size-5 text-white" />
+              <div className={`flex size-14 shrink-0 items-center justify-center rounded-xl ${suggestion.bgColor} border-3 border-black shadow-sm transform -rotate-3 group-hover:rotate-0 transition-transform`}>
+                <suggestion.icon className="size-7 text-black drop-shadow-sm" strokeWidth={2.5} />
               </div>
-              <div>
-                <div className="font-semibold text-white">{suggestion.label}</div>
-                <div className="text-xs text-slate-500 line-clamp-1">{suggestion.query}</div>
+              <div className="relative z-10">
+                <div className={`text-xl font-lilita text-black uppercase tracking-wide`}>{suggestion.label}</div>
+                <div className="text-sm font-bold text-gray-500 group-hover:text-black transition-colors">Tap to select</div>
               </div>
             </button>
           ))}
         </motion.div>
       </div>
-    );
+    )
   }
 
   return (
     <div className="flex flex-1 flex-col overflow-y-auto px-4 py-6">
-      <div className="mx-auto w-full max-w-3xl space-y-6">
+      <div className="mx-auto w-full max-w-3xl space-y-8">
         <AnimatePresence mode="popLayout">
           {messages.map((message, index) => (
             <motion.div
-              key={`${index}-${message.content.substring(0, 20)}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
+              key={message.id}
+              initial={{ opacity: 0, y: 40, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
               transition={{
-                duration: 0.3,
+                type: "spring",
+                bounce: 0.4,
+                duration: 0.6,
                 delay: index === messages.length - 1 ? 0.1 : 0,
               }}
             >
@@ -125,9 +127,10 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
         </AnimatePresence>
         {isLoading && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
+            className="pl-4"
           >
             <LoadingIndicator />
           </motion.div>
@@ -135,5 +138,5 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
         <div ref={bottomRef} className="h-4" />
       </div>
     </div>
-  );
+  )
 }

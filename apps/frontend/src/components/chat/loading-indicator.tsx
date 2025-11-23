@@ -2,28 +2,33 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
-import { Bot } from "lucide-react"
+import { Star } from "lucide-react"
 
 export function LoadingIndicator() {
   return (
-    <div className="flex items-start gap-3 px-4 py-3">
-      <div className="flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-border/50 bg-gradient-to-br from-muted to-muted/80 shadow-lg">
-        <Bot className="size-4 text-foreground/60" />
+    <div className="flex items-start gap-3 px-2 py-4">
+      {/* Bot Avatar */}
+      <div className="flex size-14 shrink-0 items-center justify-center rounded-xl bg-primary border-3 border-black shadow-[0_4px_0_0_rgba(0,0,0,1)]">
+        <Star className="size-7 drop-shadow-sm fill-white text-black" strokeWidth={3} />
       </div>
-      <div className="flex max-w-[75%] flex-col gap-2 rounded-2xl rounded-bl-sm border border-border/50 bg-card px-4 py-3 shadow-md">
-        <div className="flex gap-1.5">
+      
+      {/* Loading Bubble */}
+      <div className="flex max-w-[75%] flex-col gap-2 rounded-2xl border-3 border-black bg-white px-5 py-4 shadow-[0_6px_0_0_rgba(0,0,0,1)]">
+        <div className="flex gap-2">
           {[0, 1, 2].map((i) => (
             <motion.div
               key={i}
-              className="h-2 w-2 rounded-full bg-muted-foreground/40"
+              className="h-3 w-3 rounded-full border-2 border-black"
+              style={{
+                backgroundColor: i === 0 ? 'var(--color-primary)' : i === 1 ? 'var(--color-secondary)' : 'var(--color-accent)'
+              }}
               animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 1, 0.5],
+                y: [0, -8, 0],
               }}
               transition={{
-                duration: 0.8,
+                duration: 0.6,
                 repeat: Infinity,
-                delay: i * 0.2,
+                delay: i * 0.15,
                 ease: "easeInOut",
               }}
             />
@@ -33,4 +38,3 @@ export function LoadingIndicator() {
     </div>
   )
 }
-

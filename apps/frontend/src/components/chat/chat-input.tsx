@@ -54,7 +54,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
     >
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-3 rounded-[2rem] border-4 border-slate-900 bg-slate-800 p-3 shadow-2xl"
+        className="relative flex items-end gap-3 rounded-3xl border-3 border-black bg-muted/90 p-3 shadow-2xl backdrop-blur-sm"
       >
         <div className="relative flex-1">
             <textarea
@@ -63,7 +63,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Brawler..."
-            className="max-h-[200px] min-h-[56px] w-full resize-none rounded-2xl border-b-4 border-slate-950 bg-slate-900 px-6 py-4 text-lg font-bold text-white placeholder:text-slate-500 focus:border-cyan-500 focus:bg-slate-950 focus:outline-none transition-colors"
+            className="max-h-[200px] min-h-[56px] w-full resize-none rounded-xl border-3 border-black bg-white px-6 py-4 text-xl font-bold font-nunito text-black placeholder:text-gray-400 focus:border-secondary focus:ring-4 focus:ring-secondary/30 focus:outline-none transition-all shadow-inner"
             rows={1}
             disabled={isLoading}
             />
@@ -72,18 +72,18 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
           type="submit"
           size="icon"
           disabled={isLoading || !input.trim()}
-          className="mb-1 h-14 w-14 shrink-0 rounded-2xl bg-yellow-400 text-slate-900 border-b-8 border-r-4 border-yellow-700 shadow-lg hover:bg-yellow-300 hover:-translate-y-1 active:translate-y-1 active:border-b-0 active:mb-3 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:border-b-8 disabled:active:mb-1"
+          className="mb-1 h-14 w-14 shrink-0 rounded-xl bg-primary text-primary-foreground border-3 border-black shadow-[0_4px_0_0_rgba(0,0,0,1)] hover:bg-yellow-400 hover:-translate-y-1 active:translate-y-0 active:shadow-[0_2px_0_0_rgba(0,0,0,1)] disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none transition-all"
         >
           {isLoading ? (
             <Loader2 className="size-7 animate-spin" />
           ) : (
-            <SendHorizontal className="size-7" />
+            <SendHorizontal className="size-7" strokeWidth={3} />
           )}
           <span className="sr-only">Brawl</span>
         </Button>
       </form>
-      <div className="mt-3 flex items-center justify-center gap-2 text-xs font-black uppercase italic tracking-widest text-slate-500">
-        <Zap className="size-3 text-yellow-400 fill-yellow-400" />
+      <div className="mt-3 flex items-center justify-center gap-2 text-xs font-black uppercase italic tracking-widest text-white/80 drop-shadow-md">
+        <Zap className="size-4 text-yellow-400 fill-yellow-400 stroke-black stroke-2" />
         <span className="transform -skew-x-12">Power Points not included</span>
       </div>
     </motion.div>
