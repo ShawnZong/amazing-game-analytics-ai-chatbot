@@ -15,7 +15,7 @@ import {
   GamesYoutubeReadArgsSchema,
   GenresListArgsSchema,
   GenresReadArgsSchema,
-} from './schemas/rawg-args';
+} from './schemas/args';
 import {
   listGames,
   getGameDetails,

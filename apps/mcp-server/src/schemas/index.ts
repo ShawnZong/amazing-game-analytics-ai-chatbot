@@ -17,4 +17,4 @@ export * from "./types/media";
 export * from "./types/social";
 
 // Argument schemas for tool functions
-export * from "./rawg-args";
+export * from "./args";
