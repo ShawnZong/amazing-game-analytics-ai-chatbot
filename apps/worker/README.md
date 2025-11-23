@@ -17,16 +17,21 @@ Cloudflare Worker backend that connects the frontend UI to an LLM runtime via La
 Frontend (Next.js)
     ↓ HTTP POST /chat
 Worker (Cloudflare)
-    ↓ LangChain Agent
+    ↓ LangChain Agent (v1.0)
     ├─→ MockChatModel (default)
     │   or ChatOpenAI (with API key)
     │
-    └─→ MCP Client (JSON-RPC)
-          ↓
-        MCP Server
+    └─→ @langchain/mcp-adapters
+          ↓ MultiServerMCPClient
+        MCP Server (Cloudflare Worker)
           ↓
         RAWG API
 ```
+
+The worker uses:
+- **LangChain v1.0** with `createAgent` for agent orchestration
+- **@langchain/mcp-adapters** for seamless MCP server integration
+- **Automatic tool loading** from the remote MCP server
 
 ## API Endpoints
 
@@ -190,9 +195,9 @@ apps/worker/
 │   │   ├── mock-chat-model.ts # Mock LLM for development
 │   │   └── agent.ts         # Agent executor with memory
 │   ├── services/             # External service integrations
-│   │   └── mcp-adapter.ts   # MCP client (JSON-RPC)
-│   └── tools/                # LangChain tool wrappers
-│       └── langchain-tools.ts # LangChain tools wrapping MCP
+│   │   └── mcp-adapter.ts   # MCP client using @langchain/mcp-adapters
+│   └── tools/                # Tool management
+│       └── index.ts         # Tool factory using MCP adapter
 ├── package.json
 ├── tsconfig.json
 └── wrangler.jsonc           # Cloudflare configuration
@@ -209,10 +214,11 @@ npm run type-check
 ### Code Structure
 
 - **index.ts**: HTTP routing and request handling
-- **agent.ts**: LangChain agent setup with memory
-- **model-factory.ts**: Factory pattern for model selection
-- **mcp-adapter.ts**: JSON-RPC client for MCP server
-- **langchain-tools.ts**: Tool wrappers for LangChain
+- **handlers/chat.ts**: POST /chat endpoint handler
+- **llm/agent.ts**: LangChain v1.0 agent using `createAgent` pattern
+- **llm/model-factory.ts**: Factory pattern for model selection (mock/GPT-4)
+- **services/mcp-adapter.ts**: MCP client using `@langchain/mcp-adapters`
+- **tools/index.ts**: Tool factory that loads tools from MCP server
 
 ## Future Enhancements
 
