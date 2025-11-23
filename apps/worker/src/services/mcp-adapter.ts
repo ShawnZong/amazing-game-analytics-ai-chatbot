@@ -25,7 +25,7 @@ export const createMcpClient = (env: Env): MultiServerMCPClient => {
 
   return new MultiServerMCPClient({
     rawg: {
-      transport: 'sse', // Server-Sent Events transport for HTTP
+      transport: 'http', // HTTP transport (replaces deprecated 'sse')
       url: mcpUrl,
     },
   });
