@@ -1,0 +1,43 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "rawg-analytics-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2025-11-23",
+	"compatibility_flags": ["nodejs_compat"],
+	/**
+	 * Environment Variables
+	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+	 */
+	"vars": {
+		"MCP_SERVER_URL": "http://localhost:3000",
+		"DEFAULT_MODEL": "gpt-4o",
+		"MAX_TOKENS": "2000",
+		"TEMPERATURE": "0.7"
+	},
+	/**
+	 * Environment-specific configurations
+	 */
+	"env": {
+		"dev": {
+			"vars": {
+				"MCP_SERVER_URL": "http://localhost:3000"
+			}
+		},
+		"production": {
+			"vars": {
+				"MCP_SERVER_URL": "https://your-mcp-server.workers.dev"
+			}
+		}
+	},
+	/**
+	 * Note: Use secrets to store sensitive data.
+	 * https://developers.cloudflare.com/workers/configuration/secrets/
+	 */
+	// Example: wrangler secret put OPENAI_API_KEY
+	// OPENAI_API_KEY is optional: When provided, switches from mock to real GPT-4
+}
+
