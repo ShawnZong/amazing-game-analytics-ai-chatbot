@@ -15,7 +15,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { McpAgent } from 'agents/mcp';
 import { z } from 'zod';
-import { TOOLS } from './tool-registry';
+import { TOOLS } from './tool-registry/index';
 export interface Env {
   RAWG_API_KEY: string;
   MCP_SERVER_URL?: string;
@@ -42,7 +42,6 @@ export class RawgMcpAgent extends McpAgent {
     }
     
     // Register all tools from the TOOLS array
-    // This approach is more maintainable and uses the descriptions from tool-registry.ts
     for (const tool of TOOLS) {
       this.server.registerTool(
         tool.name,
