@@ -59,6 +59,10 @@ apps/*/next-env.d.ts
 **/.wrangler/
 .wrangler.toml.local
 
+# Wrangler generated types
+**/cloudflare-env.d.ts
+apps/*/cloudflare-env.d.ts
+
 # Miniflare (local dev runtime)
 **/.mf/
 *.mf.json
