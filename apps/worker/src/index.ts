@@ -19,6 +19,7 @@ import { ERROR_CODES, HTTP_STATUS } from './lib/constants';
 import { handleOptions, errorResponse } from './lib/response';
 import { handleRoot } from './handlers/root';
 import { handleChat } from './handlers/chat';
+import { logger } from './lib/logger';
 
 /**
  * Main Worker fetch handler
@@ -47,7 +48,12 @@ const worker: ExportedHandler<Env> = {
       return errorResponse('NOT_FOUND', `Route ${path} not found`, HTTP_STATUS.NOT_FOUND);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Unhandled error:', errorMessage, error);
+      logger.error('Unhandled error in worker', {
+        path,
+        method: request.method,
+        error: errorMessage,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return errorResponse(ERROR_CODES.INTERNAL_ERROR, 'An unexpected error occurred');
     }
   },

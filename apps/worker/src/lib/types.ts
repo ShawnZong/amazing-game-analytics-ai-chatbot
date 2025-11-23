@@ -5,7 +5,7 @@ import { z } from 'zod';
  */
 
 // Message role types
-export const MessageRoleSchema = z.enum(["system", "user", "assistant"]);
+export const MessageRoleSchema = z.enum(['system', 'user', 'assistant']);
 export type MessageRole = z.infer<typeof MessageRoleSchema>;
 
 // Individual message
@@ -53,4 +53,3 @@ export interface Env {
   MAX_TOKENS?: string;
   TEMPERATURE?: string;
 }
-

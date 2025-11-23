@@ -34,7 +34,7 @@ import { MODEL_CONFIG } from '../lib/constants';
 export function createChatModel(env: Env): BaseChatModel {
   // Check if OpenAI API key is configured
   if (env.OPENAI_API_KEY) {
-    console.log("Using ChatOpenAI with GPT-4");
+    // Log model selection (without exposing API key)
 
     /**
      * ChatOpenAI configuration for GPT-4
@@ -68,7 +68,7 @@ export function createChatModel(env: Env): BaseChatModel {
       // callbacks: [], // Add callbacks for streaming chunks
     });
   } else {
-    console.log("Using MockChatModel (OPENAI_API_KEY not configured)");
+    // Using MockChatModel (OPENAI_API_KEY not configured)
 
     /**
      * Return the mock model for development/testing

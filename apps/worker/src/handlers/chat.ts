@@ -8,6 +8,7 @@ import { createChatModel, getModelInfo } from '../llm/model-factory';
 import { createAllTools } from '../tools';
 import { executeAgent } from '../llm/agent';
 import { jsonResponse, errorResponse } from '../lib/response';
+import { logger } from '../lib/logger';
 
 /**
  * Handle POST /chat endpoint
@@ -48,8 +49,8 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
 
     const { sessionId, messages } = validation.data;
 
-    console.log(`Processing chat request for session: ${sessionId}`);
-    console.log(`Model info:`, getModelInfo(env));
+    logger.info('Processing chat request', { sessionId, messageCount: messages.length });
+    logger.debug('Model info', { model: getModelInfo(env) });
 
     // Create chat model (mock or GPT-4 based on env)
     const model = createChatModel(env);
@@ -57,7 +58,10 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     // Create tools that connect to MCP server (now async)
     const tools = await createAllTools(env);
 
-    console.log(`Available tools: ${tools.map(t => t.name).join(', ')}`);
+    logger.debug('Available tools', { 
+      toolCount: tools.length, 
+      toolNames: tools.map(t => t.name) 
+    });
 
     // Execute the agent
     const result = await executeAgent(model, tools, sessionId, messages);
@@ -73,13 +77,20 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
         name: tool.name,
         result: tool.result,
       }));
+      logger.info('Tools used in response', { 
+        sessionId, 
+        toolCount: result.toolsUsed.length 
+      });
     }
 
-    console.log(`Chat response generated successfully`);
+    logger.info('Chat response generated successfully', { sessionId });
     return jsonResponse(response);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Error handling chat request:', errorMessage, error);
+    logger.error('Error handling chat request', { 
+      error: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined,
+    });
 
     // Don't expose internal error details to client
     return errorResponse(
