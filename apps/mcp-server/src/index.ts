@@ -35,6 +35,16 @@ export class RawgMcpAgent extends McpAgent {
     version: '1.0.0',
   });
 
+  /**
+   * Durable Object constructor
+   * Called when the Durable Object is instantiated
+   */
+  constructor(state: DurableObjectState, env: Env) {
+    super(state, env);
+    // Store API key from env for use in tools
+    currentApiKey = env.RAWG_API_KEY;
+  }
+
   async init(apiKey?: string) {
     // Store API key for this request (use provided key or fall back to module-level variable)
     if (apiKey !== undefined) {
@@ -42,6 +52,7 @@ export class RawgMcpAgent extends McpAgent {
     }
 
     // Register all tools from the TOOLS array
+    // This approach is more maintainable and uses the descriptions from tool-registry.ts
     for (const tool of TOOLS) {
       this.server.registerTool(
         tool.name,
@@ -112,7 +123,7 @@ const worker: ExportedHandler<Env> = {
       currentApiKey = env.RAWG_API_KEY;
 
       // Use the parent class's serve method which handles MCP protocol
-      // The tools will access currentApiKey from the closure
+      // The RawgMcpAgent constructor will receive env and store the API key
       return RawgMcpAgent.serve('/mcp').fetch(request, env, ctx);
     }
 
