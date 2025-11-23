@@ -1,7 +1,12 @@
 import axios, { AxiosError } from 'axios';
 import { LRUCache } from 'lru-cache';
+import { z } from 'zod';
+import {
+  FetchGameDataArgsSchema
+} from '../schemas';
 import logger from '../utils/logger';
 
+type FetchGameDataArgs = z.infer<typeof FetchGameDataArgsSchema>;
 
 const BASE_URL = 'https://api.rawg.io/api';
 
@@ -51,5 +56,9 @@ const fetchRawgApi = async (endpoint: string, args: Record<string, unknown>, api
     logger.error(`Error fetching ${endpoint}:`, responseData || errorMessage);
     throw new Error(`Failed to fetch data from ${endpoint}: ${errorMessage}`);
   }
+};
+
+export const fetchGameData = async (args: FetchGameDataArgs, apiKey?: string) => {
+  return fetchRawgApi('/games', args as Record<string, unknown>, apiKey);
 };
 
