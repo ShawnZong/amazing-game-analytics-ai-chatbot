@@ -24,23 +24,6 @@
 	 */
 	// "placement": { "mode": "smart" },
 	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	"services": [
-		{
-			"binding": "BACKEND",
-			"service": "rawg-analytics-worker"
-		}
-	],
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 */
-	"vars": {
-		"NEXT_PUBLIC_WORKER_URL": "http://localhost:8787"
-	},
-	/**
 	 * Environment-specific configurations
 	 */
 	"env": {
