@@ -5,7 +5,7 @@
 import { ChatRequestSchema, ChatResponse, Env } from '../lib/types';
 import { ERROR_CODES, HTTP_STATUS } from '../lib/constants';
 import { createChatModel, getModelInfo } from '../llm/model-factory';
-import { createAllTools } from '../tools/langchain-tools';
+import { createAllTools } from '../tools';
 import { executeAgent } from '../llm/agent';
 import { jsonResponse, errorResponse } from '../lib/response';
 
