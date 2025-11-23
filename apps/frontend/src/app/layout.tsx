@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Lilita_One, Nunito } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const lilitaOne = Lilita_One({
+  weight: "400",
+  variable: "--font-lilita",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
-  title: "RAWG Analytics | AI-Powered Game Insights",
-  description: "AI-powered insights from the world's largest game database. Discover games, analyze trends, and get detailed information about your favorite titles.",
+  title: "RAWG Analytics Chat",
+  description: "AI-powered game analytics assistant",
 };
 
 export default function RootLayout({
@@ -15,8 +24,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+    <html lang="en">
+      <body
+        className={`${lilitaOne.variable} ${nunito.variable} antialiased font-nunito`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
