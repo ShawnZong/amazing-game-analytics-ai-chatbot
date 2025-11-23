@@ -13,7 +13,7 @@ import {
   GamesSuggestedReadArgsSchema,
   GamesTwitchReadArgsSchema,
   GamesYoutubeReadArgsSchema,
-} from './schemas/rawg-generated';
+} from './schemas/rawg-args';
 import {
   listGames,
   getGameDetails,

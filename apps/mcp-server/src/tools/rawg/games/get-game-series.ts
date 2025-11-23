@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GamesGameSeriesListArgsSchema } from '../../../schemas/rawg-generated';
+import { GamesGameSeriesListArgsSchema } from '../../../schemas/rawg-args';
 import { fetchRawgApi } from '../utils/api-client';
 
 /**

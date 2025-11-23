@@ -1,7 +1,7 @@
 /**
  * RAWG API Schemas
  *
- * Re-exports all schema types, API endpoints, and client utilities
+ * Re-exports all schema types and generated argument schemas
  */
 
 // Type schemas
@@ -16,5 +16,5 @@ export * from "./types/tag";
 export * from "./types/media";
 export * from "./types/social";
 
-// Keep backward compatibility with the generated schemas
-export * from "./rawg-generated";
+// Argument schemas for tool functions
+export * from "./rawg-args";

@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-// Auto-generated Zod schemas from OpenAPI specification
+// Auto-generated argument schemas from OpenAPI specification
 // DO NOT EDIT MANUALLY - This file is generated from rawg-api-openapi.json
+// Contains Zod schemas for tool function arguments/parameters
 
 export const GamesListArgsSchema = z.object({
   page: z.number().optional().describe("A page number within the paginated result set."),

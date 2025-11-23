@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { GamesRedditReadArgsSchema } from '../../../schemas/rawg-generated';
+import { GamesRedditReadArgsSchema } from '../../../schemas/rawg-args';
 import { fetchRawgApi } from '../utils/api-client';
 
 /**
