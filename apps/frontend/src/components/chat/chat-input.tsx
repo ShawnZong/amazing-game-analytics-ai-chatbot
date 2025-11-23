@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion } from "framer-motion"
-import { SendHorizontal, Loader2, Sparkles } from "lucide-react"
+import { SendHorizontal, Loader2, Zap } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -47,42 +47,44 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
 
   return (
     <motion.div
-      initial={{ y: 20, opacity: 0 }}
+      initial={{ y: 40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4, type: "spring", bounce: 0.5 }}
       className="mx-auto w-full max-w-3xl"
     >
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 rounded-xl border-4 border-slate-300 bg-slate-200 p-2 shadow-[0_4px_0_#94a3b8] focus-within:ring-2 focus-within:ring-yellow-400 dark:border-slate-700 dark:bg-slate-800 dark:shadow-[0_4px_0_#334155]"
+        className="relative flex items-end gap-3 rounded-[2rem] border-4 border-slate-900 bg-slate-800 p-3 shadow-2xl"
       >
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask the Chief..."
-          className="max-h-[200px] min-h-[44px] w-full resize-none rounded-lg bg-white/50 px-4 py-3 text-base font-medium text-slate-800 placeholder:text-slate-500 focus:outline-none dark:bg-black/20 dark:text-slate-100 dark:placeholder:text-slate-400"
-          rows={1}
-          disabled={isLoading}
-        />
+        <div className="relative flex-1">
+            <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask Brawler..."
+            className="max-h-[200px] min-h-[56px] w-full resize-none rounded-2xl border-b-4 border-slate-950 bg-slate-900 px-6 py-4 text-lg font-bold text-white placeholder:text-slate-500 focus:border-cyan-500 focus:bg-slate-950 focus:outline-none transition-colors"
+            rows={1}
+            disabled={isLoading}
+            />
+        </div>
         <Button
           type="submit"
           size="icon"
           disabled={isLoading || !input.trim()}
-          className="mb-0.5 shrink-0 rounded-lg border-b-4 border-emerald-700 bg-emerald-500 text-white shadow-sm transition-all hover:mt-0.5 hover:border-b-2 hover:bg-emerald-400 active:mt-1 active:border-b-0 disabled:opacity-50 disabled:hover:mt-0 disabled:hover:border-b-4"
+          className="mb-1 h-14 w-14 shrink-0 rounded-2xl bg-yellow-400 text-slate-900 border-b-8 border-r-4 border-yellow-700 shadow-lg hover:bg-yellow-300 hover:-translate-y-1 active:translate-y-1 active:border-b-0 active:mb-3 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:border-b-8 disabled:active:mb-1"
         >
           {isLoading ? (
-            <Loader2 className="size-6 animate-spin drop-shadow-md" />
+            <Loader2 className="size-7 animate-spin" />
           ) : (
-            <SendHorizontal className="size-6 drop-shadow-md" />
+            <SendHorizontal className="size-7" />
           )}
-          <span className="sr-only">Send</span>
+          <span className="sr-only">Brawl</span>
         </Button>
       </form>
-      <div className="mt-3 flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-shadow-sm">
-        <Sparkles className="size-3 text-yellow-500" />
-        <span>Goblin AI may steal your gems (and data)</span>
+      <div className="mt-3 flex items-center justify-center gap-2 text-xs font-black uppercase italic tracking-widest text-slate-500">
+        <Zap className="size-3 text-yellow-400 fill-yellow-400" />
+        <span className="transform -skew-x-12">Power Points not included</span>
       </div>
     </motion.div>
   )
