@@ -9,38 +9,40 @@
   "compatibility_date": "2025-11-23",
   "compatibility_flags": ["nodejs_compat"],
   /**
-   * Service Bindings (communicate between multiple Workers)
-   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-   */
-  "services": [
-    {
-      "binding": "MCP_SERVER",
-      "service": "rawg-mcp-agent"
-    }
-  ],
-  /**
    * Environment-specific configurations
-   * Note: vars are NOT inherited from top-level, must be explicitly defined
+   * Note: vars and services are NOT inherited from top-level, must be explicitly defined
    * Always use --env flag when deploying (e.g., --env production or --env dev)
    */
   "env": {
     "dev": {
+      "services": [
+        {
+          "binding": "MCP_SERVER",
+          "service": "rawg-mcp-agent"
+        }
+      ],
       "vars": {
         "MCP_SERVER_URL": "http://localhost:3000",
         "DEFAULT_MODEL": "gpt-4o",
         "MAX_TOKENS": "2000",
-        "TEMPERATURE": "0.7",
-      },
+        "TEMPERATURE": "0.7"
+      }
     },
     "production": {
+      "services": [
+        {
+          "binding": "MCP_SERVER",
+          "service": "rawg-mcp-agent"
+        }
+      ],
       "vars": {
         "MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
         "DEFAULT_MODEL": "gpt-4o",
         "MAX_TOKENS": "2000",
-        "TEMPERATURE": "0.7",
-      },
-    },
-  },
+        "TEMPERATURE": "0.7"
+      }
+    }
+  }
   /**
    * Note: Use secrets to store sensitive data.
    * https://developers.cloudflare.com/workers/configuration/secrets/
