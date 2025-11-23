@@ -10,14 +10,14 @@
   "compatibility_flags": ["nodejs_compat"],
   "migrations": [
     {
-      "new_sqlite_classes": ["RawgMcpServer"],
+      "new_sqlite_classes": ["RawgMcpAgent"],
       "tag": "v1"
     }
   ],
   "durable_objects": {
     "bindings": [
       {
-        "class_name": "RawgMcpServer",
+        "class_name": "RawgMcpAgent",
         "name": "MCP_OBJECT"
       }
     ]
