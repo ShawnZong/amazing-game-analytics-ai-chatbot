@@ -178,17 +178,24 @@ The agent has access to all 19 tools from your MCP server:
 apps/worker/
 ├── src/
 │   ├── index.ts              # Main worker entry point
-│   ├── types.ts              # TypeScript types and schemas
-│   ├── constants.ts          # Configuration constants
-│   ├── model-factory.ts      # Chat model factory (mock/GPT-4)
-│   ├── mock-chat-model.ts    # Mock LLM for development
-│   ├── mcp-adapter.ts        # MCP client (JSON-RPC)
-│   ├── langchain-tools.ts    # LangChain tools wrapping MCP
-│   └── agent.ts              # Agent executor with memory
-├── client-example.ts         # Example client usage
+│   ├── handlers/             # HTTP route handlers
+│   │   ├── chat.ts          # POST /chat endpoint handler
+│   │   └── root.ts          # GET / endpoint handler
+│   ├── lib/                  # Shared utilities and types
+│   │   ├── types.ts         # TypeScript types and schemas
+│   │   ├── constants.ts    # Configuration constants
+│   │   └── response.ts      # HTTP response utilities
+│   ├── llm/                  # LLM-related code
+│   │   ├── model-factory.ts # Chat model factory (mock/GPT-4)
+│   │   ├── mock-chat-model.ts # Mock LLM for development
+│   │   └── agent.ts         # Agent executor with memory
+│   ├── services/             # External service integrations
+│   │   └── mcp-adapter.ts   # MCP client (JSON-RPC)
+│   └── tools/                # LangChain tool wrappers
+│       └── langchain-tools.ts # LangChain tools wrapping MCP
 ├── package.json
 ├── tsconfig.json
-└── wrangler.toml            # Cloudflare configuration
+└── wrangler.jsonc           # Cloudflare configuration
 ```
 
 ## Development
