@@ -42,7 +42,7 @@
 			"services": [
 				{
 					"binding": "BACKEND",
-					"service": "rawg-analytics-worker"
+					"service": "rawg-analytics-worker-production"
 				}
 			],
 			"vars": {
