@@ -1,0 +1,24 @@
+name = "rawg-analytics-worker"
+main = "src/index.ts"
+compatibility_date = "2024-11-23"
+node_compat = true
+
+# Environment variables (set these via wrangler secret put or dashboard)
+# OPENAI_API_KEY = "sk-..." # Optional: When provided, switches from mock to real GPT-4
+# MCP_SERVER_URL = "http://localhost:3000" # URL to your deployed MCP server
+
+[vars]
+# Default configuration (can be overridden per environment)
+MCP_SERVER_URL = "http://localhost:3000"
+DEFAULT_MODEL = "gpt-4o"
+MAX_TOKENS = "2000"
+TEMPERATURE = "0.7"
+
+# Development environment
+[env.dev]
+vars = { MCP_SERVER_URL = "http://localhost:3000" }
+
+# Production environment
+[env.production]
+vars = { MCP_SERVER_URL = "https://your-mcp-server.workers.dev" }
+

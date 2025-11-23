@@ -6,7 +6,8 @@
   "private": true,
   "description": "RAWG Analytics app with frontend and mcp server - Monorepo",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "dev": "npm run dev --workspaces --if-present",

@@ -1,15 +1,9 @@
 /**
  * RAWG API Argument Schemas
  *
- * Re-exports all argument schemas organized by API endpoint.
+ * Re-exports all argument schemas from the shared package.
  * These schemas define the Zod validation for tool function arguments.
  */
 
-// Games endpoint schemas
-export * from './games-args';
-
-// Genres endpoint schemas
-export * from './genres-args';
-
-// Analysis tool schemas
-export * from './analysis-args';
+// Re-export from shared package
+export * from '@rawg-analytics/shared/schemas';

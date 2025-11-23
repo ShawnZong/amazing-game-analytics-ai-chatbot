@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
+    "@rawg-analytics/shared": "*",
     "agents": "^0.2.23",
     "axios": "^1.13.2",
     "lru-cache": "^11.2.2",
