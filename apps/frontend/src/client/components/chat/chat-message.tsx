@@ -68,18 +68,11 @@ export function ChatMessage({ message }: ChatMessageProps) {
           {isUser ? (
             <div className="whitespace-pre-wrap font-nunito">{message.content}</div>
           ) : (
-            <div className="font-nunito">
+            <div className="font-nunito markdown-content">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkMath]}
                 rehypePlugins={[rehypeKatex]}
                 components={{
-                  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
-                  ul: ({ children }) => <ul className="mb-2 ml-4 list-disc last:mb-0">{children}</ul>,
-                  ol: ({ children }) => <ol className="mb-2 ml-4 list-decimal last:mb-0">{children}</ol>,
-                  li: ({ children }) => <li className="mb-1">{children}</li>,
-                  h1: ({ children }) => <h1 className="mb-2 text-2xl font-bold last:mb-0">{children}</h1>,
-                  h2: ({ children }) => <h2 className="mb-2 text-xl font-bold last:mb-0">{children}</h2>,
-                  h3: ({ children }) => <h3 className="mb-2 text-lg font-bold last:mb-0">{children}</h3>,
                   code: ({ className, children, ...props }) => {
                     const match = /language-(\w+)/.exec(className || "");
                     const language = match ? match[1] : "";
@@ -106,11 +99,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
                       </code>
                     );
                   },
-                  pre: ({ children }) => <pre className="mb-2 last:mb-0">{children}</pre>,
-                  blockquote: ({ children }) => <blockquote className="mb-2 border-l-4 border-gray-400 pl-4 italic last:mb-0">{children}</blockquote>,
-                  a: ({ children, href }) => <a href={href} className="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">{children}</a>,
-                  strong: ({ children }) => <strong className="font-bold">{children}</strong>,
-                  em: ({ children }) => <em className="italic">{children}</em>,
                   table: ({ children }) => (
                     <div className="mb-2 overflow-x-auto last:mb-0">
                       <table className="min-w-full border-collapse border-2 border-black">

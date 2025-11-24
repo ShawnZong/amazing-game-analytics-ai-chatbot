@@ -139,6 +139,58 @@ body {
       1px 1px 0 #000,
       0px 2px 0 #000;
   }
+
+  .markdown-content {
+    @apply text-black;
+  }
+
+  .markdown-content p {
+    @apply mb-2 last:mb-0;
+  }
+
+  .markdown-content ul {
+    @apply mb-2 ml-4 list-disc last:mb-0;
+  }
+
+  .markdown-content ol {
+    @apply mb-2 ml-4 list-decimal last:mb-0;
+  }
+
+  .markdown-content li {
+    @apply mb-1;
+  }
+
+  .markdown-content h1 {
+    @apply mb-2 text-2xl font-bold last:mb-0;
+  }
+
+  .markdown-content h2 {
+    @apply mb-2 text-xl font-bold last:mb-0;
+  }
+
+  .markdown-content h3 {
+    @apply mb-2 text-lg font-bold last:mb-0;
+  }
+
+  .markdown-content pre {
+    @apply mb-2 last:mb-0;
+  }
+
+  .markdown-content blockquote {
+    @apply mb-2 border-l-4 border-gray-400 pl-4 italic last:mb-0;
+  }
+
+  .markdown-content a {
+    @apply text-blue-600 underline hover:text-blue-800;
+  }
+
+  .markdown-content strong {
+    @apply font-bold;
+  }
+
+  .markdown-content em {
+    @apply italic;
+  }
 }
 
 @layer base {
