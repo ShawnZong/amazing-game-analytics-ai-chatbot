@@ -20,4 +20,3 @@ export function createModel(env: Env): ChatOpenAI {
     maxTokens: parseInt(env.MAX_TOKENS ?? '2000', 10),
   });
 }
-
