@@ -16,13 +16,11 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { McpAgent } from 'agents/mcp';
 import { z } from 'zod';
 import { TOOLS } from './tool-registry/index';
+
 export interface Env {
   RAWG_API_KEY: string;
   MCP_SERVER_URL?: string;
 }
-
-// Request-scoped API key storage (Cloudflare Workers run one request at a time per isolate)
-let currentApiKey: string | undefined;
 
 /**
  * RAWG MCP Server Agent
@@ -35,6 +33,8 @@ export class RawgMcpAgent extends McpAgent {
     version: '1.0.0',
   });
 
+  private apiKey: string;
+
   /**
    * Durable Object constructor
    * Called when the Durable Object is instantiated
@@ -42,15 +42,10 @@ export class RawgMcpAgent extends McpAgent {
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
     // Store API key from env for use in tools
-    currentApiKey = env.RAWG_API_KEY;
+    this.apiKey = env.RAWG_API_KEY;
   }
 
-  async init(apiKey?: string) {
-    // Store API key for this request (use provided key or fall back to module-level variable)
-    if (apiKey !== undefined) {
-      currentApiKey = apiKey;
-    }
-
+  async init() {
     // Register all tools from the TOOLS array
     // This approach is more maintainable and uses the descriptions from tool-registry.ts
     for (const tool of TOOLS) {
@@ -67,7 +62,7 @@ export class RawgMcpAgent extends McpAgent {
             // Validate again for type safety and proper TypeScript types
             const validatedArgs = tool.schema.parse(args);
             // Pass API key to tools that need it (tools that don't need it will ignore the second parameter)
-            const result = await (tool.execute as any)(validatedArgs, currentApiKey);
+            const result = await (tool.execute as any)(validatedArgs, this.apiKey);
 
             return {
               content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
@@ -89,47 +84,5 @@ export class RawgMcpAgent extends McpAgent {
   }
 }
 
-/**
- * Main fetch handler for Cloudflare Worker
- */
-const worker: ExportedHandler<Env> = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
-    const url = new URL(request.url);
-
-    // Root path - server info
-    if (url.pathname === '/' && request.method === 'GET') {
-      return new Response(
-        JSON.stringify(
-          {
-            name: 'RAWG Game Analytics',
-            version: '1.0.0',
-            protocolVersion: '2024-11-05',
-          },
-          null,
-          2,
-        ),
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-        },
-      );
-    }
-
-    // MCP endpoint - handle requests to /mcp path
-    if (url.pathname === '/mcp') {
-      // Set API key for this request (Cloudflare Workers run one request per isolate)
-      currentApiKey = env.RAWG_API_KEY;
-
-      // Use the parent class's serve method which handles MCP protocol
-      // The serve('/mcp') method expects requests to come to /mcp pathname
-      return RawgMcpAgent.serve('/mcp').fetch(request, env, ctx);
-    }
-
-    // 404 for other routes
-    return new Response('Not Found', { status: 404 });
-  },
-};
-
-export default worker;
+// This is literally all there is to our Worker
+export default RawgMcpAgent.serve('/');
