@@ -1,7 +1,7 @@
 {
   "name": "rawg-analytics-app",
   "author": "Junsheng Tan",
-  "license": "MIT",
+  "license": "CC-BY-NC-ND-4.0",
   "version": "1.0.0",
   "private": true,
   "description": "RAWG Analytics app with frontend and mcp server - Monorepo",
