@@ -25,10 +25,12 @@ export const createMcpClient = (env: Env): MultiServerMCPClient => {
   const mcpUrl = serverUrl.endsWith('/mcp') ? serverUrl : `${serverUrl}/mcp`;
 
   return new MultiServerMCPClient({
-    rawg: {
-      transport: 'http', // Streamable HTTP transport (auto-falls back to SSE if needed)
-      url: mcpUrl,
+    mcpServers: {
+      rawg: {
+        url: mcpUrl,
+      },
     },
+    useStandardContentBlocks: true,
   });
 };
 
