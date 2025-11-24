@@ -30,8 +30,8 @@ const SUGGESTIONS = [
   },
   {
     icon: Zap,
-    label: "Trend Analysis",
-    query: "What's the trend in RPG game ratings for year 2025?",
+    label: "Game Analysis",
+    query: "Provide a summary and key performance metrics for the game Hollow Knight: Silksong.",
     bgColor: "bg-purple-400",
     hoverColor: "group-hover:bg-purple-300",
   },
