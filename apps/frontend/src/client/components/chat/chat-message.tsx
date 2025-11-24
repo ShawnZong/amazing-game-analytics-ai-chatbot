@@ -3,8 +3,8 @@
 import * as React from "react"
 import { Shield, Star } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-import { Message } from "@/types/chat"
+import { cn } from "@/client/utils/utils"
+import { Message } from "@/client/types/chat"
 
 interface ChatMessageProps {
   message: Message

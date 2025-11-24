@@ -4,7 +4,7 @@ import * as React from "react"
 import { motion } from "framer-motion"
 import { SendHorizontal, Loader2, Zap } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/client/components/ui/button"
 
 interface ChatInputProps {
   onSend: (message: string) => void

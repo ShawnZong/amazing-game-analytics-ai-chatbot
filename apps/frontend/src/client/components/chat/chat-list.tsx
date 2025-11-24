@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Message } from "@/types/chat"
+import { Message } from "@/client/types/chat"
 import { ChatMessage } from "./chat-message"
 import { LoadingIndicator } from "./loading-indicator"
 import { Star, Skull, Zap, Trophy } from "lucide-react"
