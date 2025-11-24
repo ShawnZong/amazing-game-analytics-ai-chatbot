@@ -60,7 +60,7 @@
       // "vars": {
       //   "RAWG_API_KEY": "your_key"
       // }
-    }
+    },
     "production": {
       /**
        * Production environment variables
