@@ -84,7 +84,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
       </form>
       <div className="mt-3 flex items-center justify-center gap-2 text-xs font-black uppercase italic tracking-widest text-white/80 drop-shadow-md">
         <Zap className="size-4 text-yellow-400 fill-yellow-400 stroke-black stroke-2" />
-        <span className="transform -skew-x-12">Power Points not included</span>
+        <span className="transform -skew-x-12">AI migh</span>
       </div>
     </motion.div>
   )
