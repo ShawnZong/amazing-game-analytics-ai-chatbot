@@ -58,7 +58,8 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     // Create chat model (mock or GPT-4 based on env)
     const model = createChatModel(env);
 
-    // Create tools that connect to MCP server (now async)
+    // Create tools that connect to MCP server via HTTP
+    // @langchain/mcp-adapters handles HTTP/SSE automatically - no fetch override needed
     const tools = await createAllTools(env);
 
     logger.debug('Available tools', {
@@ -67,6 +68,7 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     });
 
     // Execute the agent
+    // Tools will make standard HTTP requests to the MCP server
     const result = await executeAgent(model, tools, sessionId, messages);
 
     // Build response
