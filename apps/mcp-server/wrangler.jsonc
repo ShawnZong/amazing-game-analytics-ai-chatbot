@@ -20,8 +20,8 @@
   "migrations": [
     {
       "new_sqlite_classes": ["RawgMcpAgent"],
-      "tag": "v1",
-    },
+      "tag": "v1"
+    }
   ],
   /**
    * Durable Objects Bindings
@@ -32,12 +32,12 @@
     "bindings": [
       {
         "class_name": "RawgMcpAgent",
-        "name": "MCP_OBJECT",
-      },
-    ],
+        "name": "MCP_OBJECT"
+      }
+    ]
   },
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
   /**
    * Resource Limits
@@ -60,7 +60,7 @@
       // "vars": {
       //   "RAWG_API_KEY": "your_key"
       // }
-    },
+    }
     "production": {
       /**
        * Production environment variables
