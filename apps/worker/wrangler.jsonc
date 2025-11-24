@@ -18,12 +18,6 @@
    */
   "env": {
     "dev": {
-      "services": [
-        {
-          "binding": "MCP_SERVER",
-          "service": "rawg-mcp-agent",
-        },
-      ],
       "vars": {
         "MCP_SERVER_URL": "http://localhost:3000",
         "DEFAULT_MODEL": "gpt-4o",
@@ -32,12 +26,6 @@
       },
     },
     "production": {
-      "services": [
-        {
-          "binding": "MCP_SERVER",
-          "service": "rawg-mcp-agent",
-        },
-      ],
       "vars": {
         "MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
         "DEFAULT_MODEL": "gpt-4o",
