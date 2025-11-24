@@ -1,25 +1,30 @@
 "use client"
 
-import * as React from "react"
-import { Skull, Star } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
+import { Skull, Star } from "lucide-react"
+import * as React from "react"
 
 import { ChatInput } from "@/client/components/chat/chat-input"
 import { ChatList } from "@/client/components/chat/chat-list"
 import { Message } from "@/client/types/chat"
+import { DefaultChatTransport } from "ai"
 
 export function HomePage() {
-  const { messages: aiSdkMessages, append, isLoading } = useChat({
-    api: "/api/chat",
-  })
+  const { messages: aiSdkMessages, sendMessage, status } = useChat({
+		transport: new DefaultChatTransport({ api: "/api/chat" }),
+	});
+
+  // Derive isLoading from status
+  const isLoading = status === "submitted" || status === "streaming"
 
   // Convert AI SDK messages to our Message format for compatibility with existing components
   const messages: Message[] = React.useMemo(() => {
     return aiSdkMessages.map((msg) => {
-      // AI SDK messages have content as string
-      const textContent = typeof msg.content === "string" 
-        ? msg.content 
-        : String(msg.content)
+      // AI SDK messages have parts array, extract text from text parts (following example pattern)
+      const textContent = msg.parts
+        ?.filter((part) => part.type === "text")
+        .map((part) => part.text)
+        .join("") || ""
 
       return {
         id: msg.id,
@@ -31,7 +36,7 @@ export function HomePage() {
   }, [aiSdkMessages])
 
   const handleSend = (content: string) => {
-    append({ role: "user", content })
+    sendMessage({ text: content })
   }
 
   return (
