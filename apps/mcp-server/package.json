@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --env production",
+    "deploy:production": "wrangler deploy --env production",
+    "deploy:dev": "wrangler deploy --env dev",
     "build": "tsc",
     "type-check": "tsc --noEmit",
     "cf-typegen": "wrangler types",
