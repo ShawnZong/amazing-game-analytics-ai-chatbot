@@ -85,18 +85,42 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     // Execute workflow
     const result = await app.invoke({ messages: langChainMessages });
 
-    console.log('LangGraph result', { result });
+    console.log('LangGraph result', {
+      messageCount: result.messages.length,
+      lastMessageType: result.messages[result.messages.length - 1]?.constructor?.name,
+      lastMessageContent: result.messages[result.messages.length - 1]?.content,
+    });
+
     // Extract response
     const finalMessage = result.messages[result.messages.length - 1];
-    const reply = extractReply(finalMessage);
+    if (!finalMessage) {
+      console.error('No final message in result', { result });
+      return Response.json({ error: 'No response generated' }, { status: 500 });
+    }
 
-    // Return AI SDK compatible response format
-    const response = Response.json({
-      text: reply,
-      role: 'assistant',
+    const reply = extractReply(finalMessage);
+    console.log('Extracted reply', { reply, replyLength: reply.length });
+
+    if (!reply || reply.trim().length === 0) {
+      console.error('Empty reply extracted', { finalMessage });
+      return Response.json({ error: 'Empty response generated' }, { status: 500 });
+    }
+
+    // AI SDK useChat expects JSON response with content field for non-streaming
+    // The format should match: { content: string } or just return the text
+    // Based on AI SDK docs, non-streaming responses can be simple text or JSON
+    const responseBody = { content: reply };
+    console.log('Response body', {
+      content: reply.substring(0, 100) + (reply.length > 100 ? '...' : ''),
+      contentLength: reply.length,
     });
-    console.log('Response', { response });
-    return response;
+
+    return Response.json(responseBody, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+      },
+    });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error handling chat request', { error: errorMessage });
