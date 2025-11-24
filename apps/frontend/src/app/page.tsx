@@ -1,75 +1,39 @@
 "use client"
 
 import * as React from "react"
-import { v4 as uuidv4 } from "uuid"
 import { Skull, Star } from "lucide-react"
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
 
 import { ChatInput } from "@/components/chat/chat-input"
 import { ChatList } from "@/components/chat/chat-list"
-import { Message, type WorkerMessage } from "@/types/chat"
-import { sendChatMessage } from "@/lib/api"
+import { Message } from "@/types/chat"
 
 export default function Home() {
-  const [messages, setMessages] = React.useState<Message[]>([])
-  const [isLoading, setIsLoading] = React.useState(false)
-  
-  // Generate session ID once and persist it
-  const [sessionId] = React.useState(() => {
-    // Try to get from localStorage, otherwise generate new
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('chat-session-id')
-      if (stored) return stored
-      const newId = uuidv4()
-      localStorage.setItem('chat-session-id', newId)
-      return newId
-    }
-    return uuidv4()
+  const { messages: aiSdkMessages, sendMessage, isLoading } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   })
 
-  const handleSend = async (content: string) => {
-    const userMessage: Message = {
-      id: uuidv4(),
-      role: "user",
-      content,
-      createdAt: new Date(),
-    }
+  // Convert AI SDK messages to our Message format for compatibility with existing components
+  const messages: Message[] = React.useMemo(() => {
+    return aiSdkMessages.map((msg) => {
+      // Extract text content from AI SDK message parts
+      const textContent = msg.parts
+        .filter((part) => part.type === "text")
+        .map((part) => part.text)
+        .join("")
 
-    setMessages((prev) => [...prev, userMessage])
-    setIsLoading(true)
-
-    try {
-      // Convert frontend messages to worker format
-      const workerMessages: WorkerMessage[] = [...messages, userMessage].map((msg) => ({
-        role: msg.role === "assistant" ? "assistant" : "user",
-        content: msg.content,
-      }))
-
-      // Send to backend worker
-      const response = await sendChatMessage(sessionId, workerMessages)
-
-      // Create assistant message from response
-      const aiMessage: Message = {
-        id: uuidv4(),
-        role: "assistant",
-        content: response.reply,
-        createdAt: new Date(),
+      return {
+        id: msg.id,
+        role: msg.role === "user" ? "user" : "assistant",
+        content: textContent,
+        createdAt: new Date(msg.createdAt || Date.now()),
       }
+    })
+  }, [aiSdkMessages])
 
-      setMessages((prev) => [...prev, aiMessage])
-    } catch (error) {
-      console.error('Error sending message:', error)
-      
-      // Show error message to user
-      const errorMessage: Message = {
-        id: uuidv4(),
-        role: "assistant",
-        content: error instanceof Error ? error.message : "Sorry, something went wrong. Please try again.",
-        createdAt: new Date(),
-      }
-      setMessages((prev) => [...prev, errorMessage])
-    } finally {
-      setIsLoading(false)
-    }
+  const handleSend = (content: string) => {
+    sendMessage({ text: content })
   }
 
   return (
