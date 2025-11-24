@@ -11,24 +11,10 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-yellow-400 text-slate-900 border-b-4 border-r-2 border-yellow-600 hover:bg-yellow-300 active:border-0 active:mt-1 shadow-lg",
-        destructive:
-          "bg-red-500 text-white border-b-4 border-r-2 border-red-800 hover:bg-red-400 active:border-0 active:mt-1 shadow-lg",
-        outline:
-          "bg-white text-slate-900 border-2 border-slate-900 hover:bg-slate-100 active:scale-95 shadow-sm",
-        secondary:
-          "bg-cyan-400 text-white border-b-4 border-r-2 border-cyan-700 hover:bg-cyan-300 active:border-0 active:mt-1 shadow-lg",
-        ghost: "hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800",
-        link: "text-primary underline-offset-4 hover:underline",
-        emerald: 
-          "bg-emerald-500 text-white border-b-4 border-r-2 border-emerald-700 hover:bg-emerald-400 active:border-0 active:mt-1 shadow-lg",
-        purple:
-          "bg-purple-500 text-white border-b-4 border-r-2 border-purple-800 hover:bg-purple-400 active:border-0 active:mt-1 shadow-lg",
       },
       size: {
         default: "h-12 px-8 py-2",
-        sm: "h-10 rounded-full px-4 text-xs",
-        lg: "h-16 rounded-full px-10 text-lg",
-        icon: "h-12 w-12 rounded-xl", // Icon buttons slightly less rounded
+        icon: "h-12 w-12 rounded-xl",
       },
     },
     defaultVariants: {
@@ -58,4 +44,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+export { Button }
