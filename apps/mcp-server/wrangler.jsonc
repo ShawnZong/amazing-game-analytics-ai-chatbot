@@ -52,7 +52,15 @@
    */
   "env": {
     "dev": {
-      "port": 8787
+      "port": 8787,
+      "durable_objects": {
+        "bindings": [
+          {
+            "class_name": "RawgMcpAgent",
+            "name": "MCP_OBJECT"
+          }
+        ]
+      },
       /**
        * Development environment variables
        * For local development, set RAWG_API_KEY in .env.local or use wrangler secret
@@ -62,6 +70,14 @@
       // }
     },
     "production": {
+      "durable_objects": {
+        "bindings": [
+          {
+            "class_name": "RawgMcpAgent",
+            "name": "MCP_OBJECT"
+          }
+        ]
+      },
       /**
        * Production environment variables
        * Set RAWG_API_KEY as a secret: wrangler secret put RAWG_API_KEY --env production
