@@ -38,7 +38,7 @@ const SUGGESTIONS = [
   {
     icon: Skull,
     label: "Game Discovery",
-    query: "Find popular indie games with high ratings released on PC in year 2025",
+    query: "Find popular action games with high ratings released from 2022 to 2025",
     bgColor: "bg-emerald-400",
     hoverColor: "group-hover:bg-emerald-300",
   },
