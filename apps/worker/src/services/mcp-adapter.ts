@@ -21,13 +21,11 @@ import type { Env } from '../lib/types';
  */
 export const createMcpClient = (env: Env): MultiServerMCPClient => {
   // Use the public HTTP URL - @langchain/mcp-adapters handles HTTP/SSE automatically
-  const serverUrl = env.MCP_SERVER_URL || 'http://localhost:3000';
-  const mcpUrl = serverUrl.endsWith('/mcp') ? serverUrl : `${serverUrl}/mcp`;
 
   return new MultiServerMCPClient({
     mcpServers: {
       rawg: {
-        url: mcpUrl,
+        url: env.MCP_SERVER_URL ?? 'http://localhost:3000',
       },
     },
     useStandardContentBlocks: true,
