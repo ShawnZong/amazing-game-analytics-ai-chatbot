@@ -7,13 +7,27 @@
   "name": "rawg-mcp-agent",
   "main": "src/index.ts",
   "compatibility_date": "2025-11-23",
+  /**
+   * Compatibility Flags
+   * - nodejs_compat: Enables Node.js compatibility APIs required for MCP SDK
+   */
   "compatibility_flags": ["nodejs_compat"],
+  /**
+   * Durable Objects Migrations
+   * Tracks schema changes for Durable Objects.
+   * Tag "v1" represents the initial migration creating RawgMcpAgent class.
+   */
   "migrations": [
     {
       "new_sqlite_classes": ["RawgMcpAgent"],
       "tag": "v1",
     },
   ],
+  /**
+   * Durable Objects Bindings
+   * RawgMcpAgent is a Durable Object that maintains stateful MCP server connections.
+   * Each instance handles MCP protocol communication and tool execution.
+   */
   "durable_objects": {
     "bindings": [
       {
@@ -25,12 +39,36 @@
   "observability": {
     "enabled": true,
   },
-  // Environment variables (set in Cloudflare Dashboard)
-  // "vars": {
-  //   "RAWG_API_KEY": "your_key"
-  // },
-  // Development
-  "dev": {
-    "port": 8787,
+  /**
+   * Resource Limits
+   * Prevents unexpected costs by limiting resource usage per request.
+   * These limits are free and help protect against runaway costs.
+   */
+  "limits": {
+    "cpu_ms": 50
   },
+  /**
+   * Environment-specific configurations
+   */
+  "env": {
+    "dev": {
+      "port": 8787,
+      /**
+       * Development environment variables
+       * For local development, set RAWG_API_KEY in .env.local or use wrangler secret
+       */
+      // "vars": {
+      //   "RAWG_API_KEY": "your_key"
+      // }
+    },
+    "production": {
+      /**
+       * Production environment variables
+       * Set RAWG_API_KEY as a secret: wrangler secret put RAWG_API_KEY --env production
+       */
+      // "vars": {
+      //   "RAWG_API_KEY": "your_key"
+      // }
+    }
+  }
 }

@@ -7,6 +7,11 @@
 	"name": "rawg-analytics-frontend",
 	"main": ".open-next/worker.js",
 	"compatibility_date": "2025-11-23",
+	/**
+	 * Compatibility Flags
+	 * - nodejs_compat: Enables Node.js compatibility APIs
+	 * - global_fetch_strictly_public: Restricts fetch to public endpoints only
+	 */
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"
@@ -20,9 +25,21 @@
 	},
 	/**
 	 * Smart Placement
+	 * Automatically routes requests to optimal data centers for better performance.
+	 * Free feature that reduces latency by running Workers closer to backend services.
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
 	 */
-	// "placement": { "mode": "smart" },
+	"placement": {
+		"mode": "smart"
+	},
+	/**
+	 * Resource Limits
+	 * Prevents unexpected costs by limiting resource usage per request.
+	 * These limits are free and help protect against runaway costs.
+	 */
+	"limits": {
+		"cpu_ms": 50
+	},
 	/**
 	 * Environment-specific configurations
 	 */
@@ -45,11 +62,13 @@
 		}
 	}
 	/**
-	 * Note: Use secrets to store sensitive data.
+	 * Secrets Management
+	 * Use secrets to store sensitive data like API keys.
 	 * https://developers.cloudflare.com/workers/configuration/secrets/
+	 * 
+	 * Example: wrangler secret put OPENAI_API_KEY --env production
+	 * OPENAI_API_KEY is optional: When provided, switches from mock to real GPT-4
 	 */
-	// Example: wrangler secret put OPENAI_API_KEY
-	// OPENAI_API_KEY is optional: When provided, switches from mock to real GPT-4
 }
 
 
