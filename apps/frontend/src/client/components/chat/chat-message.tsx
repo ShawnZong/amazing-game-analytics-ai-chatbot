@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Shield, Star } from "lucide-react"
+import ReactMarkdown from "react-markdown"
 
 import { cn } from "@/client/utils/utils"
 import { Message } from "@/client/types/chat"
@@ -59,7 +60,38 @@ export function ChatMessage({ message }: ChatMessageProps) {
               : "bg-white text-black"
           )}
         >
-          <div className="whitespace-pre-wrap font-nunito">{message.content}</div>
+          {isUser ? (
+            <div className="whitespace-pre-wrap font-nunito">{message.content}</div>
+          ) : (
+            <div className="font-nunito">
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                  ul: ({ children }) => <ul className="mb-2 ml-4 list-disc last:mb-0">{children}</ul>,
+                  ol: ({ children }) => <ol className="mb-2 ml-4 list-decimal last:mb-0">{children}</ol>,
+                  li: ({ children }) => <li className="mb-1">{children}</li>,
+                  h1: ({ children }) => <h1 className="mb-2 text-2xl font-bold last:mb-0">{children}</h1>,
+                  h2: ({ children }) => <h2 className="mb-2 text-xl font-bold last:mb-0">{children}</h2>,
+                  h3: ({ children }) => <h3 className="mb-2 text-lg font-bold last:mb-0">{children}</h3>,
+                  code: ({ children, className }) => {
+                    const isInline = !className;
+                    return isInline ? (
+                      <code className="rounded bg-gray-200 px-1.5 py-0.5 text-sm font-mono text-black">{children}</code>
+                    ) : (
+                      <code className="block rounded bg-gray-200 p-2 text-sm font-mono text-black overflow-x-auto">{children}</code>
+                    );
+                  },
+                  pre: ({ children }) => <pre className="mb-2 rounded bg-gray-200 p-2 overflow-x-auto last:mb-0">{children}</pre>,
+                  blockquote: ({ children }) => <blockquote className="mb-2 border-l-4 border-gray-400 pl-4 italic last:mb-0">{children}</blockquote>,
+                  a: ({ children, href }) => <a href={href} className="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">{children}</a>,
+                  strong: ({ children }) => <strong className="font-bold">{children}</strong>,
+                  em: ({ children }) => <em className="italic">{children}</em>,
+                }}
+              >
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          )}
         </div>
       </div>
     </div>
