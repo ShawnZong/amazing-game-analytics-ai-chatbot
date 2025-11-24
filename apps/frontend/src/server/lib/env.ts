@@ -33,8 +33,6 @@ function loadLocalEnv(): void {
       const result = config({ path: envPath, override: true });
 
       if (!result.error && result.parsed) {
-        console.log(`Loaded environment variables from .env.local at: ${envPath}`);
-        console.log(`Loaded keys: ${Object.keys(result.parsed).join(', ')}`);
         // Verify the variables are actually in process.env
         if (result.parsed.OPENAI_API_KEY) {
           process.env.OPENAI_API_KEY = result.parsed.OPENAI_API_KEY;
@@ -83,21 +81,9 @@ export function getEnv(): Env {
     TEMPERATURE: process.env.TEMPERATURE,
   };
 
-  // Debug logging
-  console.log('Environment check:', {
-    hasOpenAIKey: !!env.OPENAI_API_KEY,
-    openAIKeyLength: env.OPENAI_API_KEY?.length ?? 0,
-    processEnvKeys: Object.keys(process.env).filter(
-      key => key.includes('OPENAI') || key.includes('MCP'),
-    ),
-    cwd: process.cwd(),
-  });
-
-  // Log warnings for missing critical variables
+  // Log warning for missing critical variable
   if (!env.OPENAI_API_KEY) {
-    console.warn(
-      'Warning: OPENAI_API_KEY is not set. Please create a .env.local file with OPENAI_API_KEY=your_key',
-    );
+    console.warn('OPENAI_API_KEY is not set');
   }
 
   return env;

@@ -27,15 +27,12 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     // Get environment from Cloudflare context or process.env
     const env = getEnv();
 
-    // Parse and validate request body (AI SDK format)
+    // Parse and validate request body
     const body = await request.json();
-    console.log('Received request body:', JSON.stringify(body, null, 2));
-
     const validation = AISDKRequestSchema.safeParse(body);
 
     if (!validation.success) {
       console.error('Validation failed:', validation.error);
-      console.error('Request body was:', JSON.stringify(body, null, 2));
       return Response.json(
         { error: `Invalid request: ${validation.error.message}`, details: validation.error.errors },
         { status: 400 },
@@ -55,34 +52,18 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     // Execute workflow
     const result = await app.invoke({ messages: langChainMessages });
 
-    console.log('LangGraph result', {
-      messageCount: result.messages.length,
-      lastMessageType: result.messages[result.messages.length - 1]?.constructor?.name,
-      lastMessageContent: result.messages[result.messages.length - 1]?.content,
-    });
-
     // Extract response
     const finalMessage = result.messages[result.messages.length - 1];
     if (!finalMessage) {
-      console.error('No final message in result', { result });
+      console.error('No final message in result');
       return Response.json({ error: 'No response generated' }, { status: 500 });
     }
 
     const reply = extractReply(finalMessage);
-    console.log('Extracted reply', { reply, replyLength: reply.length });
-
     if (!reply || reply.trim().length === 0) {
-      console.error('Empty reply extracted', { finalMessage });
+      console.error('Empty reply extracted');
       return Response.json({ error: 'Empty response generated' }, { status: 500 });
     }
-
-    // Return JSON response with content field
-    // Format: { content: string }
-    const responseBody = { content: reply };
-    console.log('Response body', {
-      content: reply.substring(0, 100) + (reply.length > 100 ? '...' : ''),
-      contentLength: reply.length,
-    });
 
     return Response.json(responseBody, {
       status: 200,
