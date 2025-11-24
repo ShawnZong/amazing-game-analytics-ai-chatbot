@@ -21,14 +21,14 @@ If you use a tool, explain what data you retrieved and how it answers the user's
  */
 export const MODEL_CONFIG = {
   // GPT-4 model name (used when OPENAI_API_KEY is provided)
-  GPT4_MODEL: "gpt-4o",
-  
+  GPT4_MODEL: 'gpt-4.1-nano',
+
   // Alternative: "gpt-4" for the original GPT-4 model
   // GPT4_MODEL: "gpt-4",
-  
+
   // Default max tokens for responses
   MAX_TOKENS: 2000,
-  
+
   // Default temperature (0-1, higher = more creative)
   TEMPERATURE: 0.7,
 } as const;
@@ -37,10 +37,10 @@ export const MODEL_CONFIG = {
  * Error codes
  */
 export const ERROR_CODES = {
-  VALIDATION_ERROR: "VALIDATION_ERROR",
-  INTERNAL_ERROR: "INTERNAL_ERROR",
-  MCP_ERROR: "MCP_ERROR",
-  MODEL_ERROR: "MODEL_ERROR",
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  MCP_ERROR: 'MCP_ERROR',
+  MODEL_ERROR: 'MODEL_ERROR',
 } as const;
 
 /**
@@ -52,4 +52,3 @@ export const HTTP_STATUS = {
   NOT_FOUND: 404,
   INTERNAL_SERVER_ERROR: 500,
 } as const;
-
