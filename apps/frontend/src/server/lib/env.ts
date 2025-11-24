@@ -63,24 +63,25 @@ function loadLocalEnv(): void {
  */
 export function getEnv(): Env {
   const context = getCloudflareContext();
+  const cloudflareEnv = context.env as CloudflareEnv & Env;
 
   // If Cloudflare context is available, use it
-  if (context?.env) {
-    const cloudflareEnv = context.env as CloudflareEnv & Env;
-    // Ensure MCP_SERVER_URL is set, defaulting if needed
+  if (cloudflareEnv && cloudflareEnv.MCP_SERVER_URL && cloudflareEnv.OPENAI_API_KEY) {
+    console.log('Using Cloudflare environment variables');
     return {
       ...cloudflareEnv,
-      MCP_SERVER_URL: cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:8787',
+      MCP_SERVER_URL: `${cloudflareEnv.MCP_SERVER_URL}/mcp`,
     };
   }
 
   // Load .env.local for local development
+  console.log('Using .env.local for local development');
   loadLocalEnv();
 
   // Fall back to process.env for local development
   const env: Env = {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    MCP_SERVER_URL: process.env.MCP_SERVER_URL ?? 'http://localhost:8787',
+    MCP_SERVER_URL: `${process.env.MCP_SERVER_URL ?? 'http://localhost:8787'}/mcp`,
     DEFAULT_MODEL: process.env.DEFAULT_MODEL,
     MAX_TOKENS: process.env.MAX_TOKENS,
     TEMPERATURE: process.env.TEMPERATURE,
