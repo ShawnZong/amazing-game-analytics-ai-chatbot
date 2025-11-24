@@ -117,13 +117,13 @@ const worker: ExportedHandler<Env> = {
       );
     }
 
-    // MCP endpoint - use serve method but ensure API key is available
-    if (url.pathname === '/' || url.pathname === '/mcp') {
+    // MCP endpoint - handle requests to /mcp path
+    if (url.pathname === '/mcp') {
       // Set API key for this request (Cloudflare Workers run one request per isolate)
       currentApiKey = env.RAWG_API_KEY;
 
       // Use the parent class's serve method which handles MCP protocol
-      // The RawgMcpAgent constructor will receive env and store the API key
+      // The serve('/mcp') method expects requests to come to /mcp pathname
       return RawgMcpAgent.serve('/mcp').fetch(request, env, ctx);
     }
 
