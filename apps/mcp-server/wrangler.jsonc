@@ -60,7 +60,7 @@
             "name": "MCP_OBJECT"
           }
         ]
-      },
+      }
       /**
        * Development environment variables
        * For local development, set RAWG_API_KEY in .env.local or use wrangler secret
@@ -77,7 +77,7 @@
             "name": "MCP_OBJECT"
           }
         ]
-      },
+      }
       /**
        * Production environment variables
        * Set RAWG_API_KEY as a secret: wrangler secret put RAWG_API_KEY --env production
