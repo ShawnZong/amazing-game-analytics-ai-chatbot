@@ -40,14 +40,6 @@
     "enabled": true
   },
   /**
-   * Resource Limits
-   * Prevents unexpected costs by limiting resource usage per request.
-   * These limits are free and help protect against runaway costs.
-   */
-  "limits": {
-    "cpu_ms": 50
-  },
-  /**
    * Environment-specific configurations
    */
   "env": {

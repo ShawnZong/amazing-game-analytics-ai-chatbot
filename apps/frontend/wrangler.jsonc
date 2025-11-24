@@ -33,14 +33,6 @@
 		"mode": "smart"
 	},
 	/**
-	 * Resource Limits
-	 * Prevents unexpected costs by limiting resource usage per request.
-	 * These limits are free and help protect against runaway costs.
-	 */
-	"limits": {
-		"cpu_ms": 50
-	},
-	/**
 	 * Environment-specific configurations
 	 */
 	"env": {
@@ -54,7 +46,7 @@
 		},
 		"production": {
 			"vars": {
-				"MCP_SERVER_URL": "https://rawg-mcp-agent.dt9gdsv25p.workers.dev",
+				"MCP_SERVER_URL": "https://rawg-mcp-agent-production.dt9gdsv25p.workers.dev",
 				"DEFAULT_MODEL": "gpt-4o",
 				"MAX_TOKENS": "2000",
 				"TEMPERATURE": "0.7"
