@@ -16,18 +16,19 @@ AI-powered video game analytics platform that transforms natural language querie
 
 ```mermaid
 graph TB
-    subgraph "Frontend Layer"
-        UI[Next.js React UI<br/>Chat Interface]
-        API[Next.js API Routes<br/>/api/chat]
+    subgraph "Frontend Cloudflare Worker"
+        subgraph "Frontend Layer"
+            UI[Next.js React UI<br/>Chat Interface]
+            API[Next.js API Routes<br/>/api/chat]
+        end
+        subgraph "Orchestration Layer"
+            LG[LangGraph Workflow<br/>State Machine]
+            LC[LangChain Core<br/>Message Handling]
+            MCP_CLIENT[MCP Client Adapter<br/>Tool Discovery]
+        end
     end
 
-    subgraph "Orchestration Layer"
-        LG[LangGraph Workflow<br/>State Machine]
-        LC[LangChain Core<br/>Message Handling]
-        MCP_CLIENT[MCP Client Adapter<br/>Tool Discovery]
-    end
-
-    subgraph "MCP Server - Cloudflare Worker"
+    subgraph "MCP Server Cloudflare Worker"
         DO[Durable Object<br/>Stateful MCP Agent]
         TOOLS[Tool Registry<br/>Games, Genres, Analysis]
         CACHE[LRU Cache<br/>1hr TTL]
@@ -105,7 +106,7 @@ sequenceDiagram
 | **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               |
 | **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability, better IDE support              |
 
-## 💡 Key Contributions & Decisions
+## 💡 Key Decisions
 
 **⚖️ Architecture Trade-offs:**
 
