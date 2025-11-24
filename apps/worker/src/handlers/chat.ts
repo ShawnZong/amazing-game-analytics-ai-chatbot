@@ -14,6 +14,8 @@ import { logger } from '../lib/logger';
  * Handle POST /chat endpoint
  */
 export async function handleChat(request: Request, env: Env): Promise<Response> {
+  let sessionId: string | undefined;
+
   try {
     // Validate Content-Type
     const contentType = request.headers.get('content-type');
@@ -47,7 +49,8 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
       );
     }
 
-    const { sessionId, messages } = validation.data;
+    const { sessionId: validatedSessionId, messages } = validation.data;
+    sessionId = validatedSessionId;
 
     logger.info('Processing chat request', { sessionId, messageCount: messages.length });
     logger.debug('Model info', { model: getModelInfo(env) });
@@ -58,9 +61,9 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     // Create tools that connect to MCP server (now async)
     const tools = await createAllTools(env);
 
-    logger.debug('Available tools', { 
-      toolCount: tools.length, 
-      toolNames: tools.map(t => t.name) 
+    logger.debug('Available tools', {
+      toolCount: tools.length,
+      toolNames: tools.map(t => t.name),
     });
 
     // Execute the agent
@@ -77,9 +80,9 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
         name: tool.name,
         result: tool.result,
       }));
-      logger.info('Tools used in response', { 
-        sessionId, 
-        toolCount: result.toolsUsed.length 
+      logger.info('Tools used in response', {
+        sessionId,
+        toolCount: result.toolsUsed.length,
       });
     }
 
@@ -87,7 +90,30 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     return jsonResponse(response);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Error handling chat request', { 
+
+    // Check for OpenAI quota/rate limit errors
+    const isQuotaError =
+      errorMessage.includes('429') ||
+      errorMessage.includes('quota') ||
+      errorMessage.includes('InsufficientQuotaError') ||
+      errorMessage.includes('rate limit') ||
+      errorMessage.includes('RATE_LIMIT');
+
+    if (isQuotaError) {
+      logger.error('OpenAI quota/rate limit exceeded', {
+        error: errorMessage,
+        sessionId,
+        stack: error instanceof Error ? error.stack : undefined,
+      });
+
+      return errorResponse(
+        ERROR_CODES.MODEL_ERROR,
+        'OpenAI API quota exceeded. Please check your billing and quota settings at https://platform.openai.com/account/billing',
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    logger.error('Error handling chat request', {
       error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
     });
@@ -99,4 +125,3 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     );
   }
 }
-
