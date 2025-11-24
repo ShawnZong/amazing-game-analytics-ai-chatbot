@@ -64,7 +64,7 @@ export async function handleChatRequest(request: Request): Promise<Response> {
       console.error('Empty reply extracted');
       return Response.json({ error: 'Empty response generated' }, { status: 500 });
     }
-
+    console.log('Reply:', { reply });
     return Response.json(
       { content: reply },
       {
