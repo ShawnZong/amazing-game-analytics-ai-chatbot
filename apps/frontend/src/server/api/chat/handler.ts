@@ -21,17 +21,40 @@ const AISDKRequestSchema = z.object({
 });
 
 /**
+ * Gets environment variables from Cloudflare context or falls back to process.env for local development
+ */
+function getEnv(): Env {
+  const context = getCloudflareContext();
+
+  // If Cloudflare context is available, use it with proper type handling
+  if (context?.env) {
+    const cloudflareEnv = context.env as unknown as Record<string, string | undefined>;
+    return {
+      OPENAI_API_KEY: cloudflareEnv.OPENAI_API_KEY,
+      MCP_SERVER_URL: cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:3000',
+      DEFAULT_MODEL: cloudflareEnv.DEFAULT_MODEL,
+      MAX_TOKENS: cloudflareEnv.MAX_TOKENS,
+      TEMPERATURE: cloudflareEnv.TEMPERATURE,
+    };
+  }
+
+  // Fall back to process.env for local development
+  return {
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    MCP_SERVER_URL: process.env.MCP_SERVER_URL ?? 'http://localhost:3000',
+    DEFAULT_MODEL: process.env.DEFAULT_MODEL,
+    MAX_TOKENS: process.env.MAX_TOKENS,
+    TEMPERATURE: process.env.TEMPERATURE,
+  };
+}
+
+/**
  * Handles chat endpoint request
  */
 export async function handleChatRequest(request: Request): Promise<Response> {
   try {
-    // Get environment from Cloudflare context
-    const context = getCloudflareContext();
-    if (!context?.env) {
-      return Response.json({ error: 'Cloudflare environment not available' }, { status: 500 });
-    }
-
-    const env = context.env as CloudflareEnv & Env;
+    // Get environment from Cloudflare context or process.env
+    const env = getEnv();
 
     // Parse and validate request body (AI SDK format)
     const body = await request.json();
@@ -76,4 +99,3 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     );
   }
 }
-
