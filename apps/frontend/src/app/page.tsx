@@ -99,7 +99,7 @@ export default function Home() {
       {/* Main Content Area */}
       <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
         <div className="mx-auto flex h-full w-full max-w-4xl flex-col">
-          <div className="flex-1 overflow-hidden p-4">
+          <div className="flex-1 overflow-hidden p-4 min-h-0">
             <ChatList messages={messages} isLoading={isLoading} onSuggestionClick={handleSend} />
           </div>
           

@@ -46,9 +46,112 @@ const SUGGESTIONS = [
 
 export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListProps) {
   const bottomRef = React.useRef<HTMLDivElement>(null)
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null)
+  const userScrolledUpRef = React.useRef(false)
+  const isScrollingRef = React.useRef(false)
+  const lastMessageCountRef = React.useRef(0)
+  const scrollTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
+  // Track user scroll behavior
   React.useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const handleScroll = () => {
+      // Clear any pending auto-scroll
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+        scrollTimeoutRef.current = null
+      }
+      
+      if (isScrollingRef.current) return
+      
+      const threshold = 150 // pixels from bottom
+      const scrollTop = container.scrollTop
+      const scrollHeight = container.scrollHeight
+      const clientHeight = container.clientHeight
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+      
+      // User has scrolled up if they're more than threshold away from bottom
+      // Reset flag if they scroll back to bottom
+      userScrolledUpRef.current = distanceFromBottom > threshold
+    }
+
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  // Auto-scroll when new messages are added
+  React.useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+    
+    const currentMessageCount = messages.length
+    const hasNewMessage = currentMessageCount > lastMessageCountRef.current
+    lastMessageCountRef.current = currentMessageCount
+    
+    // Only auto-scroll if there's a new message or loading state changed
+    if (!hasNewMessage && !isLoading) return
+    
+    // Check if the last message is from the user (user just sent a message)
+    const lastMessage = messages[messages.length - 1]
+    const isUserMessage = lastMessage?.role === "user"
+    
+    // Always scroll to bottom when user sends a message
+    if (isUserMessage) {
+      // Reset the user scrolled up flag since user is sending a new message
+      userScrolledUpRef.current = false
+      
+      // Use a small delay to ensure DOM has updated
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (scrollContainerRef.current) {
+          isScrollingRef.current = true
+          bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+          
+          // Reset scrolling flag after animation
+          setTimeout(() => {
+            isScrollingRef.current = false
+          }, 500)
+        }
+      }, 50)
+      return
+    }
+    
+    // For assistant messages, only auto-scroll if user is near the bottom
+    const threshold = 150 // pixels from bottom
+    const scrollTop = container.scrollTop
+    const scrollHeight = container.scrollHeight
+    const clientHeight = container.clientHeight
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+    const isNearBottom = distanceFromBottom < threshold
+    
+    // Only auto-scroll if user is near the bottom and hasn't manually scrolled up
+    if (isNearBottom && !userScrolledUpRef.current) {
+      // Use a small delay to ensure DOM has updated
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (scrollContainerRef.current && !userScrolledUpRef.current) {
+          isScrollingRef.current = true
+          bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+          
+          // Reset scrolling flag after animation
+          setTimeout(() => {
+            isScrollingRef.current = false
+          }, 500)
+        }
+      }, 50)
+    }
+    
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+        scrollTimeoutRef.current = null
+      }
+    }
   }, [messages, isLoading])
 
   if (messages.length === 0) {
@@ -105,7 +208,14 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
   }
 
   return (
-    <div className="flex flex-1 flex-col overflow-y-auto px-4 py-6">
+    <div 
+      ref={scrollContainerRef} 
+      className="flex flex-1 flex-col overflow-y-auto px-4 py-6 min-h-0 h-full"
+      style={{ 
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch'
+      }}
+    >
       <div className="mx-auto w-full max-w-3xl space-y-8">
         <AnimatePresence mode="popLayout">
           {messages.map((message, index) => (
