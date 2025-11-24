@@ -2,6 +2,7 @@ import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { BaseMessage, AIMessage, HumanMessage } from '@langchain/core/messages';
 import { CallbackManagerForLLMRun } from '@langchain/core/callbacks/manager';
 import { ChatResult, ChatGeneration, ChatGenerationChunk } from '@langchain/core/outputs';
+import type { StructuredToolInterface } from '@langchain/core/tools';
 
 /**
  * MockChatModel - A deterministic chat model for testing and development
@@ -21,6 +22,20 @@ export class MockChatModel extends BaseChatModel {
 
   _llmType(): string {
     return 'mock';
+  }
+
+  /**
+   * Bind tools to the model
+   * Required by LangChain's createAgent function
+   * 
+   * @param tools - Array of structured tools to bind
+   * @returns The model instance with tools bound
+   */
+  bindTools(tools: StructuredToolInterface[]): this {
+    // For the mock model, we don't need to actually use the tools
+    // but we must implement this method to satisfy the interface
+    // Store tools for potential future use in mock responses
+    return this;
   }
 
   /**
