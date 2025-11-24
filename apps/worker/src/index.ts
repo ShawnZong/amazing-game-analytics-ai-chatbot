@@ -66,7 +66,10 @@ const worker: ExportedHandler<Env> = {
         const contentType = request.headers.get('content-type');
         if (!contentType?.includes('application/json')) {
           return new Response(
-            JSON.stringify({ code: 'VALIDATION_ERROR', message: 'Content-Type must be application/json' }),
+            JSON.stringify({
+              code: 'VALIDATION_ERROR',
+              message: 'Content-Type must be application/json',
+            }),
             { status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } },
           );
         }
@@ -77,7 +80,10 @@ const worker: ExportedHandler<Env> = {
 
         if (!validation.success) {
           return new Response(
-            JSON.stringify({ code: 'VALIDATION_ERROR', message: `Invalid request: ${validation.error.message}` }),
+            JSON.stringify({
+              code: 'VALIDATION_ERROR',
+              message: `Invalid request: ${validation.error.message}`,
+            }),
             { status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } },
           );
         }
@@ -95,7 +101,7 @@ const worker: ExportedHandler<Env> = {
         const mcpClient = new MultiServerMCPClient({
           mcpServers: {
             rawg: {
-              url: env.MCP_SERVER_URL || 'http://localhost:3000',
+              url: `${env.MCP_SERVER_URL ?? 'http://localhost:3000'}/mcp`,
             },
           },
           useStandardContentBlocks: true,
