@@ -62,7 +62,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask Brawler..."
+            placeholder="Ask Anything Amazing..."
             className="max-h-[200px] min-h-[56px] w-full resize-none rounded-xl border-3 border-black bg-white px-6 py-4 text-xl font-bold font-nunito text-black placeholder:text-gray-400 focus:border-secondary focus:ring-4 focus:ring-secondary/30 focus:outline-none transition-all shadow-inner"
             rows={1}
             disabled={isLoading}
@@ -84,7 +84,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
       </form>
       <div className="mt-3 flex items-center justify-center gap-2 text-xs font-black uppercase italic tracking-widest text-white/80 drop-shadow-md">
         <Zap className="size-4 text-yellow-400 fill-yellow-400 stroke-black stroke-2" />
-        <span className="transform -skew-x-12">AI migh</span>
+        <span className="transform -skew-x-12">You are amazing!</span>
       </div>
     </motion.div>
   )
