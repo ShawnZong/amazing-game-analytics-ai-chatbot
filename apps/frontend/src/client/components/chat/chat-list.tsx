@@ -16,29 +16,29 @@ interface ChatListProps {
 const SUGGESTIONS = [
   {
     icon: Trophy,
-    label: "Meta Brawlers",
-    query: "Which Brawlers are S-tier in the current meta?",
+    label: "Top Rated Games",
+    query: "What are the highest rated action games released this year?",
     bgColor: "bg-yellow-400",
     hoverColor: "group-hover:bg-yellow-300",
   },
   {
     icon: Star,
-    label: "Map Guide",
-    query: "Best brawlers for Snake Prairie?",
+    label: "Genre Analysis",
+    query: "Compare the average Metacritic scores for RPG, Action, and Strategy genres for games released last year",
     bgColor: "bg-cyan-400",
     hoverColor: "group-hover:bg-cyan-300",
   },
   {
     icon: Zap,
-    label: "Counter Picks",
-    query: "How do I counter Edgar in Showdown?",
+    label: "Trend Analysis",
+    query: "What's the trend in game ratings over the past year?",
     bgColor: "bg-purple-400",
     hoverColor: "group-hover:bg-purple-300",
   },
   {
     icon: Skull,
-    label: "Gem Grab Tips",
-    query: "Give me advanced tips for Gem Grab mode.",
+    label: "Game Discovery",
+    query: "Find popular indie games with high ratings released on PC this year",
     bgColor: "bg-emerald-400",
     hoverColor: "group-hover:bg-emerald-300",
   },
@@ -170,13 +170,13 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="space-y-2"
+            className="flex flex-col items-center space-y-2 w-full"
           >
-            <h2 className="text-5xl font-lilita text-white brawl-text-outline transform -skew-x-3 drop-shadow-xl tracking-wide">
-              LET&apos;S BRAWL!
+            <h2 className="text-5xl font-lilita text-white brawl-text-outline transform -skew-x-3 drop-shadow-xl tracking-wide text-center w-full">
+              LET&apos;S ANALYZE GAMES!
             </h2>
-            <p className="max-w-md text-xl font-black text-cyan-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3">
-              Select a mode to start
+            <p className="text-xl font-black text-cyan-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3 text-center w-full">
+              Example questions
             </p>
           </motion.div>
         </div>
