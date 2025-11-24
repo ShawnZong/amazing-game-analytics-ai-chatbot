@@ -3,37 +3,41 @@
 import * as React from "react"
 import { Skull, Star } from "lucide-react"
 import { useChat } from "@ai-sdk/react"
-import { DefaultChatTransport } from "ai"
 
 import { ChatInput } from "@/components/chat/chat-input"
 import { ChatList } from "@/components/chat/chat-list"
 import { Message } from "@/types/chat"
 
 export default function Home() {
-  const { messages: aiSdkMessages, sendMessage, isLoading } = useChat({
-    transport: new DefaultChatTransport({ api: "/api/chat" }),
+  const { messages: aiSdkMessages, append, isLoading } = useChat({
+    api: "/api/chat",
   })
 
   // Convert AI SDK messages to our Message format for compatibility with existing components
   const messages: Message[] = React.useMemo(() => {
     return aiSdkMessages.map((msg) => {
-      // Extract text content from AI SDK message parts
-      const textContent = msg.parts
-        .filter((part) => part.type === "text")
-        .map((part) => part.text)
-        .join("")
+      // AI SDK messages have content as string or array of parts
+      let textContent = ""
+      if (typeof msg.content === "string") {
+        textContent = msg.content
+      } else if (Array.isArray(msg.content)) {
+        textContent = msg.content
+          .filter((part: any) => part.type === "text")
+          .map((part: any) => part.text)
+          .join("")
+      }
 
       return {
         id: msg.id,
         role: msg.role === "user" ? "user" : "assistant",
         content: textContent,
-        createdAt: new Date(msg.createdAt || Date.now()),
+        createdAt: new Date(),
       }
     })
   }, [aiSdkMessages])
 
   const handleSend = (content: string) => {
-    sendMessage({ text: content })
+    append({ role: "user", content })
   }
 
   return (
