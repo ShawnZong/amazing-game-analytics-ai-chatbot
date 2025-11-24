@@ -1,11 +1,16 @@
 "use client"
 
-import * as React from "react"
 import { Shield, Star } from "lucide-react"
 import ReactMarkdown from "react-markdown"
+import type { SyntaxHighlighterProps } from "react-syntax-highlighter"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
+import rehypeKatex from "rehype-katex"
+import remarkGfm from "remark-gfm"
+import remarkMath from "remark-math"
 
-import { cn } from "@/client/utils/utils"
 import { Message } from "@/client/types/chat"
+import { cn } from "@/client/utils/utils"
 
 interface ChatMessageProps {
   message: Message
@@ -65,6 +70,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
           ) : (
             <div className="font-nunito">
               <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
                 components={{
                   p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
                   ul: ({ children }) => <ul className="mb-2 ml-4 list-disc last:mb-0">{children}</ul>,
@@ -73,19 +80,57 @@ export function ChatMessage({ message }: ChatMessageProps) {
                   h1: ({ children }) => <h1 className="mb-2 text-2xl font-bold last:mb-0">{children}</h1>,
                   h2: ({ children }) => <h2 className="mb-2 text-xl font-bold last:mb-0">{children}</h2>,
                   h3: ({ children }) => <h3 className="mb-2 text-lg font-bold last:mb-0">{children}</h3>,
-                  code: ({ children, className }) => {
-                    const isInline = !className;
-                    return isInline ? (
-                      <code className="rounded bg-gray-200 px-1.5 py-0.5 text-sm font-mono text-black">{children}</code>
-                    ) : (
-                      <code className="block rounded bg-gray-200 p-2 text-sm font-mono text-black overflow-x-auto">{children}</code>
+                  code: ({ className, children, ...props }) => {
+                    const match = /language-(\w+)/.exec(className || "");
+                    const language = match ? match[1] : "";
+                    const isInline = !className || !match;
+                    const codeString = String(children).replace(/\n$/, "");
+
+                    if (!isInline && language) {
+                      return (
+                        <div className="mb-2 rounded overflow-hidden last:mb-0">
+                          <SyntaxHighlighter
+                            language={language}
+                            style={oneDark as SyntaxHighlighterProps["style"]}
+                            PreTag="div"
+                          >
+                            {codeString}
+                          </SyntaxHighlighter>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <code className="rounded bg-gray-200 px-1.5 py-0.5 text-sm font-mono text-black" {...props}>
+                        {children}
+                      </code>
                     );
                   },
-                  pre: ({ children }) => <pre className="mb-2 rounded bg-gray-200 p-2 overflow-x-auto last:mb-0">{children}</pre>,
+                  pre: ({ children }) => <pre className="mb-2 last:mb-0">{children}</pre>,
                   blockquote: ({ children }) => <blockquote className="mb-2 border-l-4 border-gray-400 pl-4 italic last:mb-0">{children}</blockquote>,
                   a: ({ children, href }) => <a href={href} className="text-blue-600 underline hover:text-blue-800" target="_blank" rel="noopener noreferrer">{children}</a>,
                   strong: ({ children }) => <strong className="font-bold">{children}</strong>,
                   em: ({ children }) => <em className="italic">{children}</em>,
+                  table: ({ children }) => (
+                    <div className="mb-2 overflow-x-auto last:mb-0">
+                      <table className="min-w-full border-collapse border-2 border-black">
+                        {children}
+                      </table>
+                    </div>
+                  ),
+                  thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
+                  tbody: ({ children }) => <tbody>{children}</tbody>,
+                  tr: ({ children }) => <tr className="border-b border-black">{children}</tr>,
+                  th: ({ children }) => (
+                    <th className="border border-black px-4 py-2 text-left font-bold bg-gray-200">
+                      {children}
+                    </th>
+                  ),
+                  td: ({ children }) => (
+                    <td className="border border-black px-4 py-2">
+                      {children}
+                    </td>
+                  ),
                 }}
               >
                 {message.content}
