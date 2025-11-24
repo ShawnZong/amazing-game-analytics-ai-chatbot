@@ -1,48 +1,73 @@
 'use client';
 
-import { useChat } from '@ai-sdk/react';
 import { Skull, Star } from 'lucide-react';
 import * as React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ChatInput } from '@/client/components/chat/chat-input';
 import { ChatList } from '@/client/components/chat/chat-list';
 import { Message } from '@/client/types/chat';
-import { DefaultChatTransport } from 'ai';
 
 export function HomePage() {
-  const {
-    messages: aiSdkMessages,
-    sendMessage,
-    status,
-  } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
-  });
+  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  // Derive isLoading from status
-  const isLoading = status === 'submitted' || status === 'streaming';
+  const handleSend = async (content: string) => {
+    if (!content.trim() || isLoading) return;
 
-  // Convert AI SDK messages to our Message format for compatibility with existing components
-  const messages: Message[] = React.useMemo(() => {
-    console.log('aiSdkMessages', { aiSdkMessages });
-    return aiSdkMessages.map(msg => {
-      // AI SDK messages have parts array, extract text from text parts (following example pattern)
-      const textContent =
-        msg.parts
-          ?.filter(part => part.type === 'text')
-          .map(part => part.text)
-          .join('') || '';
+    // Add user message immediately
+    const userMessage: Message = {
+      id: uuidv4(),
+      role: 'user',
+      content: content.trim(),
+      createdAt: new Date(),
+    };
 
-      return {
-        id: msg.id,
-        role: msg.role === 'user' ? 'user' : 'assistant',
-        content: textContent,
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      // Prepare messages for API (convert to simple format)
+      const apiMessages = [...messages, userMessage].map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      }));
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages: apiMessages }),
+      });
+
+      if (!response.ok) {
+        const errorData = (await response.json().catch(() => ({ error: 'Unknown error' }))) as { error?: string };
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = (await response.json()) as { content: string };
+      const assistantMessage: Message = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: data.content || '',
         createdAt: new Date(),
       };
-    });
-  }, [aiSdkMessages]);
 
-  const handleSend = (content: string) => {
-    sendMessage({ text: content });
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // Optionally add an error message to the UI
+      const errorMessage: Message = {
+        id: uuidv4(),
+        role: 'assistant',
+        content: `Error: ${error instanceof Error ? error.message : 'Failed to send message'}`,
+        createdAt: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

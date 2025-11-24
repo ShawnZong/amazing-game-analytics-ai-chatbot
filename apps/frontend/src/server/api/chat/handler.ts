@@ -153,9 +153,8 @@ export async function handleChatRequest(request: Request): Promise<Response> {
       return Response.json({ error: 'Empty response generated' }, { status: 500 });
     }
 
-    // AI SDK useChat expects JSON response with content field for non-streaming
-    // The format should match: { content: string } or just return the text
-    // Based on AI SDK docs, non-streaming responses can be simple text or JSON
+    // Return JSON response with content field
+    // Format: { content: string }
     const responseBody = { content: reply };
     console.log('Response body', {
       content: reply.substring(0, 100) + (reply.length > 100 ? '...' : ''),
