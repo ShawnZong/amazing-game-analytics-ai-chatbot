@@ -14,16 +14,13 @@ export async function getMcpTools(env: Env): Promise<StructuredToolInterface[]> 
     throw new Error('MCP_SERVER_URL is not set in environment variables');
   }
 
-  // Ensure URL ends with /mcp if not already present
-  const mcpUrl = env.MCP_SERVER_URL.endsWith('/mcp')
-    ? env.MCP_SERVER_URL
-    : `${env.MCP_SERVER_URL}/mcp`;
+  const mcpUrl = env.MCP_SERVER_URL;
 
   try {
     const mcpClient = new MultiServerMCPClient({
       mcpServers: {
         rawg: {
-          url: mcpUrl,
+          url: env.MCP_SERVER_URL,
         },
       },
       useStandardContentBlocks: true,
