@@ -2,13 +2,15 @@
  * Chat API handler logic
  */
 
-import { z } from 'zod';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import type { Env } from '@/server/types/env';
 import { getMcpTools } from '@/server/lib/chat/mcp-client';
-import { createModel } from '@/server/lib/chat/model';
 import { convertToLangChainMessages, extractReply } from '@/server/lib/chat/messages';
+import { createModel } from '@/server/lib/chat/model';
 import { createWorkflow } from '@/server/lib/chat/workflow';
+import type { Env } from '@/server/types/env';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+import { z } from 'zod';
 
 // AI SDK message format schema
 const AISDKMessageSchema = z.object({
@@ -25,13 +27,13 @@ const AISDKRequestSchema = z.object({
  */
 function getEnv(): Env {
   const context = getCloudflareContext();
-
+  const cloudflareEnv = context.env as unknown as Record<string, string | undefined>;
   // If Cloudflare context is available, use it with proper type handling
-  if (context?.env) {
-    const cloudflareEnv = context.env as unknown as Record<string, string | undefined>;
+  if (cloudflareEnv && cloudflareEnv.OPENAI_API_KEY) {
+    console.log('Loading environment variables from Cloudflare context');
     return {
       OPENAI_API_KEY: cloudflareEnv.OPENAI_API_KEY,
-      MCP_SERVER_URL: cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:8787',
+      MCP_SERVER_URL: `${cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:8787'}/mcp`,
       DEFAULT_MODEL: cloudflareEnv.DEFAULT_MODEL,
       MAX_TOKENS: cloudflareEnv.MAX_TOKENS,
       TEMPERATURE: cloudflareEnv.TEMPERATURE,
@@ -39,9 +41,11 @@ function getEnv(): Env {
   }
 
   // Fall back to process.env for local development
+  console.log('Loading environment variables from .env.local');
+  config({ path: resolve(process.cwd(), '.env.local') });
   return {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    MCP_SERVER_URL: process.env.MCP_SERVER_URL ?? 'http://localhost:8787',
+    MCP_SERVER_URL: `${process.env.MCP_SERVER_URL ?? 'http://localhost:8787'}/mcp`,
     DEFAULT_MODEL: process.env.DEFAULT_MODEL,
     MAX_TOKENS: process.env.MAX_TOKENS,
     TEMPERATURE: process.env.TEMPERATURE,
