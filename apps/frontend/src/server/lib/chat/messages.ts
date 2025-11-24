@@ -41,51 +41,27 @@ export function convertToLangChainMessages(
 
 /**
  * Extracts reply text from final message
- * Handles AIMessage content which can be string, array, or object
+ * Handles AIMessage content which is typically a string
  */
 export function extractReply(message: { content?: unknown }): string {
   if (!message || message.content === undefined || message.content === null) {
-    console.warn('Message has no content', { message });
     return '';
   }
 
   const content = message.content;
 
-  // If content is a string, return it directly
+  // If content is a string, return it directly (most common case)
   if (typeof content === 'string') {
     return content;
   }
 
-  // If content is an array, try to extract text from it
-  if (Array.isArray(content)) {
-    // Look for text content in the array
-    const textParts = content
-      .filter(item => item?.type === 'text' || typeof item === 'string')
-      .map(item => (typeof item === 'string' ? item : item?.text || ''))
-      .filter(text => text.length > 0);
-
-    if (textParts.length > 0) {
-      return textParts.join('\n');
-    }
-
-    // If no text found, stringify the array
-    console.warn('Content is array but no text found', { content });
-    return JSON.stringify(content);
-  }
-
-  // If content is an object, try to extract text property
-  if (typeof content === 'object') {
+  // Fallback for edge cases: try to extract text from object or stringify
+  if (typeof content === 'object' && content !== null) {
     if ('text' in content && typeof content.text === 'string') {
       return content.text;
     }
-    if ('content' in content) {
-      return extractReply({ content: content.content });
-    }
-    console.warn('Content is object but no text property found', { content });
     return JSON.stringify(content);
   }
 
-  // Fallback: stringify whatever we have
-  console.warn('Unexpected content type', { content, type: typeof content });
   return String(content);
 }
