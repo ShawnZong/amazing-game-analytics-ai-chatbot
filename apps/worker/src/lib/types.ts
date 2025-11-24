@@ -48,8 +48,7 @@ export type ErrorResponse = z.infer<typeof ErrorResponseSchema>;
  */
 export interface Env {
   OPENAI_API_KEY?: string;
-  MCP_SERVER_URL: string;
-  MCP_SERVER?: Fetcher; // Service binding to MCP server (preferred over HTTP URL)
+  MCP_SERVER_URL: string; // HTTP URL to MCP server (used by @langchain/mcp-adapters)
   DEFAULT_MODEL?: string;
   MAX_TOKENS?: string;
   TEMPERATURE?: string;
