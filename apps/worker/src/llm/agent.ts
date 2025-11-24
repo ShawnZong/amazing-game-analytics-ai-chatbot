@@ -1,52 +1,24 @@
 /**
- * LangChain Agent Setup (v1.0 pattern)
- * 
- * This module creates and manages the LangChain agent using the v1.0 API:
- * - Uses createAgent from langchain package
- * - Manages conversation history per session
+ * LangGraph Agent Setup
+ *
+ * This module creates and manages the LangChain agent using LangGraph:
+ * - Uses StateGraph with MessagesAnnotation
+ * - Stateless agent (no session management)
  * - Integrates with MCP tools via @langchain/mcp-adapters
  */
 
-import { createAgent } from 'langchain';
-import { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { AIMessage, HumanMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
 import type { StructuredToolInterface } from '@langchain/core/tools';
+import { END, MessagesAnnotation, START, StateGraph } from '@langchain/langgraph';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { ChatOpenAI } from '@langchain/openai';
 import { DEFAULT_SYSTEM_PROMPT } from '../lib/constants';
 import { Message } from '../lib/types';
-import { HumanMessage, AIMessage, SystemMessage, ToolMessage } from '@langchain/core/messages';
-
-/**
- * In-memory session storage for conversation history
- * In production, consider using Cloudflare KV or Durable Objects
- * 
- * Note: This will be lost on worker restart. For production, use persistent storage.
- */
-const sessionHistories = new Map<string, Message[]>();
-
-/**
- * Get or create conversation history for a session
- * 
- * @param sessionId - Unique session identifier
- * @returns Array of messages for the session
- */
-function getSessionHistory(sessionId: string): Message[] {
-  if (!sessionHistories.has(sessionId)) {
-    sessionHistories.set(sessionId, []);
-  }
-  return sessionHistories.get(sessionId)!;
-}
-
-/**
- * Clear conversation history for a session
- */
-export function clearSessionMemory(sessionId: string): void {
-  sessionHistories.delete(sessionId);
-}
-
 /**
  * Convert our Message format to LangChain messages
  */
 function convertToLangChainMessages(messages: Message[]) {
-  return messages.map((msg) => {
+  return messages.map(msg => {
     switch (msg.role) {
       case 'system':
         return new SystemMessage(msg.content);
@@ -61,66 +33,77 @@ function convertToLangChainMessages(messages: Message[]) {
 }
 
 /**
- * Execute the agent with a conversation
- * 
- * @param model - Chat model (MockChatModel or ChatOpenAI)
+ * Execute the agent with a conversation using LangGraph
+ *
+ * @param model - Chat model (ChatOpenAI)
  * @param tools - Available tools from MCP server
- * @param sessionId - Session identifier
  * @param messages - Conversation history
  * @returns Agent response with tool usage information
  */
 export async function executeAgent(
-  model: BaseChatModel,
+  model: ChatOpenAI,
   tools: StructuredToolInterface[],
-  sessionId: string,
-  messages: Message[]
+  messages: Message[],
 ): Promise<{
   reply: string;
   toolsUsed: Array<{ name: string; result: unknown }>;
 }> {
-  // Get the last user message
-  const lastUserMessage = messages.filter((m) => m.role === 'user').pop();
-
-  if (!lastUserMessage) {
-    throw new Error('No user message found in conversation');
-  }
-
-  // Get session history and update it
-  const sessionHistory = getSessionHistory(sessionId);
-  
   // Convert messages to LangChain format, prepending system message
   const langChainMessages = [
     new SystemMessage(DEFAULT_SYSTEM_PROMPT),
     ...convertToLangChainMessages(messages),
   ];
 
-  // Create agent using LangChain v1 pattern
-  // The agent automatically handles tool calling and conversation flow
-  const agent = await createAgent({
-    model,
-    tools,
-  });
+  // Bind tools to the model
+  const modelWithTools = model.bindTools(tools);
 
-  // Execute the agent
-  const result = await agent.invoke({
+  // Create tool node for executing tools
+  const toolNode = new ToolNode(tools);
+
+  // Define the LLM node function
+  const llmNode = async (state: typeof MessagesAnnotation.State) => {
+    const { messages } = state;
+    const response = await modelWithTools.invoke(messages);
+    return { messages: [response] };
+  };
+
+  // Create the LangGraph workflow
+  const workflow = new StateGraph(MessagesAnnotation)
+    // Add nodes
+    .addNode('llm', llmNode)
+    .addNode('tools', toolNode)
+    // Add edges
+    .addEdge(START, 'llm')
+    .addEdge('tools', 'llm')
+    // Conditional routing based on tool calls
+    .addConditionalEdges('llm', state => {
+      const lastMessage = state.messages[state.messages.length - 1];
+      const aiMessage = lastMessage as AIMessage;
+
+      if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
+        return 'tools';
+      }
+
+      return END;
+    });
+
+  // Compile the graph
+  const app = workflow.compile();
+
+  // Execute the workflow
+  const result = await app.invoke({
     messages: langChainMessages,
   });
 
-  // Extract the response text
-  const reply = result.messages[result.messages.length - 1]?.content || '';
-
-  // Update session history
-  sessionHistory.push(...messages);
-  if (sessionHistory.length > 50) {
-    // Keep only last 50 messages to prevent memory bloat
-    sessionHistory.splice(0, sessionHistory.length - 50);
-  }
+  // Extract the final response
+  const finalMessage = result.messages[result.messages.length - 1];
+  const reply = finalMessage?.content || '';
+  const replyText = typeof reply === 'string' ? reply : JSON.stringify(reply);
 
   // Extract tool usage from messages
   const toolsUsed: Array<{ name: string; result: unknown }> = [];
   for (const msg of result.messages) {
     if (msg instanceof ToolMessage) {
-      // Tool messages contain tool results
       toolsUsed.push({
         name: msg.name || 'unknown',
         result: msg.content,
@@ -129,7 +112,7 @@ export async function executeAgent(
   }
 
   return {
-    reply: typeof reply === 'string' ? reply : JSON.stringify(reply),
+    reply: replyText,
     toolsUsed,
   };
 }
