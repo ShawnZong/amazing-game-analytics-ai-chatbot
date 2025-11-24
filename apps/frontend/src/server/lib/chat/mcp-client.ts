@@ -10,21 +10,38 @@ import type { Env } from '@/server/types/env';
  * Creates MCP client and fetches tools
  */
 export async function getMcpTools(env: Env): Promise<StructuredToolInterface[]> {
-  const mcpClient = new MultiServerMCPClient({
-    mcpServers: {
-      rawg: {
-        url: env.MCP_SERVER_URL,
-      },
-    },
-    useStandardContentBlocks: true,
-  });
-
-  const tools = await mcpClient.getTools();
-  console.log(`Loaded ${tools.length} MCP tools`);
-
-  if (tools.length === 0) {
-    throw new Error('No tools found');
+  if (!env.MCP_SERVER_URL) {
+    throw new Error('MCP_SERVER_URL is not set in environment variables');
   }
 
-  return tools;
+  // Ensure URL ends with /mcp if not already present
+  const mcpUrl = env.MCP_SERVER_URL.endsWith('/mcp')
+    ? env.MCP_SERVER_URL
+    : `${env.MCP_SERVER_URL}/mcp`;
+
+  try {
+    const mcpClient = new MultiServerMCPClient({
+      mcpServers: {
+        rawg: {
+          url: mcpUrl,
+        },
+      },
+      useStandardContentBlocks: true,
+    });
+
+    const tools = await mcpClient.getTools();
+    console.log(`Loaded ${tools.length} MCP tools from ${mcpUrl}`);
+
+    if (tools.length === 0) {
+      throw new Error('No tools found');
+    }
+
+    return tools;
+  } catch (error) {
+    console.error('Failed to initialize MCP client', {
+      url: mcpUrl,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
 }

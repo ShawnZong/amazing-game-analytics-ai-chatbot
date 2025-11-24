@@ -66,7 +66,12 @@ export function getEnv(): Env {
 
   // If Cloudflare context is available, use it
   if (context?.env) {
-    return context.env as CloudflareEnv & Env;
+    const cloudflareEnv = context.env as CloudflareEnv & Env;
+    // Ensure MCP_SERVER_URL is set, defaulting if needed
+    return {
+      ...cloudflareEnv,
+      MCP_SERVER_URL: cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:8787',
+    };
   }
 
   // Load .env.local for local development
