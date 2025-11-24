@@ -9,27 +9,11 @@ import { createWorkflow } from '@/server/lib/chat/workflow';
 import { getEnv } from '@/server/lib/env';
 import { z } from 'zod';
 
-// AI SDK message part type
-type MessagePart = {
-  type: string;
-  text?: string;
-  [key: string]: unknown;
-};
-
-// AI SDK message format schema - supports both content string and parts array
-// AI SDK v5 sends messages with parts array, but we also support content string for compatibility
-const AISDKMessageSchema = z
-  .object({
-    role: z.enum(['user', 'assistant', 'system']),
-    content: z.string().optional(),
-    parts: z.array(z.record(z.unknown())).optional(),
-  })
-  .refine(
-    data =>
-      data.content !== undefined ||
-      (data.parts !== undefined && Array.isArray(data.parts) && data.parts.length > 0),
-    { message: "Message must have either 'content' or 'parts' array" },
-  );
+// Message schema - only accepts content string format
+const AISDKMessageSchema = z.object({
+  role: z.enum(['user', 'assistant', 'system']),
+  content: z.string(),
+});
 
 const AISDKRequestSchema = z.object({
   messages: z.array(AISDKMessageSchema),
@@ -59,41 +43,13 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     }
 
     const { messages } = validation.data;
-    console.log('Processing chat request', { messageCount: messages.length });
-
-    // Convert AI SDK messages (with parts) to simple format with content string
-    const convertedMessages = messages.map(msg => {
-      // If message has content string, use it directly
-      if (msg.content && typeof msg.content === 'string') {
-        return { role: msg.role, content: msg.content };
-      }
-      // If message has parts array, extract text from text parts
-      if (msg.parts && Array.isArray(msg.parts)) {
-        const textContent =
-          msg.parts
-            .filter(
-              (part): part is MessagePart =>
-                typeof part === 'object' &&
-                part !== null &&
-                'type' in part &&
-                part.type === 'text' &&
-                typeof part.text === 'string',
-            )
-            .map(part => part.text as string)
-            .join('') || '';
-        return { role: msg.role, content: textContent };
-      }
-      // Fallback - should not happen due to schema validation
-      console.warn('Message has neither content nor parts:', msg);
-      return { role: msg.role, content: '' };
-    });
 
     // Get tools and create model
     const tools = await getMcpTools(env);
     const model = createModel(env);
 
     // Convert messages and create workflow
-    const langChainMessages = convertToLangChainMessages(convertedMessages);
+    const langChainMessages = convertToLangChainMessages(messages);
     const app = createWorkflow(model, tools);
 
     // Execute workflow
