@@ -6,21 +6,15 @@
  * Returns responses compatible with AI SDK format.
  */
 
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { ChatOpenAI } from '@langchain/openai';
-import { MultiServerMCPClient } from '@langchain/mcp-adapters';
-import { StateGraph, END, START, MessagesAnnotation } from '@langchain/langgraph';
-import { ToolNode } from '@langchain/langgraph/prebuilt';
-import {
-  HumanMessage,
-  AIMessage,
-  SystemMessage,
-  ToolMessage,
-  BaseMessage,
-} from '@langchain/core/messages';
-import type { StructuredToolInterface } from '@langchain/core/tools';
-import { z } from 'zod';
 import type { Env } from '@/lib/types';
+import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
+import type { StructuredToolInterface } from '@langchain/core/tools';
+import { END, MessagesAnnotation, START, StateGraph } from '@langchain/langgraph';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { MultiServerMCPClient } from '@langchain/mcp-adapters';
+import { ChatOpenAI } from '@langchain/openai';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { z } from 'zod';
 
 // System prompt
 const SYSTEM_PROMPT = `You are a helpful assistant specializing in video game analytics using the RAWG API.
@@ -153,10 +147,7 @@ export async function POST(request: Request): Promise<Response> {
     // Get environment from Cloudflare context
     const context = getCloudflareContext();
     if (!context?.env) {
-      return Response.json(
-        { error: 'Cloudflare environment not available' },
-        { status: 500 },
-      );
+      return Response.json({ error: 'Cloudflare environment not available' }, { status: 500 });
     }
 
     const env = context.env as CloudflareEnv & Env;
@@ -192,9 +183,9 @@ export async function POST(request: Request): Promise<Response> {
 
     // Return AI SDK compatible response format
     // AI SDK's DefaultChatTransport expects responses with text content
-    return Response.json({ 
+    return Response.json({
       text: reply,
-      role: 'assistant'
+      role: 'assistant',
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
