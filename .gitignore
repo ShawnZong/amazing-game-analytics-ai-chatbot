@@ -21,36 +21,54 @@
 .env.production
 .env.development
 .env.test
+# Allow .env.example files to be tracked (they're templates)
+!.env.example
+!**/.env.example
+!**/.env*.example
 .dev.vars
 **/.dev.vars
 *.pem
 *.key
 *.cert
+*.p12
+*.pfx
+# Credentials and secrets
+**/credentials.json
+**/secrets.json
+**/config/secrets.*
+**/config/credentials.*
+*secret*
+*password*
+!*secret*.example
+!*password*.example
+# API keys and tokens (if accidentally committed)
+**/api-keys.*
+**/tokens.*
 
 # ============================================
 # Next.js
 # ============================================
-# Build outputs
+# Build outputs (all locations)
+**/.next/
+**/out/
+**/dist/
+**/build/
 .next/
 out/
 dist/
 build/
-apps/*/.next/
-apps/*/out/
-apps/*/dist/
-apps/*/build/
 
 # Next.js cache
+**/.vercel/
 .vercel/
-apps/*/.vercel/
 
 # Next.js standalone
+**/.standalone/
 .standalone/
-apps/*/.standalone/
 
 # Next.js TypeScript
+**/next-env.d.ts
 next-env.d.ts
-apps/*/next-env.d.ts
 
 # ============================================
 # Cloudflare Workers & Wrangler
@@ -85,6 +103,10 @@ apps/*/.open-next/
 # TypeScript
 # ============================================
 **/*.tsbuildinfo
+*.tsbuildinfo
+# TypeScript incremental compilation
+**/.tsbuildinfo/
+.tsbuildinfo/
 
 # ============================================
 # Testing
@@ -136,11 +158,26 @@ Desktop.ini
 # ============================================
 *.tmp
 *.temp
+**/.cache/
+**/.turbo/
+**/.temp/
+**/tmp/
+**/temp/
 .cache/
 .turbo/
 .temp/
 tmp/
 temp/
+# Editor temporary files
+*~
+*.swp
+*.swo
+.#*
+# OS temporary files
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 
 # ============================================
 # Package Manager
@@ -152,6 +189,47 @@ temp/
 # pnpm-lock.yaml
 
 # ============================================
-# Misc
+# Build Tools & Compilers
 # ============================================
+# SWC
+**/.swc/
 .swc/
+
+# Turbo
+**/.turbo/
+.turbo/
+
+# Webpack
+**/.webpack/
+.webpack/
+
+# Rollup
+**/.rollup/
+.rollup/
+
+# Parcel
+**/.parcel-cache/
+.parcel-cache/
+
+# ============================================
+# Misc Build Artifacts
+# ============================================
+# Compiled binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.bin
+
+# Archive files (unless needed)
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+!*.example.zip
+
+# Backup files
+*.bak
+*.backup
+*~
