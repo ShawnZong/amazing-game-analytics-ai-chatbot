@@ -172,10 +172,10 @@ export function ChatList({ messages, isLoading, onSuggestionClick }: ChatListPro
             transition={{ delay: 0.2, duration: 0.5 }}
             className="flex flex-col items-center space-y-2 w-full"
           >
-            <h2 className="text-5xl font-lilita text-white brawl-text-outline transform -skew-x-3 drop-shadow-xl tracking-wide text-center w-full">
-              LET&apos;S ANALYZE GAMES!
+            <h2 className="text-4xl font-lilita text-white brawl-text-outline transform -skew-x-3 drop-shadow-xl tracking-wide text-center w-full">
+              I CAN ANSWER ANYTHING AMAZING!
             </h2>
-            <p className="text-xl font-black text-cyan-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3 text-center w-full">
+            <p className="text-l font-black text-cyan-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3 text-center w-full">
               Example questions
             </p>
           </motion.div>
