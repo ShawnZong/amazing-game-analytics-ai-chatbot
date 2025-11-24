@@ -85,7 +85,7 @@ export function HomePage() {
           </div>
           <div className="flex flex-col">
             <h1 className="text-4xl font-lilita tracking-wider text-white brawl-text-outline uppercase transform -skew-x-3 drop-shadow-lg">
-              Brawl Stats
+              Amazing Game Analytics AI
             </h1>
             <p className="text-sm font-black text-yellow-300 uppercase tracking-widest brawl-text-outline transform -skew-x-3 -mt-1">
               AI Powered
