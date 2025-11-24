@@ -65,12 +65,15 @@ export async function handleChatRequest(request: Request): Promise<Response> {
       return Response.json({ error: 'Empty response generated' }, { status: 500 });
     }
 
-    return Response.json({ content: reply }, {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
+    return Response.json(
+      { content: reply },
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+        },
       },
-    });
+    );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error handling chat request', { error: errorMessage });
