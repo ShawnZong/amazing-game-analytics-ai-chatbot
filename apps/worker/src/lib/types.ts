@@ -17,7 +17,7 @@ export type Message = z.infer<typeof MessageSchema>;
 
 // Chat request
 export const ChatRequestSchema = z.object({
-  sessionId: z.string().min(1),
+  sessionId: z.string().min(1).optional(), // Optional: kept for backward compatibility, not used by stateless agent
   messages: z.array(MessageSchema).min(1),
 });
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;

@@ -14,8 +14,6 @@ import { logger } from '../lib/logger';
  * Handle POST /chat endpoint
  */
 export async function handleChat(request: Request, env: Env): Promise<Response> {
-  let sessionId: string | undefined;
-
   try {
     // Validate Content-Type
     const contentType = request.headers.get('content-type');
@@ -49,13 +47,12 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
       );
     }
 
-    const { sessionId: validatedSessionId, messages } = validation.data;
-    sessionId = validatedSessionId;
+    const { messages } = validation.data;
 
-    logger.info('Processing chat request', { sessionId, messageCount: messages.length });
+    logger.info('Processing chat request', { messageCount: messages.length });
     logger.debug('Model info', { model: getModelInfo(env) });
 
-    // Create chat model (mock or GPT-4 based on env)
+    // Create chat model
     const model = createChatModel(env);
 
     // Create tools that connect to MCP server via HTTP
@@ -69,7 +66,7 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
 
     // Execute the agent
     // Tools will make standard HTTP requests to the MCP server
-    const result = await executeAgent(model, tools, sessionId, messages);
+    const result = await executeAgent(model, tools, messages);
 
     // Build response
     const response: ChatResponse = {
@@ -83,12 +80,11 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
         result: tool.result,
       }));
       logger.info('Tools used in response', {
-        sessionId,
         toolCount: result.toolsUsed.length,
       });
     }
 
-    logger.info('Chat response generated successfully', { sessionId });
+    logger.info('Chat response generated successfully');
     return jsonResponse(response);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -104,7 +100,6 @@ export async function handleChat(request: Request, env: Env): Promise<Response> 
     if (isQuotaError) {
       logger.error('OpenAI quota/rate limit exceeded', {
         error: errorMessage,
-        sessionId,
         stack: error instanceof Error ? error.stack : undefined,
       });
 
