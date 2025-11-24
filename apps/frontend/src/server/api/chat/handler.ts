@@ -31,7 +31,7 @@ function getEnv(): Env {
     const cloudflareEnv = context.env as unknown as Record<string, string | undefined>;
     return {
       OPENAI_API_KEY: cloudflareEnv.OPENAI_API_KEY,
-      MCP_SERVER_URL: cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:3000',
+      MCP_SERVER_URL: cloudflareEnv.MCP_SERVER_URL ?? 'http://localhost:8787',
       DEFAULT_MODEL: cloudflareEnv.DEFAULT_MODEL,
       MAX_TOKENS: cloudflareEnv.MAX_TOKENS,
       TEMPERATURE: cloudflareEnv.TEMPERATURE,
@@ -41,7 +41,7 @@ function getEnv(): Env {
   // Fall back to process.env for local development
   return {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    MCP_SERVER_URL: process.env.MCP_SERVER_URL ?? 'http://localhost:3000',
+    MCP_SERVER_URL: process.env.MCP_SERVER_URL ?? 'http://localhost:8787',
     DEFAULT_MODEL: process.env.DEFAULT_MODEL,
     MAX_TOKENS: process.env.MAX_TOKENS,
     TEMPERATURE: process.env.TEMPERATURE,

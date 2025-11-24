@@ -13,7 +13,7 @@ export async function getMcpTools(env: Env): Promise<StructuredToolInterface[]> 
   const mcpClient = new MultiServerMCPClient({
     mcpServers: {
       rawg: {
-        url: `${env.MCP_SERVER_URL ?? 'http://localhost:3000'}/mcp`,
+        url: `${env.MCP_SERVER_URL ?? 'http://localhost:8787'}/mcp`,
       },
     },
     useStandardContentBlocks: true,
@@ -28,4 +28,3 @@ export async function getMcpTools(env: Env): Promise<StructuredToolInterface[]> 
 
   return tools;
 }
-

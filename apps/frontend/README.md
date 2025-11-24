@@ -5,6 +5,7 @@ Next.js frontend application for RAWG Analytics with AI-powered chat interface.
 ## Architecture
 
 The frontend uses:
+
 - **Next.js 15** with App Router
 - **AI SDK** (`@ai-sdk/react`) for chat state management
 - **LangChain** integrated directly in API routes for LLM processing
@@ -33,7 +34,7 @@ Then, run the development server:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:8787](http://localhost:8787) with your browser to see the result.
 
 ## Environment Variables
 
