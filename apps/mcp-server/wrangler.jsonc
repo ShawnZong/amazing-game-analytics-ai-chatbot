@@ -52,7 +52,7 @@
    */
   "env": {
     "dev": {
-      "port": 8787,
+      "port": 8787
       /**
        * Development environment variables
        * For local development, set RAWG_API_KEY in .env.local or use wrangler secret
