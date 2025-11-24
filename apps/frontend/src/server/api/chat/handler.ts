@@ -90,10 +90,12 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     const reply = extractReply(finalMessage);
 
     // Return AI SDK compatible response format
-    return Response.json({
+    const response = Response.json({
       text: reply,
       role: 'assistant',
     });
+    console.log('Response', { response });
+    return response;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error handling chat request', { error: errorMessage });
