@@ -85,6 +85,7 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     // Execute workflow
     const result = await app.invoke({ messages: langChainMessages });
 
+    console.log('LangGraph result', { result });
     // Extract response
     const finalMessage = result.messages[result.messages.length - 1];
     const reply = extractReply(finalMessage);
