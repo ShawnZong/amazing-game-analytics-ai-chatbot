@@ -5,7 +5,6 @@ import { motion } from "framer-motion"
 import { SendHorizontal, Loader2, Zap } from "lucide-react"
 
 import { Button } from "@/client/components/ui/button"
-import { cn } from "@/client/utils/utils"
 
 interface ChatInputProps {
   onSend: (message: string) => void
@@ -55,7 +54,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
     >
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-3 rounded-3xl border-3 border-black bg-white p-3 shadow-2xl"
+        className="relative flex items-end gap-3 rounded-3xl border-3 border-black bg-muted/90 p-3 shadow-2xl backdrop-blur-sm"
       >
         <div className="relative flex-1">
             <textarea
@@ -63,13 +62,8 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={isLoading ? "waiting for response" : "Ask Anything Amazing..."}
-            className={cn(
-              "max-h-[200px] min-h-[56px] w-full resize-none rounded-xl border-3 border-black px-6 py-4 text-xl font-bold font-nunito transition-all shadow-inner",
-              isLoading
-                ? "bg-gray-300 text-gray-600 placeholder:text-gray-500 cursor-not-allowed"
-                : "bg-white text-black placeholder:text-gray-400 focus:border-secondary focus:ring-4 focus:ring-secondary/30 focus:outline-none"
-            )}
+            placeholder="Ask Anything Amazing..."
+            className="max-h-[200px] min-h-[56px] w-full resize-none rounded-xl border-3 border-black bg-white px-6 py-4 text-xl font-bold font-nunito text-black placeholder:text-gray-400 focus:border-secondary focus:ring-4 focus:ring-secondary/30 focus:outline-none transition-all shadow-inner"
             rows={1}
             disabled={isLoading}
             />
