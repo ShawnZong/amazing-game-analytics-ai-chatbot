@@ -1,8 +1,10 @@
 # Amazing Game Analytics AI Chatbot
 
+> 🎮 **Brawl Stars UI Theme**: The Chatbot's user interface has been customized to feature a Brawl Stars-inspired design with vibrant colors, bold typography, and playful elements that bring that energetic Brawl Stars vibe to video game analytics!
+
 **Ask anything about video games in plain English—or any language—and watch the magic happen!** 🚀 Want to know which action games crushed it in 2025? Curious about genre trends? Hunting for hidden gems? Just type your question and get instant, comprehensive analytics powered by real game data from millions of titles. No SQL, no spreadsheets, no headaches—just pure gaming intelligence at your fingertips.
 
-Dive into a vibrant, game-inspired interface that feels like chatting with your smartest gaming friend. AI Chatbot crunches the numbers, performs statistical analysis, and serves up beautifully formatted reports, tables, and insights—all while keeping that hype energy you love. It's like having a data scientist and a gaming enthusiast rolled into one, always ready to geek out about the games you care about! 🎮✨
+Dive into a vibrant interface with a custom Brawl Stars-themed Chatbot that feels like chatting with your smartest gaming friend. I've customized the interface with playful yellow accents, bold typography, and energetic design elements inspired by Brawl Stars, bringing that distinctive energy to every interaction. AI Chatbot crunches the numbers, performs statistical analysis, and serves up beautifully formatted reports, tables, and insights—all while keeping that hype energy you love. It's like having a data scientist and a gaming enthusiast rolled into one, always ready to geek out about the games you care about! 🎮✨
 
 [![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
 
