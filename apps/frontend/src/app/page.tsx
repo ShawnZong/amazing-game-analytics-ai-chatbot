@@ -16,16 +16,10 @@ export default function Home() {
   // Convert AI SDK messages to our Message format for compatibility with existing components
   const messages: Message[] = React.useMemo(() => {
     return aiSdkMessages.map((msg) => {
-      // AI SDK messages have content as string or array of parts
-      let textContent = ""
-      if (typeof msg.content === "string") {
-        textContent = msg.content
-      } else if (Array.isArray(msg.content)) {
-        textContent = msg.content
-          .filter((part: any) => part.type === "text")
-          .map((part: any) => part.text)
-          .join("")
-      }
+      // AI SDK messages have content as string
+      const textContent = typeof msg.content === "string" 
+        ? msg.content 
+        : String(msg.content)
 
       return {
         id: msg.id,
