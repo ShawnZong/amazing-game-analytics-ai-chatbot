@@ -25,5 +25,8 @@ export * from './publishers-args';
 // Creators endpoint schemas
 export * from './creators-args';
 
+// Developers endpoint schemas
+export * from './developers-args';
+
 // Analysis tool schemas
 export * from './analysis-args';
