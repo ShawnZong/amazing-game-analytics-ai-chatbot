@@ -130,9 +130,9 @@ sequenceDiagram
 
 **👨‍💻 Developer Experience:**
 
-- **Monorepo structure**: Shared `@rawg-analytics/shared` package provides type definitions and Zod schemas, eliminating duplication and ensuring type safety.
-- **Environment abstraction**: `getEnv()` utility handles both Cloudflare Workers context and local `process.env`, simplifying development workflow.
-- **OpenAPI → Zod generation**: Automated schema generation from RAWG OpenAPI spec ensures API compatibility and reduces manual maintenance.
+- **Comprehensive build and deployment scripts**: Root `package.json` includes scripts to develop, build, and deploy each component individually or all at once. Developers can work on frontend or MCP server separately (`dev:frontend`, `dev:mcp-server`), build components independently, and deploy to different environments with simple commands. This eliminates the need to remember complex deployment sequences and reduces errors.
+- **Monorepo code sharing**: Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas between frontend and backend, ensuring consistency and reducing maintenance overhead.
+- **Unified development workflow**: Single commands handle linting, type-checking, and formatting across all workspaces, making it easy to maintain code quality standards throughout the project.
 
 ## 🛣️ Development Journey
 
