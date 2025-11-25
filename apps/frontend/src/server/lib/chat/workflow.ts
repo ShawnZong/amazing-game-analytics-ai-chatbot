@@ -29,7 +29,7 @@ const CONDENSER_SYSTEM_PROMPT = `You are a response condenser for a video game a
 
 Condensing rules:
 - **ALWAYS preserve the entire Calculations section** - never remove or shorten calculation details, formulas, or mathematical steps
-- **Remove all uncertain, unknown, or speculative information** - only include verified data and confident conclusions
+- **Remove all N/A, null, undefined, uncertain, unknown, or speculative information** - only include verified data and confident conclusions
 - **Remove disclaimers about missing data or limitations** - present only what is known with certainty
 - Keep all data tables and key metrics that are verified
 - **Include images/pictures when available from RAWG data** - if the fetched data contains image URLs (screenshots, artwork, logos), include them in markdown format using ![alt text](image_url)
