@@ -227,20 +227,9 @@ sequenceDiagram
 
 **👨‍💻 Developer Experience:**
 
-- **Comprehensive build and deployment scripts**
-  - Root `package.json` includes scripts to develop, build, and deploy each component individually or all at once
-  - Developers can work on frontend or MCP server separately (`dev:frontend`, `dev:mcp-server`)
-  - Build components independently and deploy to different environments with simple commands
-  - Eliminates the need to remember complex deployment sequences and reduces errors
-
-- **Monorepo code sharing**
-  - Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas
-  - Ensures consistency between frontend and backend
-  - Reduces maintenance overhead
-
-- **Unified development workflow**
-  - Single commands handle linting, type-checking, and formatting across all workspaces
-  - Makes it easy to maintain code quality standards throughout the project
+- **Monorepo with shared code and unified tooling**
+  - Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas, ensuring consistency across frontend and backend
+  - Root `package.json` provides scripts to develop, build, and deploy components individually or together (`dev:frontend`, `dev:mcp-server`, `deploy:all`). Single commands handle linting, type-checking, and formatting across all workspaces for consistent code quality
 
 ---
 
