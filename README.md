@@ -12,6 +12,7 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 
 ## 📑 Table of Contents
 
+- [Preview](#-preview)
 - [Business Use Cases](#-business-use-cases)
 - [Architecture](#-architecture)
 - [Technology Decisions](#️-technology-decisions)
@@ -26,7 +27,22 @@ An AI-powered chatbot that answers questions about video games using natural lan
 
 Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages data tools and caching. This separation enables independent scaling and parallel development, reducing time-to-market and infrastructure costs. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
-> **💼 Business Value**: Reduction in API costs via intelligent caching • Sub-second response times via edge deployment • Independent component scaling reduces infrastructure costs • Modular architecture enables parallel team development
+---
+
+## 📸 Preview
+
+<div align="center">
+  <table align="center">
+    <tr>
+      <td align="center"><strong>Web View</strong></td>
+      <td align="center"><strong>Mobile View</strong></td>
+    </tr>
+    <tr>
+      <td align="center"><img src="web-amazing-game-analytics-ai.png" alt="Web view of Amazing Game Analytics AI" width="450" /></td>
+      <td align="center"><img src="mobile-amazing-game-analytics.jpeg" alt="Mobile view of Amazing Game Analytics AI" width="200" /></td>
+    </tr>
+  </table>
+</div>
 
 ---
 
