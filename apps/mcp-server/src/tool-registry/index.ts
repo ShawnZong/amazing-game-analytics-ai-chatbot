@@ -1,6 +1,7 @@
 import { GAMES_TOOLS } from './games-tools';
 import { GENRES_TOOLS } from './genres-tools';
 import { PLATFORMS_TOOLS } from './platforms-tools';
+import { STORES_TOOLS } from './stores-tools';
 import { ANALYSIS_TOOLS } from './analysis-tools';
 
 /**
@@ -12,4 +13,10 @@ import { ANALYSIS_TOOLS } from './analysis-tools';
  */
 
 // Combine all tool arrays
-export const TOOLS = [...GAMES_TOOLS, ...GENRES_TOOLS, ...PLATFORMS_TOOLS, ...ANALYSIS_TOOLS];
+export const TOOLS = [
+  ...GAMES_TOOLS,
+  ...GENRES_TOOLS,
+  ...PLATFORMS_TOOLS,
+  ...STORES_TOOLS,
+  ...ANALYSIS_TOOLS,
+];
