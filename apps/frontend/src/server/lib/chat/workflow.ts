@@ -7,42 +7,7 @@ import type { StructuredToolInterface } from '@langchain/core/tools';
 import { END, MessagesAnnotation, START, StateGraph } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { ChatOpenAI } from '@langchain/openai';
-import { SYSTEM_PROMPT } from './messages';
-
-/**
- * System prompt for the message refiner node
- */
-const REFINER_SYSTEM_PROMPT = `You are a message refiner for a video game analytics assistant powered by the RAWG API. Your job is to rewrite the user's message to be clear, specific, and optimized for game analytics queries.
-
-Refine the user's message by:
-- Making vague questions more specific (e.g., "games" → "action games released in 2024")
-- Clarifying ambiguous terms (e.g., "recent games" → "games released in the last 6 months")
-- Preserving the user's original intent and meaning
-- Ensuring date ranges are explicit when time periods are mentioned
-- Making queries actionable for game data retrieval and analysis tools
-- Keeping the refined message concise and unambiguous
-
-Return only the refined user message, maintaining their original tone and intent.`;
-
-/**
- * System prompt for the condensing node
- */
-const CONDENSER_SYSTEM_PROMPT = `You are a response condenser for a video game analytics assistant. Your job is to condense the final response to be within 600 words while preserving all essential information and ensuring confidence and trustworthiness.
-
-Condensing rules:
-- **ALWAYS preserve the entire Calculations section** - never remove or shorten calculation details, formulas, or mathematical steps
-- **Remove all N/A, null, undefined, uncertain, unknown, or speculative information** - only include verified data and confident conclusions
-- **Remove disclaimers about missing data or limitations** - present only what is known with certainty
-- Keep all data tables and key metrics that are verified
-- **Include images/pictures when available from RAWG data** - if the fetched data contains image URLs (screenshots, artwork, logos), include them in markdown format using ![alt text](image_url)
-- Maintain the Analysis Report structure (Data Retrieved, Calculations, Findings, Implications, Bonus Commentary)
-- Remove redundant explanations and verbose descriptions
-- Keep the energetic, fun tone and emojis
-- Ensure the condensed response is confident, trustworthy, and actionable
-- Use definitive language - avoid phrases like "might be", "could be", "possibly", "uncertain", "unknown"
-- Target: maximum 600 words total
-
-Return only the condensed response in the same markdown format, presenting only verified information with confidence.`;
+import { CONDENSER_SYSTEM_PROMPT, REFINER_SYSTEM_PROMPT, SYSTEM_PROMPT } from './prompts';
 
 /**
  * Creates refiner node function
