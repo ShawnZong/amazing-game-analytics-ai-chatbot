@@ -59,9 +59,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
         </div>
         <div
           className={cn(
-            "rounded-2xl border-3 border-black px-5 py-3 shadow-[0_6px_0_0_rgba(0,0,0,1)] text-lg font-bold leading-snug transform transition-all hover:-translate-y-1 active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,1)]",
+            "rounded-2xl border-3 border-black px-5 py-3 shadow-[0_6px_0_0_rgba(0,0,0,1)] text-lg leading-snug transform transition-all hover:-translate-y-1 active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,1)]",
             isUser
-              ? "bg-secondary text-white"
+              ? "bg-secondary text-white font-bold"
               : "bg-white text-black"
           )}
         >
@@ -100,22 +100,22 @@ export function ChatMessage({ message }: ChatMessageProps) {
                     );
                   },
                   table: ({ children }) => (
-                    <div className="mb-2 overflow-x-auto last:mb-0">
-                      <table className="min-w-full border-collapse border-2 border-black">
+                    <div className="mb-2 overflow-x-auto last:mb-0 w-full">
+                      <table className="w-full border-collapse border-2 border-black">
                         {children}
                       </table>
                     </div>
                   ),
                   thead: ({ children }) => <thead className="bg-gray-100">{children}</thead>,
                   tbody: ({ children }) => <tbody>{children}</tbody>,
-                  tr: ({ children }) => <tr className="border-b border-black">{children}</tr>,
+                  tr: ({ children }) => <tr>{children}</tr>,
                   th: ({ children }) => (
                     <th className="border border-black px-4 py-2 text-left font-bold bg-gray-200">
                       {children}
                     </th>
                   ),
                   td: ({ children }) => (
-                    <td className="border border-black px-4 py-2">
+                    <td className="border border-black px-4 py-2 font-normal">
                       {children}
                     </td>
                   ),
