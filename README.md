@@ -19,9 +19,9 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 
 ---
 
-AI-powered video game analytics platform that transforms natural language queries into actionable insights from the RAWG Video Games Database. The system combines a Next.js chat interface with a Model Context Protocol (MCP) server deployed on Cloudflare Workers to interact with RAWG API, orchestrated via LangGraph/LangChain to enable LLM-assisted data retrieval, statistical analysis, and conversational exploration of game metadata, ratings, genres, and trends.
+An AI-powered chatbot that answers questions about video games using natural language. Users chat with the interface, which uses LangGraph/LangChain to orchestrate an LLM that calls MCP tools deployed on Cloudflare Workers. These tools fetch and analyze data from the RAWG Video Games Database, performing statistical analysis and returning insights in conversational format.
 
-Built as a monorepo with shared type definitions, the architecture separates concerns between frontend orchestration, MCP tool execution, and external API integration, delivering sub-second responses through edge deployment, LRU caching, and optimized request patterns.
+Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages data tools and caching. This separation enables independent scaling and parallel development. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
 ---
 
