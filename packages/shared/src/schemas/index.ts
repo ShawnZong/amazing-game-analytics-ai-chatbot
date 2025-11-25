@@ -16,5 +16,8 @@ export * from './genres-args';
 // Platforms endpoint schemas
 export * from './platforms-args';
 
+// Stores endpoint schemas
+export * from './stores-args';
+
 // Analysis tool schemas
 export * from './analysis-args';
