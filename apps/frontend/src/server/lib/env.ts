@@ -84,7 +84,6 @@ export function getEnv(): Env {
     MCP_SERVER_URL: `${process.env.MCP_SERVER_URL ?? 'http://localhost:8787'}/mcp`,
     DEFAULT_MODEL: process.env.DEFAULT_MODEL,
     MAX_TOKENS: process.env.MAX_TOKENS,
-    TEMPERATURE: process.env.TEMPERATURE,
   };
 
   // Log warning for missing critical variable

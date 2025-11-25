@@ -418,8 +418,7 @@ npm run dev:frontend
 OPENAI_API_KEY=sk-...
 MCP_SERVER_URL=http://localhost:8787
 DEFAULT_MODEL=gpt-5-mini
-MAX_TOKENS=2000
-TEMPERATURE=0.7
+MAX_TOKENS=16000
 ```
 
 **MCP Server** (set via `wrangler secret` or `.env.local`):
