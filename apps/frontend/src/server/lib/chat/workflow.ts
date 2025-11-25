@@ -1,12 +1,11 @@
 /**
  * LangGraph workflow creation
  */
-
-import { ChatOpenAI } from '@langchain/openai';
-import { END, MessagesAnnotation, START, StateGraph } from '@langchain/langgraph';
-import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { AIMessage } from '@langchain/core/messages';
 import type { StructuredToolInterface } from '@langchain/core/tools';
+import { END, MessagesAnnotation, START, StateGraph } from '@langchain/langgraph';
+import { ToolNode } from '@langchain/langgraph/prebuilt';
+import { ChatOpenAI } from '@langchain/openai';
 
 /**
  * Creates LangGraph workflow for agent execution
@@ -26,16 +25,11 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
     .addEdge(START, 'llm')
     .addEdge('tools', 'llm')
     .addConditionalEdges('llm', state => {
-      const lastMessage = state.messages[state.messages.length - 1];
-      const aiMessage = lastMessage as AIMessage;
-
-      if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
+      const lastMessage = state.messages.at(-1);
+      if (AIMessage.isInstance(lastMessage) && lastMessage.tool_calls?.length) {
         return 'tools';
       }
-
       return END;
     });
-
   return workflow.compile();
 }
-
