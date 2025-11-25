@@ -23,6 +23,26 @@ Refine the user's message by:
 Return only the refined user message, maintaining their original tone and intent.`;
 
 /**
+ * System prompt for the condensing node
+ */
+const CONDENSER_SYSTEM_PROMPT = `You are a response condenser for a video game analytics assistant. Your job is to condense the final response to be within 600 words while preserving all essential information and ensuring confidence and trustworthiness.
+
+Condensing rules:
+- **ALWAYS preserve the entire Calculations section** - never remove or shorten calculation details, formulas, or mathematical steps
+- **Remove all uncertain, unknown, or speculative information** - only include verified data and confident conclusions
+- **Remove disclaimers about missing data or limitations** - present only what is known with certainty
+- Keep all data tables and key metrics that are verified
+- **Include images/pictures when available from RAWG data** - if the fetched data contains image URLs (screenshots, artwork, logos), include them in markdown format using ![alt text](image_url)
+- Maintain the Analysis Report structure (Data Retrieved, Calculations, Findings, Implications, Bonus Commentary)
+- Remove redundant explanations and verbose descriptions
+- Keep the energetic, fun tone and emojis
+- Ensure the condensed response is confident, trustworthy, and actionable
+- Use definitive language - avoid phrases like "might be", "could be", "possibly", "uncertain", "unknown"
+- Target: maximum 600 words total
+
+Return only the condensed response in the same markdown format, presenting only verified information with confidence.`;
+
+/**
  * Creates LangGraph workflow for agent execution
  */
 
@@ -60,11 +80,41 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
     return { messages: [response] };
   };
 
-  // Build graph: START -> refiner -> llm -> maybe tools -> llm loop ...
+  // 3) Condenser node: condense the final response to within 600 words while preserving calculations
+  const condenseNode = async (state: typeof MessagesAnnotation.State) => {
+    // Find the last AI message (the final response)
+    const lastAI = [...state.messages].reverse().find(m => AIMessage.isInstance(m));
+    if (!lastAI || !AIMessage.isInstance(lastAI)) {
+      return {}; // nothing to condense
+    }
+
+    const originalContent =
+      typeof lastAI.content === 'string' ? lastAI.content : String(lastAI.content);
+
+    // Ask the model to condense the response
+    const prompt = [
+      {
+        role: 'system',
+        content: CONDENSER_SYSTEM_PROMPT,
+      },
+      {
+        role: 'user',
+        content: `Please condense the following response to within 600 words while preserving the entire Calculations section:\n\n${originalContent}`,
+      },
+    ];
+
+    const condensedResponse = await model.invoke(prompt); // uses model without tools
+    console.log('LLM condensedResponse', { condensedResponse });
+    // Replace the last AI message with the condensed version
+    return { messages: [new AIMessage(condensedResponse.content)] };
+  };
+
+  // Build graph: START -> refiner -> llm -> maybe tools -> llm -> condense -> END
   const workflow = new StateGraph(MessagesAnnotation)
     .addNode('refiner', refinerNode)
     .addNode('llm', llmNode)
     .addNode('tools', toolNode)
+    .addNode('condense', condenseNode)
     .addEdge(START, 'refiner')
     .addEdge('refiner', 'llm')
     .addEdge('tools', 'llm')
@@ -73,8 +123,9 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
       if (AIMessage.isInstance(lastMessage) && lastMessage.tool_calls?.length) {
         return 'tools';
       }
-      return END;
-    });
+      return 'condense';
+    })
+    .addEdge('condense', END);
 
   return workflow.compile();
 }
