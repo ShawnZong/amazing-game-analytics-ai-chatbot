@@ -2,6 +2,7 @@
  * Chat API handler logic
  */
 
+import { AIMessage } from '@langchain/core/messages';
 import { getMcpTools } from '@/server/lib/chat/mcp-client';
 import { convertToLangChainMessages, extractReply } from '@/server/lib/chat/messages';
 import { createModel } from '@/server/lib/chat/model';
@@ -59,9 +60,30 @@ export async function handleChatRequest(request: Request): Promise<Response> {
       return Response.json({ error: 'No response generated' }, { status: 500 });
     }
 
+    // Check for token limit error (finish_reason: "length")
+    if (AIMessage.isInstance(finalMessage)) {
+      const finishReason = finalMessage.response_metadata?.finish_reason;
+      if (finishReason === 'length') {
+        console.error('Token limit reached', {
+          finish_reason: finishReason,
+          tokenUsage: finalMessage.response_metadata?.tokenUsage,
+        });
+        return Response.json(
+          {
+            error: 'Token limit reached. The response was cut off because it exceeded the maximum token limit. Please try a simpler or more specific query.',
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     const reply = extractReply(finalMessage);
     if (!reply || reply.trim().length === 0) {
-      console.error('Empty reply extracted');
+      console.error('Empty reply extracted', {
+        finish_reason: AIMessage.isInstance(finalMessage)
+          ? finalMessage.response_metadata?.finish_reason
+          : undefined,
+      });
       return Response.json({ error: 'Empty response generated' }, { status: 500 });
     }
     console.log('Reply:', { reply });
