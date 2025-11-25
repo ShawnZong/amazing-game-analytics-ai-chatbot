@@ -21,7 +21,9 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 
 An AI-powered chatbot that answers questions about video games using natural language. Users chat with the interface, which uses LangGraph/LangChain to orchestrate an LLM that calls MCP tools deployed on Cloudflare Workers. These tools fetch and analyze data from the RAWG Video Games Database, performing statistical analysis and returning insights in conversational format.
 
-Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages data tools and caching. This separation enables independent scaling and parallel development. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
+Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages data tools and caching. This separation enables independent scaling and parallel development, reducing time-to-market and infrastructure costs. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
+
+> **💼 Business Value**: Reduction in API costs via intelligent caching • Sub-second response times via edge deployment • Independent component scaling reduces infrastructure costs • Modular architecture enables parallel team development
 
 ---
 
@@ -111,17 +113,17 @@ sequenceDiagram
 
 ## ⚙️ Technology Decisions
 
-| Technology                               | Rationale                                                                              |
-| ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| **Next.js 15 + App Router**              | SSR optimization, edge deployment via OpenNext, type-safe API routes                   |
-| **LangGraph + LangChain**                | Declarative agent workflows, tool orchestration, message state management              |
-| **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, protocol-based communication |
-| **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution    |
-| **OpenNext for Cloudflare**              | Zero-config Next.js → Workers deployment, asset optimization, compatibility flags      |
-| **LRU Cache (1hr TTL)**                  | Reduce RAWG API calls, improve response times, cost optimization                       |
-| **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation              |
-| **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               |
-| **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability, better IDE support              |
+| Technology                               | Rationale                                                                              | Business Impact                                        |
+| ---------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **Next.js 15 + App Router**              | SSR optimization, edge deployment via OpenNext, type-safe API routes                   | Faster page loads, better SEO, reduced server costs    |
+| **LangGraph + LangChain**                | Declarative agent workflows, tool orchestration, message state management              | Faster feature development, easier maintenance         |
+| **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, protocol-based communication | Independent scaling, reduced coupling costs            |
+| **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution    | Pay-per-use pricing, global edge, no server management |
+| **OpenNext for Cloudflare**              | Zero-config Next.js → Workers deployment, asset optimization, compatibility flags      | Faster deployment cycles, reduced ops overhead         |
+| **LRU Cache (1hr TTL)**                  | Reduce RAWG API calls, improve response times, cost optimization                       | API cost reduction, faster user experience             |
+| **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation              | Fewer production bugs, faster development              |
+| **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               | Parallel team development, reduced duplication         |
+| **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability, better IDE support              | Lower bug rates, faster onboarding                     |
 
 ---
 
@@ -140,20 +142,23 @@ sequenceDiagram
 - **Durable Objects for MCP state**
   - Each MCP agent instance maintains persistent connection state, reducing initialization overhead
   - Trade-off: Higher cost per request, justified by sub-100ms tool execution
+  - **Business impact**: Better user experience (fast responses) vs. slightly higher per-request costs
 
 **⚡ Performance Optimizations:**
 
 - **LRU caching**
   - 100-item cache with 1-hour TTL reduces RAWG API calls by ~60% for repeated queries
   - Cache key includes endpoint + serialized params for precise invalidation
+  - **Business impact**: Significant cost savings on API usage, faster response times
 
 - **Field selection**
   - Implemented `selectFieldsFromPaginatedResponse` to minimize payload size
   - Reduces network transfer and parsing time
+  - **Business impact**: Lower bandwidth costs, improved user experience
 
 - **Smart Placement**
   - Enabled Cloudflare Smart Placement to route requests to optimal data centers
-  - Reduces latency by ~30ms on average
+  - **Business impact**: Better global user experience, no additional infrastructure cost
 
 **🛡️ Reliability Patterns:**
 
@@ -217,11 +222,11 @@ The monorepo idea came from recognizing that both frontend and backend would nee
 
 When thinking about the tools that would fetch game data, I realized they'd likely grow over time. Rather than hardcoding each one, I designed a registry pattern where new tools could be added easily. This way, the system could expand without requiring major refactoring.
 
-I also noticed that RAWG APIs return massive amounts of data—most of which isn't needed for every query. Instead of forcing the LLM to process everything, I designed a field filtering system so it could request only what's relevant, reducing processing time and costs.
+I also noticed that RAWG APIs return massive amounts of data—most of which isn't needed for every query. Instead of forcing the LLM to process everything, I designed a field filtering system so it could request only what's relevant, reducing processing time and costs. **Result**: Lower LLM token usage and faster response generation.
 
 **Performance Considerations:**
 
-Early testing showed that users might ask similar questions, which would trigger repeated API calls. I thought: _Why make the same request twice?_ This led to implementing caching at the MCP server level, so duplicate queries return instantly without hitting external APIs.
+Early testing showed that users might ask similar questions, which would trigger repeated API calls. I thought: _Why make the same request twice?_ This led to implementing caching at the MCP server level, so duplicate queries return instantly without hitting external APIs. **Result**: reduction in API costs and sub-second response times for cached queries.
 
 **User Experience First:**
 
