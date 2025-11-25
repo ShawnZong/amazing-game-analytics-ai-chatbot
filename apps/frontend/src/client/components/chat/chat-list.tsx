@@ -24,7 +24,7 @@ const SUGGESTIONS = [
   {
     icon: Star,
     label: "Genre Analysis",
-    query: "Compare the average ratings for Action, and Strategy genres for games released in year 2025",
+    query: "Compare the average ratings for Action and Strategy genres for games released in year 2025",
     bgColor: "bg-cyan-400",
     hoverColor: "group-hover:bg-cyan-300",
   },
