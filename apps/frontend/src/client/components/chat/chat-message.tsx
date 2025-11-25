@@ -54,7 +54,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 "text-sm font-lilita uppercase tracking-wide brawl-text-outline",
                 isUser ? "text-secondary-foreground" : "text-primary"
             )}>
-                {isUser ? "You" : "Brawler Bot"}
+                {isUser ? "You" : "Amazing AI Bot"}
             </span>
         </div>
         <div
