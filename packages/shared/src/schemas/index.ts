@@ -22,5 +22,8 @@ export * from './stores-args';
 // Publishers endpoint schemas
 export * from './publishers-args';
 
+// Creators endpoint schemas
+export * from './creators-args';
+
 // Analysis tool schemas
 export * from './analysis-args';
