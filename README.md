@@ -28,7 +28,7 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 
 An AI-powered chatbot that answers questions about video games using natural language. Users chat with the interface, which uses LangGraph/LangChain to orchestrate an LLM that calls MCP tools deployed on Cloudflare Workers. These tools fetch and analyze data from the RAWG Video Games Database, performing statistical analysis and returning insights in conversational format.
 
-Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages data tools and caching. This separation enables independent scaling and parallel development, reducing time-to-market and infrastructure costs. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
+Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages **34 MCP tools** and caching. This separation enables independent scaling and parallel development, reducing time-to-market and infrastructure costs. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
 ---
 
@@ -103,7 +103,7 @@ graph TB
 
     subgraph "MCP Server Cloudflare Worker"
         DO[Durable Object<br/>Stateful MCP Agent]
-        TOOLS[Tool Registry<br/>Games, Genres, Analysis]
+        TOOLS[MCP Tool Registry<br/>34 tools]
         CACHE[LRU Cache<br/>1hr TTL]
     end
 
