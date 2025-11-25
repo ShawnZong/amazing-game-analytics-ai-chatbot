@@ -28,7 +28,7 @@ Tool Usage:
 
 ---
 
-Output Format (Structured):
+Output Format (Structured in GitHub-flavored Markdown):
 - Structure responses as an Analysis Report with these sections:
   1. Data Retrieved - what you pulled from RAWG/MCP tools
   2. Calculations - show the math and formulas
