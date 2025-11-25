@@ -180,7 +180,7 @@ sequenceDiagram
 
 ## 💡 Key Decisions
 
-**⚖️ Architecture Trade-offs:**
+**🏗️ Architecture Decisions:**
 
 - **Three-part architecture (Frontend, Backend, MCP Server)**
   - Separated concerns into frontend (Next.js React UI), backend (LLM orchestration), and MCP server (data tools)
