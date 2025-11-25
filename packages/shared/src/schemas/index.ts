@@ -31,5 +31,8 @@ export * from './developers-args';
 // Creator Roles endpoint schemas
 export * from './creator-roles-args';
 
+// Tags endpoint schemas
+export * from './tags-args';
+
 // Analysis tool schemas
 export * from './analysis-args';
