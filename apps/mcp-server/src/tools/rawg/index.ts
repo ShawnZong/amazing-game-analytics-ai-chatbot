@@ -35,3 +35,7 @@ export * from './platforms/get-platform-details';
 // Store tools
 export * from './stores/list-stores';
 export * from './stores/get-store-details';
+
+// Publisher tools
+export * from './publishers/list-publishers';
+export * from './publishers/get-publisher-details';
