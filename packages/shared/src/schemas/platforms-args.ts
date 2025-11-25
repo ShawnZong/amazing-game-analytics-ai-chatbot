@@ -20,7 +20,9 @@ export const PlatformsListsParentsListArgsSchema = z.object({
 });
 
 export const PlatformsReadArgsSchema = z.object({
-  id: z.union([z.string(), z.number()]).describe('A unique integer value identifying this Platform.'),
+  id: z
+    .union([z.string(), z.number()])
+    .describe('A unique integer value identifying this Platform.'),
   fields: z
     .array(z.string())
     .optional()
@@ -28,4 +30,3 @@ export const PlatformsReadArgsSchema = z.object({
       'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "games_count", "platforms.name"]). If not specified, all fields are returned.',
     ),
 });
-

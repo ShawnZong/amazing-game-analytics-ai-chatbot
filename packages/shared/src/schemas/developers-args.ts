@@ -13,7 +13,9 @@ export const DevelopersListArgsSchema = z.object({
 });
 
 export const DevelopersReadArgsSchema = z.object({
-  id: z.union([z.string(), z.number()]).describe('A unique integer value identifying this Developer.'),
+  id: z
+    .union([z.string(), z.number()])
+    .describe('A unique integer value identifying this Developer.'),
   fields: z
     .array(z.string())
     .optional()
@@ -21,4 +23,3 @@ export const DevelopersReadArgsSchema = z.object({
       'Specify which fields to include in the response. Use dot notation for nested fields (e.g., ["id", "name", "games_count"]). If not specified, all fields are returned.',
     ),
 });
-
