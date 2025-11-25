@@ -142,10 +142,11 @@ sequenceDiagram
     User->>Frontend: Submit query
     Frontend->>API: POST /api/chat {messages}
     API->>LangGraph: Create workflow(model, tools)
+    LangGraph->>LangGraph: Refine user message
     LangGraph->>LangChain: Initialize state graph
     LangChain->>MCP: Discover tools via MCP adapter
     MCP-->>LangChain: Return tool schemas
-    LangChain->>LLM: Invoke with messages + tools
+    LangChain->>LLM: Invoke with optimized messages + tools
     LLM-->>LangChain: Tool calls detected
     LangGraph->>LangGraph: Route to tools node
     LangGraph->>MCP: Execute tool(list_games, ...)
