@@ -225,9 +225,9 @@ sequenceDiagram
   - Frontend error handling with user-friendly messages
   - Backend error responses with structured error objects
 
-- **Graceful degradation**
-  - MCP server falls back to mock data when RAWG API key is missing
-  - Enables development without external dependencies
+- **Error handling**
+  - MCP server validates RAWG API key presence and provides clear error messages when missing
+  - API requests fail gracefully with descriptive error messages for debugging
 
 **👨‍💻 Developer Experience:**
 
