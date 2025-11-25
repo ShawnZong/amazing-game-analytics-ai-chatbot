@@ -1,7 +1,5 @@
 # Amazing Game Analytics AI Chatbot
 
-> 🎮 **Brawl Stars UI Theme**: The Chatbot's user interface has been customized to feature a Brawl Stars-inspired design with vibrant colors, bold typography, and playful elements that bring that energetic Brawl Stars vibe to video game analytics!
-
 **Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets, just pure gaming intelligence.
 
 Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. The AI performs statistical analysis and serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
@@ -9,6 +7,8 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 [![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
 
 > **🏭 Production-Ready Architecture**: This is not a hobby project. The system is built with enterprise-grade architecture designed for production deployment. Features include edge computing for global performance, intelligent caching for cost optimization, modular design for independent scaling, and comprehensive error handling for reliability. The architecture supports high availability, sub-second response times, and can handle production workloads with proper monitoring and observability.
+
+> 🎮 **Brawl Stars UI Theme**: The Chatbot's user interface has been customized to feature a Brawl Stars-inspired design with vibrant colors, bold typography, and playful elements that bring that energetic Brawl Stars vibe to video game analytics!
 
 ## 📑 Table of Contents
 
@@ -107,7 +107,7 @@ graph TB
     end
 
     subgraph "External Services"
-        LLM[OpenAI GPT-4o<br/>LLM Provider]
+        LLM[OpenAI GPT-4o-mini<br/>LLM Provider]
         RAWG[RAWG API<br/>Video Games Database]
     end
 
