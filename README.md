@@ -134,6 +134,117 @@ sequenceDiagram
 - **Environment abstraction**: `getEnv()` utility handles both Cloudflare Workers context and local `process.env`, simplifying development workflow.
 - **OpenAPI → Zod generation**: Automated schema generation from RAWG OpenAPI spec ensures API compatibility and reduces manual maintenance.
 
+## 🛣️ Development Journey
+
+This section covers the development approach, challenges encountered, time allocation, and future improvements for this project.
+
+### 🎯 How I Approached the Problem
+
+Before writing any code, I stepped back to analyze the core problem: _How do I build a system that lets users ask natural language questions about video games and get intelligent, data-driven answers?_
+
+**Breaking Down the Problem:**
+
+I started by identifying the key components needed:
+
+1. A way for users to interact naturally (chat interface)
+2. A system to understand and process their questions (LLM)
+3. Access to game data (RAWG API)
+4. A way to connect everything together
+
+This led me to think: _What if I could create a modular system where each piece could evolve independently?_ The idea of separating the chat interface, the AI orchestration, and the data tools emerged as a natural solution. This modular approach offers significant advantages: components can scale independently in native cloud infrastructure, and different teams can work on individual components in parallel to boost development significantly.
+
+**Architecture Thinking:**
+
+I realized early on that this wasn't just about building features—it was about creating a foundation that could grow. I asked myself: _What happens when I want to add more data sources? What if I need to change the UI? How do I ensure the frontend and backend stay in sync?_
+
+The monorepo idea came from recognizing that both frontend and backend would need to share the same data structures and validation rules. Instead of duplicating code or managing separate packages, I could create a shared foundation that both components build upon.
+
+**Designing for Extensibility:**
+
+When thinking about the tools that would fetch game data, I realized they'd likely grow over time. Rather than hardcoding each one, I designed a registry pattern where new tools could be added easily. This way, the system could expand without requiring major refactoring.
+
+I also noticed that RAWG APIs return massive amounts of data—most of which isn't needed for every query. Instead of forcing the LLM to process everything, I designed a field filtering system so it could request only what's relevant, reducing processing time and costs.
+
+**Performance Considerations:**
+
+Early testing showed that users might ask similar questions, which would trigger repeated API calls. I thought: _Why make the same request twice?_ This led to implementing caching at the MCP server level, so duplicate queries return instantly without hitting external APIs.
+
+**User Experience First:**
+
+For the frontend, I wanted something that felt fun and engaging—not just functional. The Brawl Stars theme came from recognizing that gaming analytics should feel as exciting as gaming itself. The vibrant colors and bold design weren't just aesthetic choices; they reinforced the playful, energetic nature of exploring game data.
+
+**Iterative Development Strategy:**
+
+I decided to build the backend (MCP server) first and deploy it, then develop the frontend to connect to it. This approach let me validate the core data access layer independently before adding the complexity of the UI. It also meant I could test the MCP protocol integration with a real deployed service rather than mocking everything locally.
+
+### 🚧 Challenges & Limitations
+
+Several technical challenges emerged during development that required architectural pivots and problem-solving:
+
+**Cloudflare Learning Curve:**
+
+- Needed to study Cloudflare SDK and Workers architecture, which had a learning curve
+- Local testing was challenging since Cloudflare SDK requires creating Cloudflare tunnels for proper testing
+
+**Data Quality Issues:**
+
+- Metric values from RAWG API could be null, making it difficult to exclude them during analysis since they come directly from the API
+
+**Architecture Integration:**
+
+- Initially attempted a microservices architecture with three separate components (frontend, backend, MCP server)
+- Ran into Cloudflare limits when trying to connect frontend and backend as separate workers
+- Spent hours troubleshooting before deciding to handle backend interactions directly in the frontend worker instead of a separate service
+- This decision simplified the architecture while maintaining separation of concerns between orchestration and MCP tool execution
+
+**Protocol Migration:**
+
+- Needed to replace deprecated SSE (Server-Sent Events) protocol with MCP protocol for MCP client-server communication
+- Required understanding of MCP protocol specifications and adapter implementations
+
+**Frontend Library Issues:**
+
+- Initially used `@ai-sdk/react` for React frontend integration
+- Encountered integration problems with LangGraph
+- Switched to official React packages from LangGraph: `@langchain/langgraph-sdk/react`
+
+### ⏱️ Time Allocation
+
+Development followed a structured learning and implementation approach:
+
+1. **Foundation (Early Phase)**: Studied Cloudflare SDK and Workers architecture to understand the deployment platform
+2. **API Understanding**: Analyzed RAWG APIs to understand data structure and available endpoints
+3. **Architecture Design**: Designed the overall architecture and decided on monorepo structure for code organization
+4. **Backend First**: Implemented MCP server with all tools and deployed it to Cloudflare Workers
+5. **Frontend Development**: Developed UI and MCP client to connect to the deployed MCP server, integrating LLM orchestration
+
+This phased approach allowed for incremental testing and validation at each stage.
+
+### 🔮 Future Improvements
+
+Several enhancements are planned to improve the project's robustness, coverage, and capabilities:
+
+**Testing & Quality:**
+
+- Add unit tests to test code from local environment and during development
+- Add E2E tests to test actual UI and API responses
+- Add GitHub CI/CD pipeline for automated testing and deployment
+
+**LLM Capabilities:**
+
+- Add short-term and long-term memory to LLM for better context retention across conversations
+- Implement conversation history management
+
+**Tool Coverage:**
+
+- Implement more MCP tools to cover all RAWG APIs, expanding the range of queries the system can handle
+- Add specialized tools for different types of game data analysis
+
+**Multi-Agent Architecture:**
+
+- Create multiple specialized agents to handle different tasks (e.g., data retrieval, statistical analysis, trend detection)
+- Use LangGraph to coordinate multiple agents for complex queries requiring multiple steps
+
 ## 🚀 Quickstart
 
 ### 📋 Prerequisites
