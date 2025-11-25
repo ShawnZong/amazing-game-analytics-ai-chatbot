@@ -187,11 +187,9 @@ sequenceDiagram
   - Enables independent scaling: frontend handles user traffic, MCP server scales with tool usage, backend scales with LLM requests
   - Parallel development: teams can work on UI, orchestration logic, and data tools simultaneously without conflicts
   - Independent deployment: update tools without redeploying frontend, deploy UI changes without affecting data layer
-  - Trade-off: Added network overhead between components, mitigated by edge deployment and efficient protocols
 
 - **MCP over direct API calls**
   - Chose MCP protocol to decouple tool execution from frontend, enabling independent scaling and tool versioning
-  - Trade-off: Added HTTP overhead, mitigated by Durable Objects for connection pooling
 
 - **LangGraph over simple chains**
   - Implemented state machine workflow for multi-turn tool execution
@@ -199,7 +197,6 @@ sequenceDiagram
 
 - **Durable Objects for MCP state**
   - Each MCP agent instance maintains persistent connection state, reducing initialization overhead
-  - Trade-off: Higher cost per request, justified by sub-100ms tool execution
 
 **⚡ Performance Optimizations:**
 
