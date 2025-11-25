@@ -20,4 +20,3 @@ export const listParentPlatforms = async (
 ) => {
   return fetchRawgApi('/platforms/lists/parents', args as Record<string, unknown>, apiKey);
 };
-

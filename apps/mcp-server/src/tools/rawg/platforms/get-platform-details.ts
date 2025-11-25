@@ -22,4 +22,3 @@ export const getPlatformDetails = async (
   const result = await fetchRawgApi('/platforms/{id}', apiArgs as Record<string, unknown>, apiKey);
   return selectFields(result, fields);
 };
-
