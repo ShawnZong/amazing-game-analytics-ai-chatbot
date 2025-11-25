@@ -1,15 +1,5 @@
 # Amazing Game Analytics AI Chatbot
 
-**Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets, just pure gaming intelligence.
-
-Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. The AI performs statistical analysis and serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
-
-[![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
-
-> **🏭 Production-Ready Architecture**: This is not a hobby project. The system is built with enterprise-grade architecture designed for production deployment. Features include edge computing for global performance, intelligent caching for cost optimization, modular design for independent scaling, and comprehensive error handling for reliability. The architecture supports high availability, sub-second response times, and can handle production workloads with proper monitoring and observability.
-
-> 🎮 **Brawl Stars UI Theme**: The Chatbot's user interface has been customized to feature a Brawl Stars-inspired design with vibrant colors, bold typography, and playful elements that bring that energetic Brawl Stars vibe to video game analytics!
-
 ## 📑 Table of Contents
 
 - [Overview](#-overview)
@@ -26,9 +16,11 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 
 ## 📋 Overview
 
-An AI-powered chatbot that answers questions about video games using natural language. Users chat with the interface, which uses LangGraph/LangChain to orchestrate an LLM that calls MCP tools deployed on Cloudflare Workers. These tools fetch and analyze data from the RAWG Video Games Database, performing statistical analysis and returning insights in conversational format.
+An AI-powered chatbot that answers questions about video games using natural language. Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** and caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
-Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration, while a separate MCP server manages **34 MCP tools** and caching. This separation enables independent scaling and parallel development, reducing time-to-market and infrastructure costs. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
+[![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
+
+> **🏭 Production-Ready Architecture**: Enterprise-grade architecture with edge computing, intelligent caching, modular design, and comprehensive error handling for high availability and sub-second response times.
 
 ---
 
