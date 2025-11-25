@@ -95,6 +95,7 @@ graph TB
         end
         subgraph "Orchestration Layer"
             LG[LangGraph Workflow<br/>State Machine]
+            REFINER[Message Refiner<br/>Query Optimization]
             LC[LangChain Core<br/>Message Handling]
             MCP_CLIENT[MCP Client Adapter<br/>Tool Discovery]
         end
@@ -113,7 +114,8 @@ graph TB
 
     UI -->|POST /api/chat| API
     API -->|Create Workflow| LG
-    LG -->|Invoke| LC
+    LG -->|Refine Query| REFINER
+    REFINER -->|Optimized Message| LC
     LC -->|Bind Tools| MCP_CLIENT
     MCP_CLIENT -->|HTTP MCP Protocol| DO
     DO -->|Execute| TOOLS
