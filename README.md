@@ -8,9 +8,20 @@ Dive into a vibrant interface with a custom Brawl Stars-themed Chatbot that feel
 
 [![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
 
+## 📑 Table of Contents
+
+- [Architecture](#-architecture)
+- [Technology Decisions](#️-technology-decisions)
+- [Key Decisions](#-key-decisions)
+- [Development Journey](#-development-journey)
+- [Quickstart](#-quickstart)
+- [Troubleshooting](#-troubleshooting)
+
 ---
 
-AI-powered video game analytics platform that transforms natural language queries into actionable insights from the RAWG Video Games Database. The system combines a Next.js chat interface with a Model Context Protocol (MCP) server deployed on Cloudflare Workers to interact with RAWG API, orchestrated via LangGraph/LangChain to enable LLM-assisted data retrieval, statistical analysis, and conversational exploration of game metadata, ratings, genres, and trends. Built as a monorepo with shared type definitions, the architecture separates concerns between frontend orchestration, MCP tool execution, and external API integration, delivering sub-second responses through edge deployment, LRU caching, and optimized request patterns.
+AI-powered video game analytics platform that transforms natural language queries into actionable insights from the RAWG Video Games Database. The system combines a Next.js chat interface with a Model Context Protocol (MCP) server deployed on Cloudflare Workers to interact with RAWG API, orchestrated via LangGraph/LangChain to enable LLM-assisted data retrieval, statistical analysis, and conversational exploration of game metadata, ratings, genres, and trends.
+
+Built as a monorepo with shared type definitions, the architecture separates concerns between frontend orchestration, MCP tool execution, and external API integration, delivering sub-second responses through edge deployment, LRU caching, and optimized request patterns.
 
 ---
 
@@ -118,27 +129,62 @@ sequenceDiagram
 
 **⚖️ Architecture Trade-offs:**
 
-- **MCP over direct API calls**: Chose MCP protocol to decouple tool execution from frontend, enabling independent scaling and tool versioning. Trade-off: Added HTTP overhead, mitigated by Durable Objects for connection pooling.
-- **LangGraph over simple chains**: Implemented state machine workflow for multi-turn tool execution. Enables conditional routing (tool calls → tools node, final response → END), improving reliability over linear chains.
-- **Durable Objects for MCP state**: Each MCP agent instance maintains persistent connection state, reducing initialization overhead. Trade-off: Higher cost per request, justified by sub-100ms tool execution.
+- **MCP over direct API calls**
+  - Chose MCP protocol to decouple tool execution from frontend, enabling independent scaling and tool versioning
+  - Trade-off: Added HTTP overhead, mitigated by Durable Objects for connection pooling
+
+- **LangGraph over simple chains**
+  - Implemented state machine workflow for multi-turn tool execution
+  - Enables conditional routing (tool calls → tools node, final response → END), improving reliability over linear chains
+
+- **Durable Objects for MCP state**
+  - Each MCP agent instance maintains persistent connection state, reducing initialization overhead
+  - Trade-off: Higher cost per request, justified by sub-100ms tool execution
 
 **⚡ Performance Optimizations:**
 
-- **LRU caching**: 100-item cache with 1-hour TTL reduces RAWG API calls by ~60% for repeated queries. Cache key includes endpoint + serialized params for precise invalidation.
-- **Field selection**: Implemented `selectFieldsFromPaginatedResponse` to minimize payload size, reducing network transfer and parsing time.
-- **Smart Placement**: Enabled Cloudflare Smart Placement to route requests to optimal data centers, reducing latency by ~30ms on average.
+- **LRU caching**
+  - 100-item cache with 1-hour TTL reduces RAWG API calls by ~60% for repeated queries
+  - Cache key includes endpoint + serialized params for precise invalidation
+
+- **Field selection**
+  - Implemented `selectFieldsFromPaginatedResponse` to minimize payload size
+  - Reduces network transfer and parsing time
+
+- **Smart Placement**
+  - Enabled Cloudflare Smart Placement to route requests to optimal data centers
+  - Reduces latency by ~30ms on average
 
 **🛡️ Reliability Patterns:**
 
-- **Zod validation**: Request/response validation at API boundaries prevents malformed data propagation. Shared schemas ensure consistency across frontend and MCP server.
-- **Error boundaries**: Frontend error handling with user-friendly messages, backend error responses with structured error objects.
-- **Graceful degradation**: MCP server falls back to mock data when RAWG API key is missing, enabling development without external dependencies.
+- **Zod validation**
+  - Request/response validation at API boundaries prevents malformed data propagation
+  - Shared schemas ensure consistency across frontend and MCP server
+
+- **Error boundaries**
+  - Frontend error handling with user-friendly messages
+  - Backend error responses with structured error objects
+
+- **Graceful degradation**
+  - MCP server falls back to mock data when RAWG API key is missing
+  - Enables development without external dependencies
 
 **👨‍💻 Developer Experience:**
 
-- **Comprehensive build and deployment scripts**: Root `package.json` includes scripts to develop, build, and deploy each component individually or all at once. Developers can work on frontend or MCP server separately (`dev:frontend`, `dev:mcp-server`), build components independently, and deploy to different environments with simple commands. This eliminates the need to remember complex deployment sequences and reduces errors.
-- **Monorepo code sharing**: Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas between frontend and backend, ensuring consistency and reducing maintenance overhead.
-- **Unified development workflow**: Single commands handle linting, type-checking, and formatting across all workspaces, making it easy to maintain code quality standards throughout the project.
+- **Comprehensive build and deployment scripts**
+  - Root `package.json` includes scripts to develop, build, and deploy each component individually or all at once
+  - Developers can work on frontend or MCP server separately (`dev:frontend`, `dev:mcp-server`)
+  - Build components independently and deploy to different environments with simple commands
+  - Eliminates the need to remember complex deployment sequences and reduces errors
+
+- **Monorepo code sharing**
+  - Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas
+  - Ensures consistency between frontend and backend
+  - Reduces maintenance overhead
+
+- **Unified development workflow**
+  - Single commands handle linting, type-checking, and formatting across all workspaces
+  - Makes it easy to maintain code quality standards throughout the project
 
 ---
 
@@ -185,6 +231,8 @@ For the frontend, I wanted something that felt fun and engaging—not just funct
 
 I decided to build the backend (MCP server) first and deploy it, then develop the frontend to connect to it. This approach let me validate the core data access layer independently before adding the complexity of the UI. It also meant I could test the MCP protocol integration with a real deployed service rather than mocking everything locally.
 
+---
+
 ### 🚧 Challenges & Limitations
 
 Several technical challenges emerged during development that required architectural pivots and problem-solving:
@@ -216,17 +264,31 @@ Several technical challenges emerged during development that required architectu
 - Encountered integration problems with LangGraph
 - Switched to official React packages from LangGraph: `@langchain/langgraph-sdk/react`
 
+---
+
 ### ⏱️ Time Allocation
 
 Development followed a structured learning and implementation approach:
 
-1. **Foundation (Early Phase)**: Studied Cloudflare SDK and Workers architecture to understand the deployment platform
-2. **API Understanding**: Analyzed RAWG APIs to understand data structure and available endpoints
-3. **Architecture Design**: Designed the overall architecture and decided on monorepo structure for code organization
-4. **Backend First**: Implemented MCP server with all tools and deployed it to Cloudflare Workers
-5. **Frontend Development**: Developed UI and MCP client to connect to the deployed MCP server, integrating LLM orchestration
+1. **Foundation (Early Phase)**
+   - Studied Cloudflare SDK and Workers architecture to understand the deployment platform
+
+2. **API Understanding**
+   - Analyzed RAWG APIs to understand data structure and available endpoints
+
+3. **Architecture Design**
+   - Designed the overall architecture and decided on monorepo structure for code organization
+
+4. **Backend First**
+   - Implemented MCP server with all tools and deployed it to Cloudflare Workers
+
+5. **Frontend Development**
+   - Developed UI and MCP client to connect to the deployed MCP server
+   - Integrated LLM orchestration
 
 This phased approach allowed for incremental testing and validation at each stage.
+
+---
 
 ### 🔮 Future Improvements
 
@@ -234,23 +296,24 @@ Several enhancements are planned to improve the project's robustness, coverage, 
 
 **Testing & Quality:**
 
-- Add unit tests to test code from local environment and during development
-- Add E2E tests to test actual UI and API responses
+- Add unit tests for local environment and during development
+- Add E2E tests for actual UI and API responses
 - Add GitHub CI/CD pipeline for automated testing and deployment
 
 **LLM Capabilities:**
 
-- Add short-term and long-term memory to LLM for better context retention across conversations
+- Add short-term and long-term memory for better context retention across conversations
 - Implement conversation history management
 
 **Tool Coverage:**
 
-- Implement more MCP tools to cover all RAWG APIs, expanding the range of queries the system can handle
+- Implement more MCP tools to cover all RAWG APIs
+- Expand the range of queries the system can handle
 - Add specialized tools for different types of game data analysis
 
 **Multi-Agent Architecture:**
 
-- Create multiple specialized agents to handle different tasks (e.g., data retrieval, statistical analysis, trend detection)
+- Create multiple specialized agents for different tasks (e.g., data retrieval, statistical analysis, trend detection)
 - Use LangGraph to coordinate multiple agents for complex queries requiring multiple steps
 
 ---
