@@ -15,7 +15,8 @@ export function createModel(env: Env): ChatOpenAI {
 
   return new ChatOpenAI({
     openAIApiKey: env.OPENAI_API_KEY,
-    modelName: env.DEFAULT_MODEL ?? 'gpt-5-mini',
+    modelName: env.DEFAULT_MODEL ?? 'gpt-4.1-mini',
     maxTokens: parseInt(env.MAX_TOKENS ?? '16000', 10),
+    temperature: parseFloat(env.TEMPERATURE ?? '1'),
   });
 }

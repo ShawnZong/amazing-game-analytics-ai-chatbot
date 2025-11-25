@@ -7,5 +7,5 @@ export interface Env {
   MCP_SERVER_URL: string;
   DEFAULT_MODEL?: string;
   MAX_TOKENS?: string;
+  TEMPERATURE?: string;
 }
-

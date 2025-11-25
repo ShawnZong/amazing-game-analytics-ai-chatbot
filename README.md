@@ -417,8 +417,9 @@ npm run dev:frontend
 ```env
 OPENAI_API_KEY=sk-...
 MCP_SERVER_URL=http://localhost:8787
-DEFAULT_MODEL=gpt-5-mini
+DEFAULT_MODEL=gpt-4.1-mini
 MAX_TOKENS=16000
+TEMPERATURE=1
 ```
 
 **MCP Server** (set via `wrangler secret` or `.env.local`):
@@ -466,7 +467,7 @@ wrangler secret put OPENAI_API_KEY --env production
 **🤖 OpenAI API errors:**
 
 - Verify `OPENAI_API_KEY` is set as Cloudflare secret or in `.env.local`
-- Check model name matches available models (default: `gpt-5-mini`)
+- Check model name matches available models (default: `gpt-4.1-mini`)
 - Review rate limits and quota in OpenAI dashboard
 
 **⏱️ RAWG API rate limiting:**
