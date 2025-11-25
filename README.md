@@ -35,7 +35,7 @@ Built as a monorepo with modular architecture: the frontend (Next.js React) hand
       <td align="center"><strong>Mobile View</strong></td>
     </tr>
     <tr>
-      <td align="center"><img src="web-amazing-game-analytics-ai.png" alt="Web view of Amazing Game Analytics AI" width="450" /></td>
+      <td align="center"><img src="web-amazing-game-analytics.png" alt="Web view of Amazing Game Analytics AI" width="450" /></td>
       <td align="center"><img src="mobile-amazing-game-analytics.jpeg" alt="Mobile view of Amazing Game Analytics AI" width="200" /></td>
     </tr>
   </table>
