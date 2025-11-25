@@ -2,6 +2,7 @@ import { GAMES_TOOLS } from './games-tools';
 import { GENRES_TOOLS } from './genres-tools';
 import { PLATFORMS_TOOLS } from './platforms-tools';
 import { STORES_TOOLS } from './stores-tools';
+import { PUBLISHERS_TOOLS } from './publishers-tools';
 import { ANALYSIS_TOOLS } from './analysis-tools';
 
 /**
@@ -18,5 +19,6 @@ export const TOOLS = [
   ...GENRES_TOOLS,
   ...PLATFORMS_TOOLS,
   ...STORES_TOOLS,
+  ...PUBLISHERS_TOOLS,
   ...ANALYSIS_TOOLS,
 ];
