@@ -50,3 +50,7 @@ export * from './developers/get-developer-details';
 
 // Creator Role tools
 export * from './creator-roles/list-creator-roles';
+
+// Tag tools
+export * from './tags/list-tags';
+export * from './tags/get-tag-details';
