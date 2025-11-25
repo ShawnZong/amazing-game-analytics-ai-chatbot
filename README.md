@@ -211,6 +211,21 @@ sequenceDiagram
 - **Smart Placement**
   - Enabled Cloudflare Smart Placement to route requests to optimal data centers
 
+**📊 Statistical Analysis Capabilities:**
+
+- **Four specialized analysis tools for complex data insights**
+  - **Execute Calculation**: Performs statistical operations (mean, median, mode, standard deviation, variance, percentiles) on numeric datasets using the simple-statistics library
+  - **Compare Groups**: Compares statistics across multiple groups with automatic ranking, difference calculations, and percentage comparisons—perfect for comparing platforms, genres, or time periods
+  - **Trend Analysis**: Three analysis types—linear regression with R-squared calculation and trend direction interpretation, growth rate calculation with period-based analysis, and moving averages with configurable window size for smoothing noisy data
+  - **Correlation Analysis**: Calculates Pearson correlation coefficient with automatic strength interpretation (very weak to very strong) and direction to identify relationships between variables
+
+- **Creative solutions for intelligent analytics**
+  - **Automatic result interpretation**: Tools provide human-readable interpretations of statistical results (e.g., "Positive trend: values increase by approximately 2.5 per unit", "Strong positive correlation: as Metacritic scores increase, user ratings tend to increase")
+  - **Built-in ranking and comparison**: Group comparison tool automatically ranks groups, calculates differences from best performers, and provides percentage comparisons without requiring additional processing
+  - **R-squared calculation**: Custom implementation for regression quality assessment to determine how well the linear model fits the data
+  - **Moving average smoothing**: Window-based smoothing technique for trend detection in noisy time-series data, enabling identification of underlying patterns
+  - **Comprehensive metadata**: All tools return contextual information including data points, input ranges, and interpretations, enabling the LLM to provide rich, contextual responses
+
 **🛡️ Reliability Patterns:**
 
 - **Zod validation**
