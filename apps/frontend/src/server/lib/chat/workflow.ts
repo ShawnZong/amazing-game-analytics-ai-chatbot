@@ -43,16 +43,10 @@ Condensing rules:
 Return only the condensed response in the same markdown format, presenting only verified information with confidence.`;
 
 /**
- * Creates LangGraph workflow for agent execution
+ * Creates refiner node function
  */
-
-// keep your existing createWorkflow signature
-export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface[]) {
-  const modelWithTools = model.bindTools(tools);
-  const toolNode = new ToolNode(tools);
-
-  // 1) Refiner node: call the raw model to rewrite/refine the user's last message
-  const refinerNode = async (state: typeof MessagesAnnotation.State) => {
+function createRefinerNode(model: ChatOpenAI) {
+  return async (state: typeof MessagesAnnotation.State) => {
     // find last user message (works with plain messages array)
     const lastUser = [...state.messages].reverse().find(m => HumanMessage.isInstance(m));
     if (!lastUser) return {}; // nothing to refine
@@ -72,16 +66,24 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
     // note: using a plain message object {role, content} matches the patterns used elsewhere
     return { messages: [{ role: 'user', content: rewriteResponse.content }] };
   };
+}
 
-  // 2) Existing LLM node (calls modelWithTools so it can optionally call tools)
-  const llmNode = async (state: typeof MessagesAnnotation.State) => {
+/**
+ * Creates LLM node function
+ */
+function createLlmNode(modelWithTools: ReturnType<ChatOpenAI['bindTools']>) {
+  return async (state: typeof MessagesAnnotation.State) => {
     const response = await modelWithTools.invoke(state.messages);
     console.log('LLM response', { response });
     return { messages: [response] };
   };
+}
 
-  // 3) Condenser node: condense the final response to within 600 words while preserving calculations
-  const condenseNode = async (state: typeof MessagesAnnotation.State) => {
+/**
+ * Creates condensing node function
+ */
+function createCondenseNode(model: ChatOpenAI) {
+  return async (state: typeof MessagesAnnotation.State) => {
     // Find the last AI message (the final response)
     const lastAI = [...state.messages].reverse().find(m => AIMessage.isInstance(m));
     if (!lastAI || !AIMessage.isInstance(lastAI)) {
@@ -108,6 +110,18 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
     // Replace the last AI message with the condensed version
     return { messages: [new AIMessage(condensedResponse.content)] };
   };
+}
+
+/**
+ * Creates LangGraph workflow for agent execution
+ */
+export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface[]) {
+  const modelWithTools = model.bindTools(tools);
+  const toolNode = new ToolNode(tools);
+
+  const refinerNode = createRefinerNode(model);
+  const llmNode = createLlmNode(modelWithTools);
+  const condenseNode = createCondenseNode(model);
 
   // Build graph: START -> refiner -> llm -> maybe tools -> llm -> condense -> END
   const workflow = new StateGraph(MessagesAnnotation)
