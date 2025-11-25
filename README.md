@@ -18,11 +18,11 @@
 
 **Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets—just pure gaming intelligence. Dive into a vibrant Brawl Stars-themed chatbot that serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
 
-An AI-powered chatbot that answers questions about video games using natural language. Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** and caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
-
-[![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
+Built as a monorepo with modular architecture: the frontend (Next.js React) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** and caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
 > **🏭 Production-Ready Architecture**: Enterprise-grade architecture with edge computing, intelligent caching, modular design, and comprehensive error handling for high availability and sub-second response times.
+
+[![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
 
 ---
 
@@ -143,12 +143,12 @@ sequenceDiagram
     LangChain->>LLM: Invoke with optimized messages + tools
     LLM-->>LangChain: Tool calls detected
     LangGraph->>LangGraph: Route to tools node
-    LangGraph->>MCP: Execute tool(list_games, ...)
+    LangGraph->>MCP: Execute MCP tools (34 tools available in total)
     MCP->>MCP: Check LRU cache
     alt Cache Hit
         MCP-->>LangGraph: Return cached data
     else Cache Miss
-        MCP->>RAWG: GET /api/games?key=...
+        MCP->>RAWG: Fetch game data via RAWG API
         RAWG-->>MCP: Game data
         MCP->>MCP: Store in cache
         MCP-->>LangGraph: Return data
@@ -157,7 +157,7 @@ sequenceDiagram
     LangGraph->>LLM: Invoke with tool results
     LLM-->>LangGraph: Final response
     LangGraph-->>API: Extract reply
-    API-->>Frontend: {content: "..."}
+    API-->>Frontend: Final response
     Frontend->>User: Display response
 ```
 
@@ -167,11 +167,10 @@ sequenceDiagram
 
 | Technology                               | Rationale                                                                              | Business Impact                                        |
 | ---------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| **Next.js 15 + App Router**              | SSR optimization, edge deployment via OpenNext, type-safe API routes                   | Faster page loads, better SEO, reduced server costs    |
+| **Next.js 15 + App Router**              | SSR optimization, type-safe API routes                                                 | Faster page loads, better SEO, reduced server costs    |
 | **LangGraph + LangChain**                | Declarative agent workflows, tool orchestration, message state management              | Faster feature development, easier maintenance         |
 | **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, protocol-based communication | Independent scaling, reduced coupling costs            |
 | **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution    | Pay-per-use pricing, global edge, no server management |
-| **OpenNext for Cloudflare**              | Zero-config Next.js → Workers deployment, asset optimization, compatibility flags      | Faster deployment cycles, reduced ops overhead         |
 | **LRU Cache (1hr TTL)**                  | Reduce RAWG API calls, improve response times, cost optimization                       | API cost reduction, faster user experience             |
 | **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation              | Fewer production bugs, faster development              |
 | **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               | Parallel team development, reduced duplication         |
@@ -194,23 +193,19 @@ sequenceDiagram
 - **Durable Objects for MCP state**
   - Each MCP agent instance maintains persistent connection state, reducing initialization overhead
   - Trade-off: Higher cost per request, justified by sub-100ms tool execution
-  - **Business impact**: Better user experience (fast responses) vs. slightly higher per-request costs
 
 **⚡ Performance Optimizations:**
 
 - **LRU caching**
   - 100-item cache with 1-hour TTL reduces RAWG API calls by ~60% for repeated queries
   - Cache key includes endpoint + serialized params for precise invalidation
-  - **Business impact**: Significant cost savings on API usage, faster response times
 
 - **Field selection**
   - Implemented `selectFieldsFromPaginatedResponse` to minimize payload size
   - Reduces network transfer and parsing time
-  - **Business impact**: Lower bandwidth costs, improved user experience
 
 - **Smart Placement**
   - Enabled Cloudflare Smart Placement to route requests to optimal data centers
-  - **Business impact**: Better global user experience, no additional infrastructure cost
 
 **🛡️ Reliability Patterns:**
 
