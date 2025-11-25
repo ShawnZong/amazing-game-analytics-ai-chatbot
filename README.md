@@ -12,6 +12,7 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 
 ## 📑 Table of Contents
 
+- [Overview](#-overview)
 - [Preview](#-preview)
 - [Business Use Cases](#-business-use-cases)
 - [Architecture](#-architecture)
@@ -22,6 +23,8 @@ Dive into a vibrant Brawl Stars-themed Chatbot customized with playful accents. 
 - [Troubleshooting](#-troubleshooting)
 
 ---
+
+## 📋 Overview
 
 An AI-powered chatbot that answers questions about video games using natural language. Users chat with the interface, which uses LangGraph/LangChain to orchestrate an LLM that calls MCP tools deployed on Cloudflare Workers. These tools fetch and analyze data from the RAWG Video Games Database, performing statistical analysis and returning insights in conversational format.
 
