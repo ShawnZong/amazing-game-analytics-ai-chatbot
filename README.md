@@ -12,6 +12,8 @@ Dive into a vibrant interface with a custom Brawl Stars-themed Chatbot that feel
 
 AI-powered video game analytics platform that transforms natural language queries into actionable insights from the RAWG Video Games Database. The system combines a Next.js chat interface with a Model Context Protocol (MCP) server deployed on Cloudflare Workers to interact with RAWG API, orchestrated via LangGraph/LangChain to enable LLM-assisted data retrieval, statistical analysis, and conversational exploration of game metadata, ratings, genres, and trends. Built as a monorepo with shared type definitions, the architecture separates concerns between frontend orchestration, MCP tool execution, and external API integration, delivering sub-second responses through edge deployment, LRU caching, and optimized request patterns.
 
+---
+
 ## 🏗️ Architecture
 
 ### 📊 System Overview
@@ -94,6 +96,8 @@ sequenceDiagram
     Frontend->>User: Display response
 ```
 
+---
+
 ## ⚙️ Technology Decisions
 
 | Technology                               | Rationale                                                                              |
@@ -107,6 +111,8 @@ sequenceDiagram
 | **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation              |
 | **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               |
 | **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability, better IDE support              |
+
+---
 
 ## 💡 Key Decisions
 
@@ -133,6 +139,8 @@ sequenceDiagram
 - **Comprehensive build and deployment scripts**: Root `package.json` includes scripts to develop, build, and deploy each component individually or all at once. Developers can work on frontend or MCP server separately (`dev:frontend`, `dev:mcp-server`), build components independently, and deploy to different environments with simple commands. This eliminates the need to remember complex deployment sequences and reduces errors.
 - **Monorepo code sharing**: Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas between frontend and backend, ensuring consistency and reducing maintenance overhead.
 - **Unified development workflow**: Single commands handle linting, type-checking, and formatting across all workspaces, making it easy to maintain code quality standards throughout the project.
+
+---
 
 ## 🛣️ Development Journey
 
@@ -245,6 +253,8 @@ Several enhancements are planned to improve the project's robustness, coverage, 
 - Create multiple specialized agents to handle different tasks (e.g., data retrieval, statistical analysis, trend detection)
 - Use LangGraph to coordinate multiple agents for complex queries requiring multiple steps
 
+---
+
 ## 🚀 Quickstart
 
 ### 📋 Prerequisites
@@ -321,6 +331,8 @@ wrangler secret put RAWG_API_KEY --env production
 # Frontend
 wrangler secret put OPENAI_API_KEY --env production
 ```
+
+---
 
 ## 🔧 Troubleshooting
 
