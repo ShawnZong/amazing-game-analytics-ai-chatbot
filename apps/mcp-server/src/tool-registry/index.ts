@@ -3,6 +3,7 @@ import { GENRES_TOOLS } from './genres-tools';
 import { PLATFORMS_TOOLS } from './platforms-tools';
 import { STORES_TOOLS } from './stores-tools';
 import { PUBLISHERS_TOOLS } from './publishers-tools';
+import { CREATORS_TOOLS } from './creators-tools';
 import { ANALYSIS_TOOLS } from './analysis-tools';
 
 /**
@@ -20,5 +21,6 @@ export const TOOLS = [
   ...PLATFORMS_TOOLS,
   ...STORES_TOOLS,
   ...PUBLISHERS_TOOLS,
+  ...CREATORS_TOOLS,
   ...ANALYSIS_TOOLS,
 ];
