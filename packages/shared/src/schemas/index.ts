@@ -1,6 +1,6 @@
 /**
  * Shared Zod Schemas
- * 
+ *
  * These schemas are used by:
  * - MCP Server: For request validation
  * - Worker: For LangChain tool definitions
@@ -27,6 +27,9 @@ export * from './creators-args';
 
 // Developers endpoint schemas
 export * from './developers-args';
+
+// Creator Roles endpoint schemas
+export * from './creator-roles-args';
 
 // Analysis tool schemas
 export * from './analysis-args';
