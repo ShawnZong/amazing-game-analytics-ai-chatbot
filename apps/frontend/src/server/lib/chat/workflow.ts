@@ -58,6 +58,25 @@ function ensureSystemPrompt(messages: BaseMessage[]): BaseMessage[] {
 }
 
 /**
+ * Maximum number of tool call iterations allowed to prevent infinite loops and excessive token usage
+ */
+const MAX_TOOL_ITERATIONS = 10;
+
+/**
+ * Counts the number of tool call rounds (llm -> tools -> llm cycles)
+ * This helps prevent infinite loops and excessive token consumption
+ */
+function countToolIterations(messages: BaseMessage[]): number {
+  let iterations = 0;
+  for (const msg of messages) {
+    if (AIMessage.isInstance(msg) && msg.tool_calls?.length) {
+      iterations++;
+    }
+  }
+  return iterations;
+}
+
+/**
  * Creates LLM node function that ensures the system prompt is always present.
  * This makes the system prompt usage explicit in the workflow and guarantees
  * it's always available to the LLM, even if previous nodes modified messages.
@@ -116,7 +135,10 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
   const llmNode = createLlmNode(modelWithTools);
   const condenseNode = createCondenseNode(model);
 
-  // Build graph: START -> refiner -> llm -> maybe tools -> llm -> condense -> END
+  // Build graph: START -> refiner -> llm -> (loop: tools -> llm) -> condense -> END
+  // The loop allows multiple tool calls: llm can call tools, then llm again, then tools again, etc.
+  // This enables the LLM to fetch more data if it can't find some data in the first round.
+  // LangGraph will continue looping until the LLM stops making tool calls.
   const workflow = new StateGraph(MessagesAnnotation)
     .addNode('refiner', refinerNode)
     .addNode('llm', llmNode)
@@ -124,15 +146,34 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
     .addNode('condense', condenseNode)
     .addEdge(START, 'refiner')
     .addEdge('refiner', 'llm')
-    .addEdge('tools', 'llm')
+    .addEdge('tools', 'llm') // Loop back to llm after tools execute - enables multiple tool call rounds
     .addConditionalEdges('llm', state => {
       const lastMessage = state.messages.at(-1);
+      const toolIterations = countToolIterations(state.messages);
+
+      // Check if we've exceeded the maximum iterations to prevent infinite loops and excessive token usage
+      if (toolIterations >= MAX_TOOL_ITERATIONS) {
+        console.warn(
+          `Maximum tool iterations (${MAX_TOOL_ITERATIONS}) reached. Forcing workflow to condense and end to prevent excessive token usage.`,
+        );
+        // Force termination to prevent infinite loops
+        return 'condense';
+      }
+
       if (AIMessage.isInstance(lastMessage) && lastMessage.tool_calls?.length) {
+        console.log(
+          `Tool calls detected (${lastMessage.tool_calls.length} calls, iteration ${toolIterations + 1}/${MAX_TOOL_ITERATIONS}), routing to tools node for execution`,
+        );
         return 'tools';
       }
+      console.log(
+        `No tool calls detected (completed ${toolIterations} iterations), routing to condense node for final response`,
+      );
       return 'condense';
     })
     .addEdge('condense', END);
 
+  // Compile the workflow - LangGraph will automatically handle the loop
+  // The workflow will continue until the LLM stops making tool calls
   return workflow.compile();
 }

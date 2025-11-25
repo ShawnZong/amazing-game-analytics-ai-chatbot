@@ -50,8 +50,13 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     const langChainMessages = convertToLangChainMessages(messages);
     const app = createWorkflow(model, tools);
 
-    // Execute workflow
-    const result = await app.invoke({ messages: langChainMessages });
+    // Execute workflow with recursion limit to prevent infinite loops
+    // This ensures the workflow stops after a reasonable number of iterations
+    // Each iteration includes: llm -> tools -> llm, so 15 steps = ~7-8 tool call rounds
+    const result = await app.invoke(
+      { messages: langChainMessages },
+      { recursionLimit: 15 },
+    );
 
     // Extract response
     const finalMessage = result.messages[result.messages.length - 1];
