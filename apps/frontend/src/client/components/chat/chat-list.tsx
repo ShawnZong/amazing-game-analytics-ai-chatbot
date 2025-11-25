@@ -17,7 +17,7 @@ const SUGGESTIONS = [
   {
     icon: Trophy,
     label: "Top Rated Action",
-    query: "Show me action games with rating above 4.0 released in 2025 on PC platform with at least 100 reviews",
+    query: "Show me top 3 action games with rating above 4.0 released in 2025 on PC platform with at least 100 reviews",
     bgColor: "bg-yellow-400",
     hoverColor: "group-hover:bg-yellow-300",
   },
@@ -38,7 +38,7 @@ const SUGGESTIONS = [
   {
     icon: Skull,
     label: "Game Discovery",
-    query: "Find action games with rating above 4.0 released from 2022 to 2025 on PC platform with at least 100 reviews",
+    query: "Recommend me an action game with rating above 4.0 released from 2022 to 2025 on PC platform with at least 100 reviews",
     bgColor: "bg-emerald-400",
     hoverColor: "group-hover:bg-emerald-300",
   },
