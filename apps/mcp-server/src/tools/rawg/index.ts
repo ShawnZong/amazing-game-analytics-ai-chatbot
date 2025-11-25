@@ -26,3 +26,8 @@ export * from './games/get-game-youtube';
 // Genre tools
 export * from './genres/list-genres';
 export * from './genres/get-genre-details';
+
+// Platform tools
+export * from './platforms/list-platforms';
+export * from './platforms/list-parent-platforms';
+export * from './platforms/get-platform-details';

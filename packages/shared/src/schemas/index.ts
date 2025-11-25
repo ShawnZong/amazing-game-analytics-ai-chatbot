@@ -13,5 +13,8 @@ export * from './games-args';
 // Genres endpoint schemas
 export * from './genres-args';
 
+// Platforms endpoint schemas
+export * from './platforms-args';
+
 // Analysis tool schemas
 export * from './analysis-args';
