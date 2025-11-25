@@ -43,3 +43,7 @@ export * from './publishers/get-publisher-details';
 // Creator tools
 export * from './creators/list-creators';
 export * from './creators/get-creator-details';
+
+// Developer tools
+export * from './developers/list-developers';
+export * from './developers/get-developer-details';
