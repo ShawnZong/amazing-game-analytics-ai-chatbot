@@ -16,6 +16,8 @@
 
 ## 📋 Overview
 
+**Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets—just pure gaming intelligence. Dive into a vibrant Brawl Stars-themed chatbot that serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
+
 An AI-powered chatbot that answers questions about video games using natural language. Built as a monorepo with modular architecture: the frontend (Next.js) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** and caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
 [![Live App](https://img.shields.io/badge/🚀_Live_App-Visit_Now:Click_Here-00D9FF?style=for-the-badge&logo=cloudflare&logoColor=white)](https://rawg-analytics-frontend-production.dt9gdsv25p.workers.dev/)
