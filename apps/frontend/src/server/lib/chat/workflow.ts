@@ -1,11 +1,13 @@
 /**
  * LangGraph workflow creation
  */
-import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import type { BaseMessage } from '@langchain/core/messages';
+import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { StructuredToolInterface } from '@langchain/core/tools';
 import { END, MessagesAnnotation, START, StateGraph } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { ChatOpenAI } from '@langchain/openai';
+import { SYSTEM_PROMPT } from './messages';
 
 /**
  * System prompt for the message refiner node
@@ -69,11 +71,37 @@ function createRefinerNode(model: ChatOpenAI) {
 }
 
 /**
- * Creates LLM node function
+ * Ensures the system prompt is always present and first in the messages array.
+ * This guarantees that the LLM always receives the correct system instructions,
+ * even if previous nodes in the workflow modified the messages array.
+ *
+ * @param messages - The current messages array from the workflow state
+ * @returns Messages array with SYSTEM_PROMPT guaranteed to be first
+ */
+function ensureSystemPrompt(messages: BaseMessage[]): BaseMessage[] {
+  // Check if first message is already a SystemMessage with SYSTEM_PROMPT
+  const firstMessage = messages[0];
+  if (SystemMessage.isInstance(firstMessage) && firstMessage.content === SYSTEM_PROMPT) {
+    return messages; // System prompt already present and correct
+  }
+
+  // Filter out any existing system messages to avoid duplicates
+  const nonSystemMessages = messages.filter(msg => !SystemMessage.isInstance(msg));
+
+  // Prepend the system prompt as the first message
+  return [new SystemMessage(SYSTEM_PROMPT), ...nonSystemMessages];
+}
+
+/**
+ * Creates LLM node function that ensures the system prompt is always present.
+ * This makes the system prompt usage explicit in the workflow and guarantees
+ * it's always available to the LLM, even if previous nodes modified messages.
  */
 function createLlmNode(modelWithTools: ReturnType<ChatOpenAI['bindTools']>) {
   return async (state: typeof MessagesAnnotation.State) => {
-    const response = await modelWithTools.invoke(state.messages);
+    // Ensure system prompt is always present and first
+    const messagesWithSystemPrompt = ensureSystemPrompt(state.messages);
+    const response = await modelWithTools.invoke(messagesWithSystemPrompt);
     console.log('LLM response', { response });
     return { messages: [response] };
   };
