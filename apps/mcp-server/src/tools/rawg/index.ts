@@ -31,3 +31,7 @@ export * from './genres/get-genre-details';
 export * from './platforms/list-platforms';
 export * from './platforms/list-parent-platforms';
 export * from './platforms/get-platform-details';
+
+// Store tools
+export * from './stores/list-stores';
+export * from './stores/get-store-details';
