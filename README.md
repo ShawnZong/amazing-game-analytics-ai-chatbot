@@ -108,7 +108,7 @@ graph TB
     end
 
     subgraph "External Services"
-        LLM[OpenAI GPT-4o-mini<br/>LLM Provider]
+        LLM[OpenAI Models<br/>(configurable)]
         RAWG[RAWG API<br/>Video Games Database]
     end
 
