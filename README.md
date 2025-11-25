@@ -18,7 +18,7 @@
 
 **Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets—just pure gaming intelligence. Dive into a vibrant Brawl Stars-themed chatbot that serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
 
-Built as a monorepo with modular architecture: the frontend (Next.js React) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** and caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
+Built as a monorepo with modular architecture: the frontend (Next.js React) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** covering all RAWG APIs with intelligent caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
 > **🏭 Production-Ready Architecture**: Enterprise-grade architecture with edge computing, intelligent caching, modular design, and comprehensive error handling for high availability and sub-second response times.
 
@@ -352,7 +352,6 @@ Several enhancements are planned to improve the project's robustness, coverage, 
 
 **Tool Coverage:**
 
-- Implement more MCP tools to cover all RAWG APIs
 - Expand the range of queries the system can handle
 - Add specialized tools for different types of game data analysis
 
