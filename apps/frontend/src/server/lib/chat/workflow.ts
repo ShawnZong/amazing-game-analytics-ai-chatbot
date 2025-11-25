@@ -60,7 +60,7 @@ function ensureSystemPrompt(messages: BaseMessage[]): BaseMessage[] {
 /**
  * Maximum number of tool call iterations allowed to prevent infinite loops and excessive token usage
  */
-const MAX_TOOL_ITERATIONS = 10;
+const MAX_TOOL_ITERATIONS = 30;
 
 /**
  * Counts the number of tool call rounds (llm -> tools -> llm cycles)
