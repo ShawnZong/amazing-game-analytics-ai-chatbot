@@ -5,6 +5,7 @@ import { STORES_TOOLS } from './stores-tools';
 import { PUBLISHERS_TOOLS } from './publishers-tools';
 import { CREATORS_TOOLS } from './creators-tools';
 import { DEVELOPERS_TOOLS } from './developers-tools';
+import { CREATOR_ROLES_TOOLS } from './creator-roles-tools';
 import { ANALYSIS_TOOLS } from './analysis-tools';
 
 /**
@@ -24,5 +25,6 @@ export const TOOLS = [
   ...PUBLISHERS_TOOLS,
   ...CREATORS_TOOLS,
   ...DEVELOPERS_TOOLS,
+  ...CREATOR_ROLES_TOOLS,
   ...ANALYSIS_TOOLS,
 ];
