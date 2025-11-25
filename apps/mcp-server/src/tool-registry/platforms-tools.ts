@@ -37,4 +37,3 @@ export const PLATFORMS_TOOLS = [
     execute: getPlatformDetails,
   },
 ];
-
