@@ -47,3 +47,6 @@ export * from './creators/get-creator-details';
 // Developer tools
 export * from './developers/list-developers';
 export * from './developers/get-developer-details';
+
+// Creator Role tools
+export * from './creator-roles/list-creator-roles';
