@@ -39,3 +39,7 @@ export * from './stores/get-store-details';
 // Publisher tools
 export * from './publishers/list-publishers';
 export * from './publishers/get-publisher-details';
+
+// Creator tools
+export * from './creators/list-creators';
+export * from './creators/get-creator-details';
