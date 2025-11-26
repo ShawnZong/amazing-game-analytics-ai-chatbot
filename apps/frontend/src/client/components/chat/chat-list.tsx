@@ -24,7 +24,7 @@ const SUGGESTIONS = [
   {
     icon: Star,
     label: "Genre Analysis",
-    query: "Compare the average ratings for Action and Strategy genres for games released in 2025 on PC platform with at least 50 reviews",
+    query: "Compare the Action and Strategy genres for games released in 2025 on PC platform with at least 50 reviews, fetch their data and perform comprehensive data analysis and generate me a detailed report.",
     bgColor: "bg-cyan-400",
     hoverColor: "group-hover:bg-cyan-300",
   },
