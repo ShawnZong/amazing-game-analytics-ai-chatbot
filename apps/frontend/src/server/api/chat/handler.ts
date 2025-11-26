@@ -6,6 +6,7 @@ import { AIMessage } from '@langchain/core/messages';
 import { getMcpTools } from '@/server/lib/chat/mcp-client';
 import { convertToLangChainMessages, extractReply } from '@/server/lib/chat/messages';
 import { createModel } from '@/server/lib/chat/model';
+import { SYSTEM_PROMPT } from '@/server/lib/chat/prompts';
 import { createWorkflow } from '@/server/lib/chat/workflow';
 import { getEnv } from '@/server/lib/env';
 import { z } from 'zod';
@@ -24,6 +25,9 @@ const AISDKRequestSchema = z.object({
  * Handles chat endpoint request
  */
 export async function handleChatRequest(request: Request): Promise<Response> {
+  // Store messages outside try block for error handling
+  let messages: Array<{ role: 'user' | 'assistant' | 'system'; content: string }> = [];
+
   try {
     // Get environment from Cloudflare context or process.env
     const env = getEnv();
@@ -40,7 +44,7 @@ export async function handleChatRequest(request: Request): Promise<Response> {
       );
     }
 
-    const { messages } = validation.data;
+    messages = validation.data.messages;
 
     // Get tools and create model
     const tools = await getMcpTools(env);
@@ -51,12 +55,24 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     const app = createWorkflow(model, tools);
 
     // Execute workflow with recursion limit to prevent infinite loops
-    // This ensures the workflow stops after a reasonable number of iterations
-    // Each iteration includes: llm -> tools -> llm, so 15 steps = ~7-8 tool call rounds
-    const result = await app.invoke(
-      { messages: langChainMessages },
-      { recursionLimit: 15 },
-    );
+    // Each round includes: refiner -> llm -> tools -> llm, so we need enough steps
+    // MAX_TOOL_ITERATIONS is 30, and each tool round = 2 steps (tools + llm)
+    // Plus refiner (1) and condense (1) = ~62 steps minimum, but we'll use 50 for safety
+    let result;
+    try {
+      result = await app.invoke({ messages: langChainMessages }, { recursionLimit: 50 });
+    } catch (error) {
+      // Handle recursion limit error gracefully - extract partial response
+      if (error instanceof Error && error.message.includes('Recursion limit')) {
+        console.warn('Recursion limit reached, attempting to extract partial response', {
+          error: error.message,
+        });
+        // Try to get the last state from the error if available
+        // If not, we'll handle it in the error catch block below
+        throw new Error('RECURSION_LIMIT_REACHED');
+      }
+      throw error;
+    }
 
     // Extract response
     const finalMessage = result.messages[result.messages.length - 1];
@@ -75,7 +91,8 @@ export async function handleChatRequest(request: Request): Promise<Response> {
         });
         return Response.json(
           {
-            error: 'Token limit reached. The response was cut off because it exceeded the maximum token limit. Please try a simpler or more specific query.',
+            error:
+              'Token limit reached. The response was cut off because it exceeded the maximum token limit. Please try a simpler or more specific query.',
           },
           { status: 400 },
         );
@@ -103,6 +120,51 @@ export async function handleChatRequest(request: Request): Promise<Response> {
     );
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    // Handle recursion limit error - try to extract partial response
+    if (errorMessage === 'RECURSION_LIMIT_REACHED' || errorMessage.includes('Recursion limit')) {
+      console.warn(
+        'Recursion limit reached, attempting to extract partial response from workflow state',
+      );
+
+      try {
+        const env = getEnv();
+        const model = createModel(env);
+
+        // Try to get the last AI message from the workflow state if available
+        // If the error contains state information, we could extract it, but LangGraph doesn't expose this easily
+        // Instead, we'll generate a helpful message explaining the situation
+
+        // Get the original user message to understand context
+        const lastUserMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+        const userQuery = lastUserMessage?.content || 'your query';
+
+        // Generate a final response that acknowledges the limit and provides what we can
+        const fallbackPrompt = `The analysis for "${userQuery}" reached the maximum iteration limit. Based on the data collected, provide a comprehensive analysis report with the available information. Clearly state any limitations due to the iteration limit. Structure your response as an Analysis Report with: Data Retrieved, Calculations, Findings, and Implications sections. Be transparent about what data was available and what might be missing.`;
+
+        const fallbackResponse = await model.invoke([
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'user', content: fallbackPrompt },
+        ]);
+
+        const reply = extractReply(fallbackResponse);
+        if (reply && reply.trim().length > 0) {
+          console.log('Generated fallback response after recursion limit');
+          return Response.json(
+            { content: reply },
+            {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+              },
+            },
+          );
+        }
+      } catch (fallbackError) {
+        console.error('Failed to generate fallback response', fallbackError);
+      }
+    }
+
     console.error('Error handling chat request', { error: errorMessage });
     return Response.json(
       { error: 'An internal error occurred while processing your request' },

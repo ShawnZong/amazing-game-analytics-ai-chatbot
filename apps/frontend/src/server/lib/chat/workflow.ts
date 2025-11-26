@@ -98,12 +98,42 @@ function createCondenseNode(model: ChatOpenAI) {
   return async (state: typeof MessagesAnnotation.State) => {
     // Find the last AI message (the final response)
     const lastAI = [...state.messages].reverse().find(m => AIMessage.isInstance(m));
+
+    // If no AI message exists, generate a response based on available data
     if (!lastAI || !AIMessage.isInstance(lastAI)) {
-      return {}; // nothing to condense
+      console.warn(
+        'No AI message found for condensing, generating final response from available data',
+      );
+
+      // Find the last user message to understand the query
+      const lastUser = [...state.messages].reverse().find(m => HumanMessage.isInstance(m));
+      const userQuery =
+        lastUser && HumanMessage.isInstance(lastUser) ? lastUser.content : 'the query';
+
+      // Generate a response acknowledging the situation
+      const prompt = [
+        {
+          role: 'system',
+          content: CONDENSER_SYSTEM_PROMPT,
+        },
+        {
+          role: 'user',
+          content: `Generate a comprehensive analysis report for: "${userQuery}". Based on the available data collected, provide insights and analysis. If data collection was incomplete, clearly state the limitations. Structure as an Analysis Report with: Data Retrieved, Calculations, Findings, and Implications sections.`,
+        },
+      ];
+
+      const response = await model.invoke(prompt);
+      return { messages: [new AIMessage(response.content)] };
     }
 
     const originalContent =
       typeof lastAI.content === 'string' ? lastAI.content : String(lastAI.content);
+
+    // If the content is empty or very short, don't condense, just return as-is
+    if (!originalContent || originalContent.trim().length < 50) {
+      console.warn('AI message content too short to condense, returning as-is');
+      return { messages: [lastAI] };
+    }
 
     // Ask the model to condense the response
     const prompt = [
@@ -157,15 +187,32 @@ export function createWorkflow(model: ChatOpenAI, tools: StructuredToolInterface
           `Maximum tool iterations (${MAX_TOOL_ITERATIONS}) reached. Forcing workflow to condense and end to prevent excessive token usage.`,
         );
         // Force termination to prevent infinite loops
+        // Even if there are tool calls, we stop here and generate a final response
         return 'condense';
       }
 
+      // If we have tool calls, continue to tools node
       if (AIMessage.isInstance(lastMessage) && lastMessage.tool_calls?.length) {
         console.log(
           `Tool calls detected (${lastMessage.tool_calls.length} calls, iteration ${toolIterations + 1}/${MAX_TOOL_ITERATIONS}), routing to tools node for execution`,
         );
         return 'tools';
       }
+
+      // No tool calls - generate final response
+      // Check if we have at least one AI message with content
+      const hasAIContent = state.messages.some(
+        msg =>
+          AIMessage.isInstance(msg) &&
+          msg.content &&
+          (typeof msg.content === 'string' ? msg.content.trim().length > 0 : true),
+      );
+
+      if (!hasAIContent) {
+        console.warn('No AI content found, but no tool calls - forcing a response generation');
+        // This shouldn't happen, but if it does, we'll let condense node handle it
+      }
+
       console.log(
         `No tool calls detected (completed ${toolIterations} iterations), routing to condense node for final response`,
       );
