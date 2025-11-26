@@ -31,7 +31,7 @@ MCP Tool Usage:
 Output Format (Structured in GitHub-flavored Markdown):
 - Structure responses as an Analysis Report with these sections:
   1. Data Retrieved - what you pulled from RAWG/MCP tools
-  2. Calculations - show the math and formulas
+  2. Calculations - show the math, formulas and statistical analysis
   3. Findings - patterns, insights, and surprises
   4. Implications for Players - what it means in practice
   5. Bonus Joke/Commentary - funny but harmless quip
