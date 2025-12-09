@@ -18,7 +18,7 @@
 
 **Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets—just pure gaming intelligence. Dive into a vibrant Brawl Stars-themed chatbot that serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
 
-Built as a monorepo with modular architecture: the frontend (Next.js React) handles chat and LLM orchestration via LangGraph/LangChain, while a separate MCP server manages **34 MCP tools** covering all RAWG APIs with intelligent caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
+Built as a monorepo with modular architecture: the frontend (Next.js React) handles chat and LLM orchestration via LangGraph, while a separate MCP server manages **34 MCP tools** covering all RAWG APIs with intelligent caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
 > **🏭 Production-Ready Architecture**: Enterprise-grade architecture with edge computing, intelligent caching, modular design, and comprehensive error handling for high availability and sub-second response times.
 
@@ -88,10 +88,13 @@ graph TB
             API[Next.js API Routes<br/>/api/chat]
         end
         subgraph "Orchestration Layer"
-            LG[LangGraph Workflow<br/>State Machine]
-            REFINER[Message Refiner<br/>Query Optimization]
-            LC[LangChain Core<br/>Message Handling]
             MCP_CLIENT[MCP Client Adapter<br/>Tool Discovery]
+            MODEL[OpenAI Model<br/>with Tools Bound]
+            LG[LangGraph Workflow<br/>State Machine]
+            REFINER[Refiner Node<br/>Query Optimization]
+            LLM_NODE[LLM Node<br/>Tool Execution]
+            TOOLS_NODE[Tools Node<br/>MCP Tool Execution]
+            CONDENSE[Condense Node<br/>Response Optimization]
         end
     end
 
@@ -107,16 +110,24 @@ graph TB
     end
 
     UI -->|POST /api/chat| API
-    API -->|Create Workflow| LG
-    LG -->|Refine Query| REFINER
-    REFINER -->|Optimized Message| LC
-    LC -->|Bind Tools| MCP_CLIENT
+    API -->|Discover Tools| MCP_CLIENT
     MCP_CLIENT -->|HTTP MCP Protocol| DO
+    DO -->|Return Tool Schemas| MCP_CLIENT
+    API -->|Create Model + Bind Tools| MODEL
+    API -->|Create Workflow| LG
+    LG -->|START| REFINER
+    REFINER -->|Refined Query| LLM_NODE
+    LLM_NODE -->|Tool Calls?| TOOLS_NODE
+    TOOLS_NODE -->|HTTP MCP Protocol| DO
     DO -->|Execute| TOOLS
     TOOLS -->|Check Cache| CACHE
     TOOLS -->|Fetch Data| RAWG
-    LC -->|Generate Response| LLM
-    LC -->|Stream| API
+    TOOLS_NODE -->|Tool Results| LLM_NODE
+    LLM_NODE -->|No Tool Calls| CONDENSE
+    CONDENSE -->|END| API
+    LLM_NODE -->|Invoke| LLM
+    REFINER -->|Invoke| LLM
+    CONDENSE -->|Invoke| LLM
     API -->|JSON Response| UI
 ```
 
@@ -127,23 +138,28 @@ sequenceDiagram
     participant User
     participant Frontend
     participant API as Next.js API Route
+    participant MCPClient as MCP Client
     participant LangGraph
-    participant LangChain
     participant MCP as MCP Server
     participant RAWG
     participant LLM as OpenAI
 
     User->>Frontend: Submit query
     Frontend->>API: POST /api/chat {messages}
+    API->>MCPClient: Discover tools via MCP adapter
+    MCPClient->>MCP: HTTP MCP Protocol - List tools
+    MCP-->>MCPClient: Return tool schemas (34 tools)
+    MCPClient-->>API: Return tools array
+    API->>API: Create model and bind tools
     API->>LangGraph: Create workflow(model, tools)
-    LangGraph->>LangGraph: Refine user message
-    LangGraph->>LangChain: Initialize state graph
-    LangChain->>MCP: Discover tools via MCP adapter
-    MCP-->>LangChain: Return tool schemas
-    LangChain->>LLM: Invoke with optimized messages + tools
-    LLM-->>LangChain: Tool calls detected
+    LangGraph->>LangGraph: START → Refiner node
+    LangGraph->>LLM: Invoke refiner (optimize query)
+    LLM-->>LangGraph: Refined query
+    LangGraph->>LangGraph: Refiner → LLM node
+    LangGraph->>LLM: Invoke with messages + tools
+    LLM-->>LangGraph: Tool calls detected
     LangGraph->>LangGraph: Route to tools node
-    LangGraph->>MCP: Execute MCP tools (34 tools available in total)
+    LangGraph->>MCP: Execute MCP tools (HTTP MCP Protocol)
     MCP->>MCP: Check LRU cache
     alt Cache Hit
         MCP-->>LangGraph: Return cached data
@@ -153,11 +169,19 @@ sequenceDiagram
         MCP->>MCP: Store in cache
         MCP-->>LangGraph: Return data
     end
-    LangGraph->>LangGraph: Route back to LLM
+    LangGraph->>LangGraph: Tools → LLM node (loop)
     LangGraph->>LLM: Invoke with tool results
-    LLM-->>LangGraph: Final response
-    LangGraph-->>API: Extract reply
-    API-->>Frontend: Final response
+    LLM-->>LangGraph: Response (may have more tool calls)
+    alt More Tool Calls
+        LangGraph->>LangGraph: Loop back to tools node
+    else No Tool Calls
+        LangGraph->>LangGraph: Route to condense node
+        LangGraph->>LLM: Invoke condense (optimize response)
+        LLM-->>LangGraph: Condensed final response
+        LangGraph->>LangGraph: Condense → END
+    end
+    LangGraph-->>API: Extract reply from final message
+    API-->>Frontend: JSON response
     Frontend->>User: Display response
 ```
 
@@ -165,16 +189,16 @@ sequenceDiagram
 
 ## ⚙️ Technology Decisions
 
-| Technology                               | Rationale                                                                              | Business Impact                                        |
-| ---------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| **Next.js 15 + App Router**              | SSR optimization, type-safe API routes                                                 | Faster page loads, better SEO, reduced server costs    |
-| **LangGraph + LangChain**                | Declarative agent workflows, tool orchestration, message state management              | Faster feature development, easier maintenance         |
-| **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, protocol-based communication | Independent scaling, reduced coupling costs            |
-| **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution    | Pay-per-use pricing, global edge, no server management |
-| **LRU Cache (1hr TTL)**                  | Reduce RAWG API calls, improve response times, cost optimization                       | API cost reduction, faster user experience             |
-| **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation              | Fewer production bugs, faster development              |
-| **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               | Parallel team development, reduced duplication         |
-| **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability, better IDE support              | Lower bug rates, faster onboarding                     |
+| Technology                                   | Rationale                                                                                                                                                                                                               | Business Impact                                                                                 |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Next.js 15 + App Router**                  | SSR optimization, type-safe API routes                                                                                                                                                                                  | Faster page loads, better SEO, reduced server costs                                             |
+| **LangGraph**                                | LangGraph for declarative agent workflows and state machine orchestration                                                                                                                                               | Faster feature development, easier maintenance, clear separation of orchestration and utilities |
+| **Model Context Protocol (MCP)**             | Standardized tool interface, decoupled server deployment, protocol-based communication                                                                                                                                  | Independent scaling, reduced coupling costs                                                     |
+| **Cloudflare Workers + Durable Objects**     | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution                                                                                                                                     | Pay-per-use pricing, global edge, no server management                                          |
+| **LRU Cache (1hr TTL)**                      | Reduce RAWG API calls, improve response times, cost optimization                                                                                                                                                        | API cost reduction, faster user experience                                                      |
+| **Zod + Shared Schemas**                     | Runtime validation, type safety across monorepo, OpenAPI → Zod generation                                                                                                                                               | Fewer production bugs, faster development                                                       |
+| **Monorepo (npm workspaces)**                | Code sharing, atomic deployments, unified tooling, dependency management                                                                                                                                                | Parallel team development, reduced duplication                                                  |
+| **TypeScript Strict Mode**                   | Catch errors at compile time, improve maintainability, better IDE support                                                                                                                                               | Lower bug rates, faster onboarding                                                              |
 
 ---
 
