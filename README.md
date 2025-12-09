@@ -83,52 +83,80 @@ Built as a monorepo with modular architecture: the frontend (Next.js React) hand
 ```mermaid
 graph TB
     subgraph "Frontend Cloudflare Worker"
-        subgraph "Frontend Layer"
-            UI[Next.js React UI<br/>Chat Interface]
-            API[Next.js API Routes<br/>/api/chat]
-        end
-        subgraph "Orchestration Layer"
-            MCP_CLIENT[MCP Client Adapter<br/>Tool Discovery]
-            MODEL[OpenAI Model<br/>with Tools Bound]
-            LG[LangGraph Workflow<br/>State Machine]
-            REFINER[Refiner Node<br/>Query Optimization]
-            LLM_NODE[LLM Node<br/>Tool Execution]
-            TOOLS_NODE[Tools Node<br/>MCP Tool Execution]
-            CONDENSE[Condense Node<br/>Response Optimization]
-        end
+        UI[Next.js React UI<br/>Chat Interface]
+        API[API Handler<br/>/api/chat]
+        MCP_CLIENT[MCP Client<br/>Tool Discovery]
+        WORKFLOW[LangGraph Workflow<br/>State Machine Orchestration]
     end
 
     subgraph "MCP Server Cloudflare Worker"
-        DO[Durable Object<br/>Stateful MCP Agent]
-        TOOLS[MCP Tool Registry<br/>34 tools]
+        DO[Durable Object<br/>MCP Agent]
+        TOOLS[Tool Registry<br/>34 MCP Tools]
         CACHE[LRU Cache<br/>1hr TTL]
     end
 
     subgraph "External Services"
-        LLM[OpenAI Models<br/>configurable]
-        RAWG[RAWG API<br/>Video Games Database]
+        LLM[OpenAI API<br/>LLM Models]
+        RAWG[RAWG API<br/>Game Database]
     end
 
     UI -->|POST /api/chat| API
-    API -->|Discover Tools| MCP_CLIENT
-    MCP_CLIENT -->|HTTP MCP Protocol| DO
-    DO -->|Return Tool Schemas| MCP_CLIENT
-    API -->|Create Model + Bind Tools| MODEL
-    API -->|Create Workflow| LG
-    LG -->|START| REFINER
-    REFINER -->|Refined Query| LLM_NODE
-    LLM_NODE -->|Tool Calls?| TOOLS_NODE
-    TOOLS_NODE -->|HTTP MCP Protocol| DO
-    DO -->|Execute| TOOLS
-    TOOLS -->|Check Cache| CACHE
-    TOOLS -->|Fetch Data| RAWG
-    TOOLS_NODE -->|Tool Results| LLM_NODE
-    LLM_NODE -->|No Tool Calls| CONDENSE
-    CONDENSE -->|END| API
-    LLM_NODE -->|Invoke| LLM
-    REFINER -->|Invoke| LLM
-    CONDENSE -->|Invoke| LLM
+    API -->|1. Discover Tools| MCP_CLIENT
+    MCP_CLIENT <-->|HTTP MCP Protocol| DO
+    API -->|2. Create Workflow| WORKFLOW
+    WORKFLOW <-->|Execute Tools| MCP_CLIENT
+    WORKFLOW <-->|LLM Calls| LLM
+    MCP_CLIENT <-->|Tool Execution| DO
+    DO -->|Route to| TOOLS
+    TOOLS -->|Check| CACHE
+    TOOLS -->|Fetch| RAWG
+    WORKFLOW -->|Final Response| API
     API -->|JSON Response| UI
+
+    style WORKFLOW fill:#e1f5ff
+    style DO fill:#fff4e1
+    style LLM fill:#f0f0f0
+    style RAWG fill:#f0f0f0
+```
+
+### 🔄 LangGraph Workflow Detail
+
+```mermaid
+stateDiagram-v2
+    [*] --> Refiner: START
+    Refiner --> LLM: Refined Query
+
+    LLM --> Tools: Has Tool Calls?
+    LLM --> Condense: No Tool Calls
+
+    Tools --> LLM: Tool Results
+    LLM --> Tools: More Tool Calls?
+    LLM --> Condense: No More Calls
+
+    Condense --> [*]: END
+
+    note right of Refiner
+        Optimizes user query
+        using LLM (no tools)
+    end note
+
+    note right of LLM
+        Model with tools bound
+        Can make tool calls
+        or generate response
+    end note
+
+    note right of Tools
+        Executes MCP tools
+        via HTTP MCP Protocol
+        Returns results to LLM
+    end note
+
+    note right of Condense
+        Optimizes final response
+        using LLM (no tools)
+        Max 600 words
+    end note
 ```
 
 ### 🔄 Request/Response Flow
@@ -137,50 +165,50 @@ graph TB
 sequenceDiagram
     participant User
     participant Frontend
-    participant API as Next.js API Route
+    participant API as API Handler
     participant MCPClient as MCP Client
-    participant LangGraph
+    participant Workflow as LangGraph Workflow
     participant MCP as MCP Server
     participant RAWG
     participant LLM as OpenAI
 
     User->>Frontend: Submit query
     Frontend->>API: POST /api/chat {messages}
-    API->>MCPClient: Discover tools via MCP adapter
-    MCPClient->>MCP: HTTP MCP Protocol - List tools
-    MCP-->>MCPClient: Return tool schemas (34 tools)
-    MCPClient-->>API: Return tools array
-    API->>API: Create model and bind tools
-    API->>LangGraph: Create workflow(model, tools)
-    LangGraph->>LangGraph: START → Refiner node
-    LangGraph->>LLM: Invoke refiner (optimize query)
-    LLM-->>LangGraph: Refined query
-    LangGraph->>LangGraph: Refiner → LLM node
-    LangGraph->>LLM: Invoke with messages + tools
-    LLM-->>LangGraph: Tool calls detected
-    LangGraph->>LangGraph: Route to tools node
-    LangGraph->>MCP: Execute MCP tools (HTTP MCP Protocol)
-    MCP->>MCP: Check LRU cache
-    alt Cache Hit
-        MCP-->>LangGraph: Return cached data
-    else Cache Miss
-        MCP->>RAWG: Fetch game data via RAWG API
-        RAWG-->>MCP: Game data
-        MCP->>MCP: Store in cache
-        MCP-->>LangGraph: Return data
+
+    Note over API,MCP: Setup Phase
+    API->>MCPClient: Discover tools
+    MCPClient->>MCP: HTTP MCP - List tools
+    MCP-->>MCPClient: Tool schemas (34 tools)
+    MCPClient-->>API: Tools array
+    API->>API: Create model + bind tools
+    API->>Workflow: Create workflow(model, tools)
+
+    Note over Workflow,LLM: Workflow Execution
+    Workflow->>LLM: Refiner: Optimize query
+    LLM-->>Workflow: Refined query
+
+    loop Tool Execution Loop (max 30 iterations)
+        Workflow->>LLM: LLM: Invoke with tools
+        LLM-->>Workflow: Tool calls detected
+        Workflow->>MCP: Execute MCP tools
+        MCP->>MCP: Check LRU cache
+        alt Cache Hit
+            MCP-->>Workflow: Cached data
+        else Cache Miss
+            MCP->>RAWG: Fetch game data
+            RAWG-->>MCP: Game data
+            MCP->>MCP: Store in cache
+            MCP-->>Workflow: Fresh data
+        end
+        Workflow->>LLM: LLM: Process tool results
+        LLM-->>Workflow: Response (may have more tool calls)
     end
-    LangGraph->>LangGraph: Tools → LLM node (loop)
-    LangGraph->>LLM: Invoke with tool results
-    LLM-->>LangGraph: Response (may have more tool calls)
-    alt More Tool Calls
-        LangGraph->>LangGraph: Loop back to tools node
-    else No Tool Calls
-        LangGraph->>LangGraph: Route to condense node
-        LangGraph->>LLM: Invoke condense (optimize response)
-        LLM-->>LangGraph: Condensed final response
-        LangGraph->>LangGraph: Condense → END
-    end
-    LangGraph-->>API: Extract reply from final message
+
+    Note over Workflow,LLM: Finalization
+    Workflow->>LLM: Condense: Optimize response
+    LLM-->>Workflow: Final condensed response
+    Workflow-->>API: Extract reply
+
     API-->>Frontend: JSON response
     Frontend->>User: Display response
 ```
