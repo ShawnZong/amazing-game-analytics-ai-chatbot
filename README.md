@@ -4,9 +4,9 @@
 
 - [Overview](#-overview)
 - [Preview](#-preview)
+- [Features & Use Cases](#-features--use-cases)
 - [Architecture](#-architecture)
 - [Technology Stack](#-technology-stack)
-- [Features & Use Cases](#-features--use-cases)
 - [Development Journey](#-development-journey)
 - [Quickstart](#-quickstart)
 - [Troubleshooting](#-troubleshooting)
