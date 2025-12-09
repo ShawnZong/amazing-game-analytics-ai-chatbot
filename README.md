@@ -4,10 +4,9 @@
 
 - [Overview](#-overview)
 - [Preview](#-preview)
-- [Business Use Cases](#-business-use-cases)
 - [Architecture](#-architecture)
-- [Technology Decisions](#️-technology-decisions)
-- [Key Decisions](#-key-decisions)
+- [Technology Stack](#-technology-stack)
+- [Features & Use Cases](#-features--use-cases)
 - [Development Journey](#-development-journey)
 - [Quickstart](#-quickstart)
 - [Troubleshooting](#-troubleshooting)
@@ -16,7 +15,7 @@
 
 ## 📋 Overview
 
-**Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets—just pure gaming intelligence. Dive into a vibrant Brawl Stars-themed chatbot that serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
+**Ask anything about video games in plain English and get instant analytics!** 🚀 Just type your question and watch the AI crunch numbers from millions of game titles. No SQL, no spreadsheets, just pure gaming intelligence. Dive into a vibrant Brawl Stars-themed chatbot that serves up beautifully formatted reports and insights with that energetic vibe you love! 🎮✨
 
 Built as a monorepo with modular architecture: the frontend (Next.js React) handles chat and LLM orchestration via LangGraph, while a separate MCP server manages **34 MCP tools** covering all RAWG APIs with intelligent caching. The system delivers sub-second responses through edge deployment on Cloudflare, LRU caching, and optimized request patterns.
 
@@ -43,40 +42,21 @@ Built as a monorepo with modular architecture: the frontend (Next.js React) hand
 
 ---
 
-## 💼 Business Use Cases
+## 💼 Features & Use Cases
 
-### 🎯 Real-World Scenarios
+**Real-World Scenarios:**
 
-**1. Market Analysis for Game Developers**
+- **Market Analysis**: Developers analyze genre trends and platform preferences with statistical insights across thousands of games
+- **Competitive Intelligence**: Publishers compare competitor portfolios by genre, platform, and release timing for strategic planning
+- **Game Discovery**: Gamers find the best games by criteria (genre, year, ratings) with instant filtered results
 
-- **Scenario**: An indie developer wants to understand genre trends and platform preferences before starting a new project
-- **Value**: Get statistical analysis of genre performance, platform distribution, and rating trends across thousands of games
-- **Business Impact**: Data-driven decision making reduces market risk, helps identify profitable niches
-
-**2. Competitive Intelligence**
-
-- **Scenario**: A publisher wants to analyze competitor game portfolios by genre, platform, and release timing
-- **Value**: Comprehensive comparison reports showing market positioning and trends
-- **Business Impact**: Strategic planning insights, identification of market gaps, competitive advantage
-
-**3. Game Discovery & Research**
-
-- **Scenario**: A gamer wants to find the best action RPGs released in 2024 with high ratings
-- **Value**: Instant access to filtered, analyzed game data without manual database queries or spreadsheet work
-- **Business Impact**: Reduces research time from hours to seconds, enabling faster purchase decisions
-
-### 🎮 Key Value Propositions
-
-- **⚡ Speed**: Get complex analytics in seconds, not hours
-- **📊 Accuracy**: Direct integration with RAWG's comprehensive database ensures reliable data
-- **🧠 Intelligence**: AI-powered analysis goes beyond raw data to provide actionable insights
-- **💰 Cost-Effective**: No need for data analysts or expensive analytics tools
-- **🌐 Accessibility**: Natural language interface means anyone can ask questions, no technical skills required
-- **📈 Scalable**: Handles everything from simple queries to complex multi-step analyses
+**Key Value Propositions:** ⚡ Speed (seconds not hours) • 📊 Accuracy (direct RAWG integration) • 🧠 Intelligence (AI-powered insights) • 🌐 Accessibility (natural language, no SQL) • 📈 Scalable (simple to complex queries)
 
 ---
 
 ## 🏗️ Architecture
+
+The system uses a three-part architecture: **Frontend Worker** (Next.js React UI + LangGraph orchestration), **MCP Server Worker** (34 tools with LRU caching), and **External Services** (OpenAI LLM, RAWG API). The LangGraph workflow orchestrates multi-turn tool execution with conditional routing, enabling complex queries through iterative data retrieval and analysis.
 
 ### 📊 System Overview
 
@@ -215,129 +195,62 @@ sequenceDiagram
 
 ---
 
-## ⚙️ Technology Decisions
+## ⚙️ Technology Stack
 
-| Technology                               | Rationale                                                                              | Business Impact                                                                                 |
-| ---------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| **Next.js 15 + App Router**              | SSR optimization, type-safe API routes                                                 | Faster page loads, better SEO, reduced server costs                                             |
-| **LangGraph**                            | LangGraph for declarative agent workflows and state machine orchestration              | Faster feature development, easier maintenance, clear separation of orchestration and utilities |
-| **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, protocol-based communication | Independent scaling, reduced coupling costs                                                     |
-| **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution    | Pay-per-use pricing, global edge, no server management                                          |
-| **LRU Cache (1hr TTL)**                  | Reduce RAWG API calls, improve response times, cost optimization                       | API cost reduction, faster user experience                                                      |
-| **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation              | Fewer production bugs, faster development                                                       |
-| **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling, dependency management               | Parallel team development, reduced duplication                                                  |
-| **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability, better IDE support              | Lower bug rates, faster onboarding                                                              |
+| Technology                               | Rationale                                                                                  |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Next.js 15 + App Router**              | SSR optimization, type-safe API routes                                                     |
+| **LangGraph**                            | Declarative agent workflows with state machine orchestration for multi-turn tool execution |
+| **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, independent scaling              |
+| **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution        |
+| **LRU Cache (1hr TTL)**                  | Reduces RAWG API calls by ~60%, improves response times                                    |
+| **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation                  |
+| **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling                                          |
+| **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability                                      |
 
----
+### Key Architecture Decisions
 
-## 💡 Key Decisions
+**Three-part architecture**: Frontend (Next.js React UI), orchestration (LangGraph workflow), and MCP server (34 tools) enable independent scaling and parallel development.
 
-**🏗️ Architecture Decisions:**
+**MCP over direct API calls**: Protocol-based decoupling enables independent tool versioning and scaling.
 
-- **Three-part architecture (Frontend, Backend, MCP Server)**
-  - Separated concerns into frontend (Next.js React UI), backend (LLM orchestration), and MCP server (data tools)
-  - Enables independent scaling: frontend handles user traffic, MCP server scales with tool usage, backend scales with LLM requests
-  - Parallel development: teams can work on UI, orchestration logic, and data tools simultaneously without conflicts
-  - Independent deployment: update tools without redeploying frontend, deploy UI changes without affecting data layer
+**LangGraph state machine**: Conditional routing (tool calls → tools node, final response → condense) improves reliability over linear chains.
 
-- **MCP over direct API calls**
-  - Chose MCP protocol to decouple tool execution from frontend, enabling independent scaling and tool versioning
+**Performance optimizations**: LRU caching (~60% API call reduction), field selection (minimize payloads), Cloudflare Smart Placement (optimal routing).
 
-- **LangGraph over simple chains**
-  - Implemented state machine workflow for multi-turn tool execution
-  - Enables conditional routing (tool calls → tools node, final response → END), improving reliability over linear chains
-
-- **Durable Objects for MCP state**
-  - Each MCP agent instance maintains persistent connection state, reducing initialization overhead
-
-**⚡ Performance Optimizations:**
-
-- **LRU caching**
-  - 100-item cache with 1-hour TTL reduces RAWG API calls by ~60% for repeated queries
-  - Cache key includes endpoint + serialized params for precise invalidation
-
-- **Field selection**
-  - Implemented `selectFieldsFromPaginatedResponse` to minimize payload size
-  - Reduces network transfer and parsing time
-
-- **Smart Placement**
-  - Enabled Cloudflare Smart Placement to route requests to optimal data centers
-
-**📊 Statistical Analysis Capabilities:**
-
-- **Four specialized analysis tools for complex data insights**
-  - **Execute Calculation**: Performs statistical operations (mean, median, mode, standard deviation, variance, percentiles) on numeric datasets using the simple-statistics library
-  - **Compare Groups**: Compares statistics across multiple groups with automatic ranking, difference calculations, and percentage comparisons—perfect for comparing platforms, genres, or time periods
-  - **Trend Analysis**: Three analysis types—linear regression with R-squared calculation and trend direction interpretation, growth rate calculation with period-based analysis, and moving averages with configurable window size for smoothing noisy data
-  - **Correlation Analysis**: Calculates Pearson correlation coefficient with automatic strength interpretation (very weak to very strong) and direction to identify relationships between variables
-
-- **Creative solutions for intelligent analytics**
-  - **Automatic result interpretation**: Tools provide human-readable interpretations of statistical results (e.g., "Positive trend: values increase by approximately 2.5 per unit", "Strong positive correlation: as Metacritic scores increase, user ratings tend to increase")
-  - **Built-in ranking and comparison**: Group comparison tool automatically ranks groups, calculates differences from best performers, and provides percentage comparisons without requiring additional processing
-  - **R-squared calculation**: Custom implementation for regression quality assessment to determine how well the linear model fits the data
-  - **Moving average smoothing**: Window-based smoothing technique for trend detection in noisy time-series data, enabling identification of underlying patterns
-  - **Comprehensive metadata**: All tools return contextual information including data points, input ranges, and interpretations, enabling the LLM to provide rich, contextual responses
-
-**🛡️ Reliability Patterns:**
-
-- **Zod validation**
-  - Request/response validation at API boundaries prevents malformed data propagation
-  - Shared schemas ensure consistency across frontend and MCP server
-
-- **Error boundaries**
-  - Frontend error handling with user-friendly messages
-  - Backend error responses with structured error objects
-
-- **Error handling**
-  - MCP server validates RAWG API key presence and provides clear error messages when missing
-  - API requests fail gracefully with descriptive error messages for debugging
-
-**👨‍💻 Developer Experience:**
-
-- **Monorepo with shared code and unified tooling**
-  - Shared `@rawg-analytics/shared` package eliminates duplication of type definitions and schemas, ensuring consistency across frontend and backend
-  - Root `package.json` provides scripts to develop, build, and deploy components individually or together (`dev:frontend`, `dev:mcp-server`, `deploy:all`). Single commands handle linting, type-checking, and formatting across all workspaces for consistent code quality
+**Statistical analysis tools**: Four specialized tools (Execute Calculation, Compare Groups, Trend Analysis, Correlation Analysis) with automatic result interpretation and built-in ranking.
 
 ---
 
 ## 🛣️ Development Journey
 
-This section covers the development approach, challenges encountered, time allocation, and future improvements for this project.
-
 ### 🎯 How I Approached the Problem
 
 Before writing any code, I stepped back to analyze the core problem: _How do I build a system that lets users ask natural language questions about video games and get intelligent, data-driven answers?_
 
-**Breaking Down the Problem:**
+I started by identifying the key components needed: a chat interface, an LLM system to process questions, access to game data via RAWG API, and a way to connect everything together.
 
-I started by identifying the key components needed:
-
-1. A way for users to interact naturally (chat interface)
-2. A system to understand and process their questions (LLM)
-3. Access to game data (RAWG API)
-4. A way to connect everything together
-
-This led me to think: _What if I could create a modular system where each piece could evolve independently?_ The idea of separating the chat interface, the AI orchestration, and the data tools emerged as a natural solution. This modular approach offers significant advantages: components can scale independently in native cloud infrastructure, and different teams can work on individual components in parallel to boost development significantly.
+This led me to think: _What if I could create a modular system where each piece could evolve independently?_ The idea of separating the chat interface, the AI orchestration, and the data tools emerged as a natural solution. This modular approach enables components to scale independently and allows different teams to work on individual components in parallel.
 
 **Architecture Thinking:**
 
-I realized early on that this wasn't just about building features—it was about creating a foundation that could grow. I asked myself: _What happens when I want to add more data sources? What if I need to change the UI? How do I ensure the frontend and backend stay in sync?_
+I realized early on that this wasn't just about building features. It was about creating a foundation that could grow. I asked myself: _What happens when I want to add more data sources? What if I need to change the UI? How do I ensure the frontend and backend stay in sync?_
 
-The monorepo idea came from recognizing that both frontend and backend would need to share the same data structures and validation rules. Instead of duplicating code or managing separate packages, I could create a shared foundation that both components build upon.
+The monorepo idea came from recognizing that both frontend and backend would need to share the same data structures and validation rules. Instead of duplicating code or managing separate packages, I created a shared foundation that both components build upon.
 
 **Designing for Extensibility:**
 
 When thinking about the tools that would fetch game data, I realized they'd likely grow over time. Rather than hardcoding each one, I designed a registry pattern where new tools could be added easily. This way, the system could expand without requiring major refactoring.
 
-I also noticed that RAWG APIs return massive amounts of data—most of which isn't needed for every query. Instead of forcing the LLM to process everything, I designed a field filtering system so it could request only what's relevant, reducing processing time and costs. **Result**: Lower LLM token usage and faster response generation.
+I also noticed that RAWG APIs return massive amounts of data, most of which isn't needed for every query. Instead of forcing the LLM to process everything, I designed a field filtering system so it could request only what's relevant, reducing processing time and costs. **Result**: Lower LLM token usage and faster response generation.
 
 **Performance Considerations:**
 
-Early testing showed that users might ask similar questions, which would trigger repeated API calls. I thought: _Why make the same request twice?_ This led to implementing caching at the MCP server level, so duplicate queries return instantly without hitting external APIs. **Result**: reduction in API costs and sub-second response times for cached queries.
+Early testing showed that users might ask similar questions, which would trigger repeated API calls. I thought: _Why make the same request twice?_ This led to implementing caching at the MCP server level, so duplicate queries return instantly without hitting external APIs. **Result**: Reduction in API costs and sub-second response times for cached queries.
 
 **User Experience First:**
 
-For the frontend, I wanted something that felt fun and engaging—not just functional. The Brawl Stars theme came from recognizing that gaming analytics should feel as exciting as gaming itself. The vibrant colors and bold design weren't just aesthetic choices; they reinforced the playful, energetic nature of exploring game data.
+For the frontend, I wanted something that felt fun and engaging, not just functional. The Brawl Stars theme came from recognizing that gaming analytics should feel as exciting as gaming itself. The vibrant colors and bold design weren't just aesthetic choices; they reinforced the playful, energetic nature of exploring game data.
 
 **Iterative Development Strategy:**
 
@@ -345,87 +258,72 @@ I decided to build the backend (MCP server) first and deploy it, then develop th
 
 ---
 
-### 🚧 Challenges & Limitations
+### 🚧 Challenges & Solutions
 
-Several technical challenges emerged during development that required architectural pivots and problem-solving:
+**Architecture Integration Pivot:**
 
-**Cloudflare Learning Curve:**
-
-- Needed to study Cloudflare SDK and Workers architecture, which had a learning curve
-- Local testing was challenging since Cloudflare SDK requires creating Cloudflare tunnels for proper testing
-
-**Data Quality Issues:**
-
-- Metric values from RAWG API could be null, making it difficult to exclude them during analysis since they come directly from the API
-
-**Architecture Integration:**
-
-- Initially attempted a microservices architecture with three separate components (frontend, backend, MCP server)
-- Ran into Cloudflare limits when trying to connect frontend and backend as separate workers
-- Spent hours troubleshooting before deciding to handle backend interactions directly in the frontend worker instead of a separate service
-- This decision simplified the architecture while maintaining separation of concerns between orchestration and MCP tool execution
+- Initially attempted microservices with three separate workers (frontend, backend, MCP server)
+- Hit Cloudflare limits connecting separate workers
+- **Solution**: Consolidated backend orchestration into frontend worker while maintaining separation of concerns
 
 **Protocol Migration:**
 
-- Needed to replace deprecated SSE (Server-Sent Events) protocol with MCP protocol for MCP client-server communication
-- Required understanding of MCP protocol specifications and adapter implementations
+- Replaced deprecated SSE with MCP protocol for client-server communication
+- Required deep understanding of MCP specifications and adapter implementations
 
 **Frontend Library Issues:**
 
-- Initially used `@ai-sdk/react` for React frontend integration
-- Encountered integration problems with LangGraph
-- Switched to official React packages from LangGraph: `@langchain/langgraph-sdk/react`
+- `@ai-sdk/react` had integration problems with LangGraph
+- **Solution**: Switched to official `@langchain/langgraph-sdk/react` packages
+
+**Cloudflare Learning Curve:**
+
+- Studied Workers architecture and Durable Objects
+- Local testing required Cloudflare tunnels for proper validation
+
+**Data Quality:**
+
+- RAWG API returns null values that need handling during statistical analysis
 
 ---
 
 ### ⏱️ Time Allocation
 
-Development followed a structured learning and implementation approach:
+**Foundation & Learning (Early Phase)**
 
-1. **Foundation (Early Phase)**
-   - Studied Cloudflare SDK and Workers architecture to understand the deployment platform
+- Studied Cloudflare Workers architecture and Durable Objects
+- Analyzed RAWG APIs to understand data structures and endpoints
 
-2. **API Understanding**
-   - Analyzed RAWG APIs to understand data structure and available endpoints
+**Architecture & Design**
 
-3. **Architecture Design**
-   - Designed the overall architecture and decided on monorepo structure for code organization
+- Designed three-part architecture (Frontend, Orchestration, MCP Server)
+- Decided on monorepo structure for code organization and shared schemas
 
-4. **Backend First**
-   - Implemented MCP server with all tools and deployed it to Cloudflare Workers
+**Backend Implementation**
 
-5. **Frontend Development**
-   - Developed UI and MCP client to connect to the deployed MCP server
-   - Integrated LLM orchestration
+- Built MCP server with 34 tools covering all RAWG APIs
+- Implemented tool registry pattern and LRU caching
+- Deployed to Cloudflare Workers for validation
 
-This phased approach allowed for incremental testing and validation at each stage.
+**Frontend Development**
+
+- Developed Next.js React UI with Brawl Stars theme
+- Integrated MCP client and LangGraph workflow orchestration
+- Connected to deployed MCP server for end-to-end testing
+
+This phased approach enabled incremental validation and real-world protocol testing at each stage.
 
 ---
 
 ### 🔮 Future Improvements
 
-Several enhancements are planned to improve the project's robustness, coverage, and capabilities:
+**Testing & Quality**: Unit tests, E2E tests, GitHub CI/CD pipeline
 
-**Testing & Quality:**
+**LLM Capabilities**: Short-term and long-term memory, conversation history management
 
-- Add unit tests for local environment and during development
-- Add E2E tests for actual UI and API responses
-- Add GitHub CI/CD pipeline for automated testing and deployment
+**Tool Coverage**: Expand query range, add specialized analysis tools
 
-**LLM Capabilities:**
-
-- Add short-term and long-term memory for better context retention across conversations
-- Implement conversation history management
-
-**Tool Coverage:**
-
-- Expand the range of queries the system can handle
-- Add specialized tools for different types of game data analysis
-
-**Multi-Agent Architecture:**
-
-- Create multiple specialized agents for different tasks (e.g., data retrieval, statistical analysis, trend detection)
-- Use LangGraph to coordinate multiple agents for complex queries requiring multiple steps
+**Multi-Agent Architecture**: Specialized agents for data retrieval, statistical analysis, and trend detection, coordinated via LangGraph
 
 ---
 
