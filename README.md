@@ -203,7 +203,7 @@ sequenceDiagram
 | **LangGraph**                            | Declarative agent workflows with state machine orchestration for multi-turn tool execution |
 | **Model Context Protocol (MCP)**         | Standardized tool interface, decoupled server deployment, independent scaling              |
 | **Cloudflare Workers + Durable Objects** | Edge execution, stateful MCP connections, sub-50ms cold starts, global distribution        |
-| **LRU Cache (1hr TTL)**                  | Reduces RAWG API calls by ~60%, improves response times                                    |
+| **LRU Cache (1hr TTL)**                  | Reduces redundant RAWG API calls, improves response times                                  |
 | **Zod + Shared Schemas**                 | Runtime validation, type safety across monorepo, OpenAPI → Zod generation                  |
 | **Monorepo (npm workspaces)**            | Code sharing, atomic deployments, unified tooling                                          |
 | **TypeScript Strict Mode**               | Catch errors at compile time, improve maintainability                                      |
@@ -216,7 +216,7 @@ sequenceDiagram
 
 **LangGraph state machine**: Conditional routing (tool calls → tools node, final response → condense) improves reliability over linear chains.
 
-**Performance optimizations**: LRU caching (~60% API call reduction), field selection (minimize payloads), Cloudflare Smart Placement (optimal routing).
+**Performance optimizations**: LRU caching (reduces redundant API calls), field selection (minimize payloads), Cloudflare Smart Placement (optimal routing).
 
 **Statistical analysis tools**: Four specialized tools (Execute Calculation, Compare Groups, Trend Analysis, Correlation Analysis) with automatic result interpretation and built-in ranking.
 
@@ -224,94 +224,69 @@ sequenceDiagram
 
 ## 🛣️ Development Journey
 
-### 🎯 How I Approached the Problem
+### 🏗️ Architecture & Design Decisions
 
-Before writing any code, I stepped back to analyze the core problem: _How do I build a system that lets users ask natural language questions about video games and get intelligent, data-driven answers?_
+**Three-Part Modular Architecture**
 
-I started by identifying the key components needed: a chat interface, an LLM system to process questions, access to game data via RAWG API, and a way to connect everything together.
+Separated the system into three independent components: Frontend Worker (Next.js React UI + LangGraph orchestration), MCP Server Worker (34 tools with caching), and External Services (OpenAI LLM, RAWG API).
 
-This led me to think: _What if I could create a modular system where each piece could evolve independently?_ The idea of separating the chat interface, the AI orchestration, and the data tools emerged as a natural solution. This modular approach enables components to scale independently and allows different teams to work on individual components in parallel.
+**Trade-off**: Considered monolithic approach for simplicity, but chose modularity to enable independent scaling and parallel development. Each component scales based on its workload (user traffic, tool usage, LLM requests).
 
-**Architecture Thinking:**
+**LangGraph State Machine over Simple Chains**
 
-I realized early on that this wasn't just about building features. It was about creating a foundation that could grow. I asked myself: _What happens when I want to add more data sources? What if I need to change the UI? How do I ensure the frontend and backend stay in sync?_
+Implemented state machine workflow using LangGraph instead of linear chains.
 
-The monorepo idea came from recognizing that both frontend and backend would need to share the same data structures and validation rules. Instead of duplicating code or managing separate packages, I created a shared foundation that both components build upon.
+**Trade-off**: Linear chains are simpler but don't handle multi-turn tool execution well. LangGraph's conditional routing (tool calls → tools node, final response → condense) improves reliability and enables iterative data gathering.
 
-**Designing for Extensibility:**
-
-When thinking about the tools that would fetch game data, I realized they'd likely grow over time. Rather than hardcoding each one, I designed a registry pattern where new tools could be added easily. This way, the system could expand without requiring major refactoring.
-
-I also noticed that RAWG APIs return massive amounts of data, most of which isn't needed for every query. Instead of forcing the LLM to process everything, I designed a field filtering system so it could request only what's relevant, reducing processing time and costs. **Result**: Lower LLM token usage and faster response generation.
-
-**Performance Considerations:**
-
-Early testing showed that users might ask similar questions, which would trigger repeated API calls. I thought: _Why make the same request twice?_ This led to implementing caching at the MCP server level, so duplicate queries return instantly without hitting external APIs. **Result**: Reduction in API costs and sub-second response times for cached queries.
-
-**User Experience First:**
-
-For the frontend, I wanted something that felt fun and engaging, not just functional. The Brawl Stars theme came from recognizing that gaming analytics should feel as exciting as gaming itself. The vibrant colors and bold design weren't just aesthetic choices; they reinforced the playful, energetic nature of exploring game data.
-
-**Iterative Development Strategy:**
-
-I decided to build the backend (MCP server) first and deploy it, then develop the frontend to connect to it. This approach let me validate the core data access layer independently before adding the complexity of the UI. It also meant I could test the MCP protocol integration with a real deployed service rather than mocking everything locally.
+**Additional decisions**: Monorepo with shared schemas for type safety across the stack, tool registry pattern for easy extensibility (34 tools can be added without core changes).
 
 ---
 
-### 🚧 Challenges & Solutions
+### 🚧 Technical Challenges & Solutions
 
-**Architecture Integration Pivot:**
+**Architecture Integration Pivot**
 
-- Initially attempted microservices with three separate workers (frontend, backend, MCP server)
-- Hit Cloudflare limits connecting separate workers
-- **Solution**: Consolidated backend orchestration into frontend worker while maintaining separation of concerns
+**Problem**: Initially attempted microservices with three separate Cloudflare Workers. Hit platform limits connecting separate workers.
 
-**Protocol Migration:**
+**Options**: Keep separate workers (unreliable), consolidate everything (loses separation), or move orchestration into frontend worker (maintains separation, works within limits).
 
-- Replaced deprecated SSE with MCP protocol for client-server communication
-- Required deep understanding of MCP specifications and adapter implementations
+**Solution**: Consolidated backend orchestration into frontend worker while maintaining separation through code organization. MCP server remains separate for independent scaling.
 
-**Frontend Library Issues:**
+**Result**: Architecture works within Cloudflare's constraints while preserving modularity.
 
-- `@ai-sdk/react` had integration problems with LangGraph
-- **Solution**: Switched to official `@langchain/langgraph-sdk/react` packages
+**Frontend Library Integration**
 
-**Cloudflare Learning Curve:**
+**Problem**: `@ai-sdk/react` had compatibility issues with LangGraph workflows.
 
-- Studied Workers architecture and Durable Objects
-- Local testing required Cloudflare tunnels for proper validation
+**Options**: Fix compatibility (time-consuming), build custom integration (reinventing), or switch to official LangGraph packages (refactoring required, but official support).
 
-**Data Quality:**
+**Solution**: Switched to official `@langchain/langgraph-sdk/react` packages designed for LangGraph integration.
 
-- RAWG API returns null values that need handling during statistical analysis
+**Result**: Stable integration with official support and better TypeScript types.
 
 ---
 
-### ⏱️ Time Allocation
+### ⚡ Performance Optimizations
 
-**Foundation & Learning (Early Phase)**
+**LRU Caching**: Implemented at MCP server level with 1-hour TTL. Cache key includes endpoint path and serialized parameters for precise hits. Reduces redundant API calls and improves response times for repeated queries.
 
-- Studied Cloudflare Workers architecture and Durable Objects
-- Analyzed RAWG APIs to understand data structures and endpoints
+**Field Filtering**: RAWG APIs return extensive data, but most fields aren't needed per query. Implemented field filtering so LLM requests only relevant fields, reducing token usage and processing costs.
 
-**Architecture & Design**
+**Cloudflare Smart Placement**: Enabled intelligent request routing to optimal data centers, improving global latency and reliability.
 
-- Designed three-part architecture (Frontend, Orchestration, MCP Server)
-- Decided on monorepo structure for code organization and shared schemas
+---
 
-**Backend Implementation**
+### ⏱️ Development Timeline
 
-- Built MCP server with 34 tools covering all RAWG APIs
-- Implemented tool registry pattern and LRU caching
-- Deployed to Cloudflare Workers for validation
+**Phase 1: Foundation & Learning** - Studied Cloudflare Workers/Durable Objects, analyzed RAWG APIs
 
-**Frontend Development**
+**Phase 2: Architecture & Design** - Designed three-part architecture, decided on monorepo structure, designed tool registry pattern
 
-- Developed Next.js React UI with Brawl Stars theme
-- Integrated MCP client and LangGraph workflow orchestration
-- Connected to deployed MCP server for end-to-end testing
+**Phase 3: Backend Implementation** - Built MCP server with 34 tools, implemented registry pattern and LRU caching, deployed to Cloudflare Workers for validation
 
-This phased approach enabled incremental validation and real-world protocol testing at each stage.
+**Phase 4: Frontend Development** - Developed Next.js React UI, integrated MCP client and LangGraph workflow, connected to deployed MCP server for end-to-end testing
+
+**Learning approach**: Started with documentation and proof-of-concepts. Built MCP server first and deployed it, then connected frontend. This real-world integration testing revealed platform-specific issues (like Workers connection limits) that wouldn't appear in local mocks.
 
 ---
 
